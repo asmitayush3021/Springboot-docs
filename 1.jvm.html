@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Mastery Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6;font-size:15px}
+.nav{display:flex;border-bottom:1px solid #21262d;background:#161b22;padding:0 20px;gap:4px;flex-wrap:wrap}
+.nav-btn{padding:12px 18px;border:none;background:none;color:#8b949e;cursor:pointer;font-size:14px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{color:#e6edf3}
+.nav-btn.active{color:#58a6ff;border-bottom-color:#58a6ff}
+.section{display:none;padding:24px 20px;max-width:1000px;margin:0 auto}
+.section.active{display:block}
+h1{font-size:26px;font-weight:700;color:#e6edf3;margin:0 0 6px}
+h2{font-size:19px;font-weight:600;color:#e6edf3;margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid #21262d}
+h3{font-size:15px;font-weight:600;color:#79c0ff;margin:18px 0 8px}
+h4{font-size:14px;font-weight:600;color:#d2a8ff;margin:14px 0 6px}
+.subtitle{color:#8b949e;font-size:14px;margin-bottom:24px}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas','Monaco',monospace;font-size:13px;line-height:1.5;margin:10px 0}
+code{font-family:'Consolas','Monaco',monospace;font-size:13px}
+.inline-code{background:#21262d;color:#f0883e;padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12px}
+.kw{color:#ff7b72}
+.cm{color:#8b949e;font-style:italic}
+.st{color:#a5d6ff}
+.an{color:#d2a8ff}
+.nb{color:#79c0ff}
+.nm{color:#e6edf3}
+.nf{color:#d2a8ff}
+.num{color:#79c0ff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:12px 0}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px}
+.card-title{font-size:13px;font-weight:600;color:#58a6ff;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card p{font-size:13px;color:#8b949e;line-height:1.5}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin:2px}
+.badge-blue{background:#1f3a5f;color:#58a6ff}
+.badge-green{background:#1a3a2a;color:#3fb950}
+.badge-orange{background:#3d2800;color:#f0883e}
+.badge-red{background:#3d1f1f;color:#ff7b72}
+.badge-purple{background:#2d1f3d;color:#d2a8ff}
+.badge-yellow{background:#3d3000;color:#e3b341}
+.tip{background:#0d2339;border-left:3px solid #58a6ff;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.tip-title{font-size:12px;font-weight:700;color:#58a6ff;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.warn{background:#2d1f00;border-left:3px solid #e3b341;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#c9b060}
+.warn-title{font-size:12px;font-weight:700;color:#e3b341;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.danger{background:#3d0f0f;border-left:3px solid #ff7b72;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#ff9999}
+.danger-title{font-size:12px;font-weight:700;color:#ff7b72;margin-bottom:4px;text-transform:uppercase}
+.success{background:#0d2a1a;border-left:3px solid #3fb950;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#7ee787}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th{background:#21262d;color:#8b949e;padding:8px 12px;text-align:left;font-weight:600;border:1px solid #30363d}
+td{padding:8px 12px;border:1px solid #21262d;color:#c9d1d9;vertical-align:top}
+tr:nth-child(even) td{background:#0d1117}
+.diagram{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:20px;margin:14px 0;font-family:monospace;font-size:12px;line-height:1.8;overflow-x:auto}
+.phase{background:#1f3a5f;color:#58a6ff;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600}
+.arrow{color:#f0883e}
+details{margin:10px 0}
+summary{cursor:pointer;color:#58a6ff;font-size:14px;font-weight:500;padding:8px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▶ ';font-size:11px}
+details[open] summary::before{content:'▼ '}
+details[open]{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:0 14px 14px}
+details[open] summary{padding:14px 0 8px}
+.tab-inner{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tab-inner-btn{padding:5px 12px;border:1px solid #30363d;border-radius:6px;background:#0d1117;color:#8b949e;cursor:pointer;font-size:12px;transition:all .2s}
+.tab-inner-btn.active,.tab-inner-btn:hover{background:#21262d;color:#e6edf3;border-color:#58a6ff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.step{display:flex;gap:14px;margin:10px 0;align-items:flex-start}
+.step-num{min-width:26px;height:26px;background:#1f3a5f;color:#58a6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:2px}
+.step-content{flex:1}
+.step-content p{font-size:13px;color:#8b949e;margin-top:4px}
+.highlight-box{background:#1a2332;border:1px solid #2d4a6b;border-radius:8px;padding:14px;margin:12px 0}
+.compare{display:flex;gap:14px;margin:12px 0}
+.compare-bad{flex:1;background:#2d1212;border:1px solid #5a2020;border-radius:8px;padding:14px}
+.compare-good{flex:1;background:#0d2a1a;border:1px solid #204020;border-radius:8px;padding:14px}
+.compare-label{font-size:11px;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.compare-bad .compare-label{color:#ff7b72}
+.compare-good .compare-label{color:#3fb950}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showSection('jvm')">⚙️ JVM Architecture</button>
+  <button class="nav-btn" onclick="showSection('threads')">🧵 Multithreading</button>
+  <button class="nav-btn" onclick="showSection('gradle')">🔨 Gradle</button>
+  <button class="nav-btn" onclick="showSection('patterns')">🧩 Design Patterns</button>
+</div>
+
+<!-- ==================== JVM ==================== -->
+<div id="jvm" class="section active">
+<h1>JVM Architecture</h1>
+<p class="subtitle">From source code to machine execution — every layer explained with Spring Boot context</p>
+
+<h2>1. The Full Execution Pipeline</h2>
+<div class="diagram">
+<span style="color:#e3b341">Source (.java)</span>
+  <span class="arrow">──javac──▶</span>
+  <span style="color:#58a6ff">Bytecode (.class)</span>
+  <span class="arrow">──ClassLoader──▶</span>
+  <span style="color:#d2a8ff">Runtime Data Areas</span>
+  <span class="arrow">──JIT──▶</span>
+  <span style="color:#3fb950">Native Machine Code</span>
+
+<br><br>
+<span style="color:#8b949e">Spring Boot JAR:</span>
+  app.jar<span class="arrow"> ▶ </span>JarLauncher<span class="arrow"> ▶ </span>AppClassLoader loads 300+ classes<span class="arrow"> ▶ </span>JIT compiles hot paths<span class="arrow"> ▶ </span>runs
+</div>
+
+<h2>2. Class Loading Subsystem</h2>
+
+<div class="grid3">
+  <div class="card">
+    <div class="card-title">🔵 Bootstrap CL</div>
+    <p>Loads <code>java.lang.*</code>, <code>java.util.*</code> from <code>rt.jar</code> / modules. Written in native C. Parent of all.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">🟡 Extension / Platform CL</div>
+    <p>Loads <code>javax.*</code>, security, XML. Java 9+: Platform ClassLoader handles named modules.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">🟢 App ClassLoader</div>
+    <p>Loads your app's classpath. Spring Boot's <code>LaunchedURLClassLoader</code> wraps this for nested JARs.</p>
+  </div>
+</div>
+
+<h3>Delegation Model (Parent-First)</h3>
+<div class="diagram">
+AppClassLoader.loadClass("com.example.Service")
+  <span class="arrow">→</span> ask Bootstrap  <span class="arrow">→</span> not found
+  <span class="arrow">→</span> ask Extension  <span class="arrow">→</span> not found
+  <span class="arrow">→</span> load itself    <span class="arrow">→</span> found! return Class object
+</div>
+
+<h3>Class Loading Phases</h3>
+<div class="tab-inner">
+  <button class="tab-inner-btn active" onclick="innerTab(this,'cl-load')">Loading</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'cl-link')">Linking</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'cl-init')">Initialization</button>
+</div>
+<div id="cl-load" class="tab-content active">
+<p style="font-size:13px;color:#8b949e;margin-bottom:8px">JVM reads .class bytes, creates <code>java.lang.Class</code> object in heap, stores metadata in Metaspace.</p>
+<pre><span class="cm">// Spring Boot: LaunchedURLClassLoader reads from nested JAR</span>
+<span class="cm">// BOOT-INF/classes/ + BOOT-INF/lib/*.jar</span>
+<span class="kw">protected</span> Class&lt;?&gt; findClass(String name) <span class="kw">throws</span> ClassNotFoundException {
+    <span class="cm">// opens nested URL connection</span>
+    <span class="cm">// reads .class bytes</span>
+    <span class="kw">return</span> defineClass(name, bytes, <span class="num">0</span>, bytes.length);
+}</pre>
+</div>
+<div id="cl-link" class="tab-content">
+<p style="font-size:13px;color:#8b949e;margin-bottom:8px">Three sub-phases: <b>Verification</b> (bytecode safety), <b>Preparation</b> (static field defaults), <b>Resolution</b> (symbolic refs → direct refs).</p>
+<pre><span class="cm">// Preparation: static fields get DEFAULT values</span>
+<span class="kw">class</span> <span class="nb">AppConfig</span> {
+    <span class="kw">static int</span> MAX = <span class="num">100</span>;   <span class="cm">// Preparation: MAX = 0</span>
+    <span class="cm">// then Initialization sets MAX = 100</span>
+}</pre>
+</div>
+<div id="cl-init" class="tab-content">
+<p style="font-size:13px;color:#8b949e;margin-bottom:8px">Static initializers run once, thread-safely. Spring beans initialized after this.</p>
+<pre><span class="kw">class</span> <span class="nb">DatabasePool</span> {
+    <span class="kw">static final</span> ConnectionPool POOL;
+    <span class="kw">static</span> {
+        <span class="cm">// runs ONCE, JVM guarantees thread-safety</span>
+        POOL = <span class="kw">new</span> ConnectionPool(<span class="num">20</span>);
+        System.out.println(<span class="st">"Pool initialized"</span>);
+    }
+}</pre>
+</div>
+
+<h2>3. Runtime Data Areas</h2>
+<div class="diagram">
+┌──────────────────────────────────────────────────────────┐
+│                    JVM Process Memory                     │
+│                                                           │
+│  ┌──────────────────────────────┐  ┌──────────────────┐  │
+│  │           HEAP               │  │    METASPACE      │  │
+│  │  ┌──────────┐ ┌──────────┐  │  │  Class metadata  │  │
+│  │  │  Young   │ │   Old    │  │  │  Method info     │  │
+│  │  │  (Eden + │ │  (long-  │  │  │  Static fields   │  │
+│  │  │  S0 + S1)│ │  lived)  │  │  │  Interned str.   │  │
+│  │  └──────────┘ └──────────┘  │  └──────────────────┘  │
+│  └──────────────────────────────┘                        │
+│                                                           │
+│  Per-Thread:  ┌───────────┐  ┌──────────┐  ┌────────┐  │
+│               │   Stack   │  │  Stack   │  │  PC    │  │
+│               │(T-1 frames│  │ (T-2)    │  │ regs   │  │
+│               └───────────┘  └──────────┘  └────────┘  │
+└──────────────────────────────────────────────────────────┘</div>
+
+<h3>Heap: Young vs Old Generation</h3>
+<div class="grid2">
+<div class="card">
+<div class="card-title">🌱 Young Generation (Minor GC)</div>
+<pre style="font-size:11px">Eden ──[full]──▶ Minor GC
+├── live objects ──▶ Survivor S0
+└── dead objects ──▶ collected
+
+S0 ──[age≥15]──▶ promoted to Old
+S0 ──▶ S1 (swap each minor GC)
+
+<span class="cm">Spring: Most request objects die here</span>
+<span class="cm">Minor GC: ~1-10ms, very frequent</span></pre>
+</div>
+<div class="card">
+<div class="card-title">🏔️ Old Generation (Major/Full GC)</div>
+<pre style="font-size:11px">Survivors promoted from Young
+Long-lived objects:
+  - Spring singleton beans
+  - Caches (Caffeine, Redis client)
+  - Thread pools
+  - Connection pools (HikariCP)
+
+<span class="cm">Major GC: ~100ms-seconds</span>
+<span class="cm">Stop-The-World = app pauses!</span></pre>
+</div>
+</div>
+
+<h3>Stack Frame Deep Dive</h3>
+<pre><span class="an">@RestController</span>
+<span class="kw">public class</span> <span class="nb">OrderController</span> {
+    <span class="kw">public</span> Order getOrder(<span class="kw">long</span> id) {        <span class="cm">// Frame 3 pushed</span>
+        <span class="kw">return</span> orderService.findById(id);   <span class="cm">// Frame 4 pushed</span>
+    }                                         <span class="cm">// Frame 3 popped</span>
+}
+
+<span class="cm">// Each frame contains:</span>
+<span class="cm">// - Local variable array (id, this, local vars)</span>
+<span class="cm">// - Operand stack (intermediate computations)</span>
+<span class="cm">// - Reference to runtime constant pool</span>
+
+<span class="cm">// StackOverflowError: too many nested frames</span>
+<span class="cm">// Default: -Xss512k per thread</span>
+<span class="cm">// Spring: embedded Tomcat default 200 threads = 200 stacks!</span></pre>
+
+<h3>Metaspace (Java 8+ replaces PermGen)</h3>
+<div class="grid2">
+<div class="card">
+<div class="card-title">What lives here</div>
+<p>Class structures, method bytecode, field descriptors, annotations, static variable <i>references</i>, interned strings (Java 8+: in heap).</p>
+</div>
+<div class="card">
+<div class="card-title">Spring Boot concern</div>
+<pre style="font-size:11px"><span class="cm"># application.properties</span>
+<span class="cm"># Metaspace can grow unbounded!</span>
+<span class="cm"># Set limit to detect leaks:</span>
+-XX:MaxMetaspaceSize=256m
+
+<span class="cm"># OutOfMemoryError: Metaspace</span>
+<span class="cm"># Cause: ClassLoader leak</span>
+<span class="cm"># (hot-reload, Hibernate proxies)</span></pre>
+</div>
+</div>
+
+<h2>4. JIT Compiler</h2>
+
+<div class="diagram">
+Interpreted (slow)
+  │
+  │  ~1000 invocations
+  ▼
+C1 Compiler (Client) — fast compile, light optimizations
+  │
+  │  ~10000 invocations (hotspot threshold)
+  ▼
+C2 Compiler (Server) — aggressive: inlining, escape analysis, loop unrolling
+  │
+  │  profile-guided
+  ▼
+Native Machine Code (fastest)
+</div>
+
+<h3>Key JIT Optimizations</h3>
+<div class="grid3">
+<div class="card">
+<div class="card-title">Method Inlining</div>
+<pre style="font-size:11px"><span class="cm">// Before JIT:</span>
+result = add(a, b);
+
+<span class="cm">// After inline:</span>
+result = a + b;
+<span class="cm">// call overhead removed</span>
+<span class="cm">// Spring: getters inlined!</span></pre>
+</div>
+<div class="card">
+<div class="card-title">Escape Analysis</div>
+<pre style="font-size:11px"><span class="cm">// Object doesn't escape</span>
+<span class="cm">// method → stack allocated!</span>
+Point p = <span class="kw">new</span> Point(x,y);
+<span class="kw">return</span> p.x + p.y;
+<span class="cm">// p never goes to heap</span>
+<span class="cm">// no GC pressure</span></pre>
+</div>
+<div class="card">
+<div class="card-title">Loop Unrolling</div>
+<pre style="font-size:11px"><span class="cm">// Before:</span>
+<span class="kw">for</span>(i=<span class="num">0</span>; i&lt;<span class="num">4</span>; i++) sum+=a[i];
+
+<span class="cm">// After JIT:</span>
+sum = a[<span class="num">0</span>]+a[<span class="num">1</span>]+a[<span class="num">2</span>]+a[<span class="num">3</span>];
+<span class="cm">// branch removed</span></pre>
+</div>
+</div>
+
+<h2>5. Garbage Collection & Stop-The-World</h2>
+
+<h3>GC Algorithms Compared</h3>
+<table>
+<tr><th>GC</th><th>Algorithm</th><th>Pause</th><th>Best For</th></tr>
+<tr><td><code>Serial</code></td><td>Single-thread, stop-world</td><td>High</td><td>Small apps, &lt;1GB</td></tr>
+<tr><td><code>G1GC</code></td><td>Region-based, concurrent</td><td>~200ms target</td><td><b>Default. Spring Boot.</b></td></tr>
+<tr><td><code>ZGC</code></td><td>Colored pointers, concurrent</td><td>&lt;1ms</td><td>Low-latency APIs</td></tr>
+<tr><td><code>Shenandoah</code></td><td>Concurrent evacuation</td><td>&lt;10ms</td><td>Large heaps</td></tr>
+</table>
+
+<h3>Stop-The-World Explained</h3>
+<div class="diagram">
+Thread-1: <span style="color:#3fb950">▓▓▓▓▓▓▓▓▓</span><span style="color:#ff7b72">░░░░</span><span style="color:#3fb950">▓▓▓▓▓▓▓▓▓</span>
+Thread-2: <span style="color:#3fb950">▓▓▓▓▓▓▓▓▓</span><span style="color:#ff7b72">░░░░</span><span style="color:#3fb950">▓▓▓▓▓▓▓▓▓</span>
+GC Thread:              <span style="color:#ff7b72">████ (STW pause)</span>
+           ──────────────────────────────────▶ time
+<span style="color:#3fb950">▓</span> = app running   <span style="color:#ff7b72">░</span> = app paused   <span style="color:#ff7b72">█</span> = GC working
+
+During STW: all app threads halted at "safe points"
+HTTP requests hang, timeouts can occur!</div>
+
+<h3>GC Root Marking</h3>
+<pre><span class="cm">// GC Roots (always reachable, never collected):</span>
+<span class="cm">// 1. Active thread stacks (local variables)</span>
+<span class="cm">// 2. Static fields of loaded classes</span>
+<span class="cm">// 3. JNI references</span>
+
+<span class="cm">// Memory leak in Spring: Static collection holding beans</span>
+<span class="kw">public class</span> <span class="nb">LeakyCache</span> {
+    <span class="kw">private static final</span> List&lt;User&gt; CACHE = <span class="kw">new</span> ArrayList&lt;&gt;();
+    <span class="cm">// This is a GC Root! Objects never collected!</span>
+    <span class="kw">public void</span> add(User u) { CACHE.add(u); } <span class="cm">// leak!</span>
+}
+<span class="cm">// Fix: Use bounded cache like Caffeine</span></pre>
+
+<h2>6. Production Tuning for Spring Boot</h2>
+
+<h3>JVM Flags for Microservices</h3>
+<pre><span class="cm">## Dockerfile / kubernetes JAVA_OPTS</span>
+
+<span class="cm"># Heap (rule: 70% of container memory)</span>
+-Xms512m -Xmx512m          <span class="cm"># set equal to avoid resize pauses</span>
+-XX:+UseContainerSupport    <span class="cm"># respect Docker memory limits</span>
+
+<span class="cm"># GC (G1 is default Java 9+)</span>
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200    <span class="cm"># G1 pause target</span>
+-XX:G1HeapRegionSize=16m    <span class="cm"># larger regions for big heaps</span>
+
+<span class="cm"># For ultra-low latency (Java 15+)</span>
+-XX:+UseZGC
+-XX:SoftMaxHeapSize=400m    <span class="cm"># ZGC hint for GC frequency</span>
+
+<span class="cm"># Metaspace</span>
+-XX:MaxMetaspaceSize=256m
+
+<span class="cm"># GC Logging (production must-have)</span>
+-Xlog:gc*:file=/var/log/gc.log:time,uptime:filecount=5,filesize=20m
+
+<span class="cm"># Crash dumps</span>
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/tmp/heap.hprof</pre>
+
+<h3>Diagnosing GC Issues</h3>
+<div class="grid2">
+<div class="card">
+<div class="card-title">🔍 Too many Minor GCs</div>
+<pre style="font-size:11px"><span class="cm"># Symptom: CPU spike every few seconds</span>
+<span class="cm"># Cause: Eden too small</span>
+-XX:NewRatio=2  <span class="cm"># Young = Heap/3</span>
+-XX:NewSize=256m
+<span class="cm"># Spring Boot: request objects</span>
+<span class="cm"># live only per-request</span>
+<span class="cm"># → more Eden = less GC</span></pre>
+</div>
+<div class="card">
+<div class="card-title">⚡ Long Major GC pauses</div>
+<pre style="font-size:11px"><span class="cm"># Symptom: 500ms+ pauses</span>
+<span class="cm"># Cause: Old Gen pressure</span>
+<span class="cm"># Check: large session objects</span>
+<span class="cm"># Check: Hibernate L2 cache size</span>
+<span class="cm"># Fix:</span>
+spring.cache.caffeine.spec=
+  maximumSize=1000,expireAfterWrite=10m</pre>
+</div>
+</div>
+
+<div class="tip"><div class="tip-title">💡 Production rule</div>Always run <code>-server</code> flag (default on 64-bit JVMs). Use GraalVM Native Image for serverless Spring Boot — startup drops from 3s to 50ms, memory from 300MB to 50MB.</div>
+</div>
+
+<!-- ==================== THREADS ==================== -->
+<div id="threads" class="section">
+<h1>Java Multithreading</h1>
+<p class="subtitle">From CPU scheduling to CompletableFuture — complete with Spring Boot internals</p>
+
+<h2>1. CPU Scheduling & Thread States</h2>
+
+<div class="diagram">
+Thread States:
+<span style="color:#3fb950">NEW</span> ──start()──▶ <span style="color:#58a6ff">RUNNABLE</span> ◀──────────────────────────┐
+                      │                                           │
+              CPU scheduler                                      │
+                      │                                           │
+              ┌───────▼────────┐                                  │
+              │    RUNNING     │ ──Object.wait()──▶ <span style="color:#e3b341">WAITING</span>       │
+              │  (on CPU core) │ ──sleep(n)───────▶ <span style="color:#e3b341">TIMED_WAIT</span>   │
+              └───────┬────────┘ ──lock contend───▶ <span style="color:#f0883e">BLOCKED</span>     │
+                      │                                    │      │
+                 run() ends                         notify/unlock─┘
+                      │
+                  <span style="color:#ff7b72">TERMINATED</span>
+</div>
+
+<h3>CPU Context Switch Cost</h3>
+<pre><span class="cm">// Platform threads (OS threads): ~1-10 microseconds switch</span>
+<span class="cm">// Virtual threads (Java 21): negligible (JVM scheduler)</span>
+
+<span class="cm">// Tomcat default: 200 platform threads</span>
+<span class="cm">// Each: ~1MB stack, OS kernel thread</span>
+<span class="cm">// 200 threads × 1MB = 200MB just for stacks!</span>
+
+<span class="cm">// With Virtual Threads (Spring Boot 3.2+):</span>
+spring.threads.virtual.enabled=true
+<span class="cm">// Millions of virtual threads, each ~few KB</span></pre>
+
+<h2>2. Thread Lifecycle with Spring Boot Request Handling</h2>
+
+<div class="diagram">
+HTTP Request arrives
+       │
+       ▼
+Tomcat Acceptor Thread (1) — accepts TCP connection
+       │
+       ▼
+Tomcat Worker Thread Pool (200 threads default)
+  Thread picked from pool
+       │
+  Spring DispatcherServlet
+       │
+  Spring Security filter chain
+       │
+  @RestController method
+       │
+  (thread blocks on DB/IO)  ←── thread WASTED here!
+       │
+  Response sent
+       │
+  Thread returned to pool
+</div>
+
+<h3>Thread Pool Tuning for Spring Boot</h3>
+<pre><span class="cm"># application.properties</span>
+server.tomcat.threads.max=200        <span class="cm"># max worker threads</span>
+server.tomcat.threads.min-spare=25   <span class="cm"># always-alive threads</span>
+server.tomcat.accept-count=100       <span class="cm"># queue when pool full</span>
+server.tomcat.connection-timeout=5000
+
+<span class="cm"># Rule: threads = (CPU cores × 2) for CPU-bound</span>
+<span class="cm">#       threads = (CPU cores × (1 + wait/compute)) for IO-bound</span>
+<span class="cm"># A microservice mostly IO-bound → 100-200 threads fine</span></pre>
+
+<h2>3. Synchronization & Race Conditions</h2>
+
+<div class="compare">
+<div class="compare-bad">
+<div class="compare-label">❌ Race Condition — BROKEN</div>
+<pre style="font-size:12px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">CounterService</span> {
+    <span class="kw">private int</span> count = <span class="num">0</span>; <span class="cm">// NOT thread-safe</span>
+
+    <span class="kw">public void</span> increment() {
+        count++;  <span class="cm">// READ-MODIFY-WRITE</span>
+        <span class="cm">// NOT atomic! 3 bytecode ops:</span>
+        <span class="cm">// getfield, iadd, putfield</span>
+        <span class="cm">// Two threads can interleave!</span>
+    }
+}
+<span class="cm">// Result: 10000 increments</span>
+<span class="cm">// Expected: 10000, Actual: ~9800</span></pre>
+</div>
+<div class="compare-good">
+<div class="compare-label">✅ Fixed Options</div>
+<pre style="font-size:12px"><span class="cm">// Option 1: synchronized</span>
+<span class="kw">public synchronized void</span> increment() {
+    count++;
+}
+
+<span class="cm">// Option 2: AtomicInteger (preferred)</span>
+<span class="kw">private</span> AtomicInteger count =
+    <span class="kw">new</span> AtomicInteger(<span class="num">0</span>);
+<span class="kw">public void</span> increment() {
+    count.incrementAndGet(); <span class="cm">// CAS op</span>
+}
+
+<span class="cm">// Option 3: LongAdder (high contention)</span>
+<span class="kw">private</span> LongAdder count = <span class="kw">new</span> LongAdder();
+<span class="kw">public void</span> increment() { count.increment(); }</pre>
+</div>
+</div>
+
+<h3>The volatile Keyword</h3>
+<pre><span class="kw">public class</span> <span class="nb">ShutdownExample</span> {
+    <span class="cm">// Without volatile: thread may cache in register!</span>
+    <span class="cm">// Other thread's write never seen → infinite loop</span>
+    <span class="kw">private volatile boolean</span> running = <span class="kw">true</span>;
+
+    <span class="kw">public void</span> stop() {
+        running = <span class="kw">false</span>;  <span class="cm">// write visible to ALL threads immediately</span>
+    }
+
+    <span class="kw">public void</span> run() {
+        <span class="kw">while</span> (running) {  <span class="cm">// always reads from main memory</span>
+            processNextTask();
+        }
+    }
+}
+<span class="cm">// volatile: visibility guarantee, NOT atomicity</span>
+<span class="cm">// volatile++ is still NOT atomic!</span></pre>
+
+<h2>4. Deadlock — Detection & Prevention</h2>
+
+<div class="compare">
+<div class="compare-bad">
+<div class="compare-label">❌ Classic Deadlock</div>
+<pre style="font-size:12px"><span class="cm">// Thread 1: locks A then B</span>
+<span class="cm">// Thread 2: locks B then A</span>
+<span class="cm">// → Circular wait = deadlock</span>
+
+<span class="kw">synchronized</span>(lockA) {
+    Thread.sleep(<span class="num">50</span>);
+    <span class="kw">synchronized</span>(lockB) {  <span class="cm">// waits for B</span>
+        doWork();
+    }
+}
+
+<span class="cm">// Meanwhile Thread 2:</span>
+<span class="kw">synchronized</span>(lockB) {
+    Thread.sleep(<span class="num">50</span>);
+    <span class="kw">synchronized</span>(lockA) {  <span class="cm">// waits for A</span>
+        doWork();          <span class="cm">// DEADLOCK!</span>
+    }
+}</pre>
+</div>
+<div class="compare-good">
+<div class="compare-label">✅ Prevention: Lock Ordering</div>
+<pre style="font-size:12px"><span class="cm">// ALWAYS lock in same order!</span>
+<span class="kw">private static final</span> Object LOCK_A = <span class="kw">new</span> Object();
+<span class="kw">private static final</span> Object LOCK_B = <span class="kw">new</span> Object();
+
+<span class="cm">// Both threads: A then B, always</span>
+<span class="kw">synchronized</span>(LOCK_A) {
+    <span class="kw">synchronized</span>(LOCK_B) {
+        doWork();
+    }
+}
+
+<span class="cm">// Or use tryLock with timeout:</span>
+<span class="kw">if</span> (lock.tryLock(<span class="num">1</span>, TimeUnit.SECONDS)) {
+    <span class="kw">try</span> { doWork(); }
+    <span class="kw">finally</span> { lock.unlock(); }
+} <span class="kw">else</span> { <span class="cm">/* timeout, retry/fail */</span> }</pre>
+</div>
+</div>
+
+<div class="tip"><div class="tip-title">🔍 Detect deadlocks</div><code>jstack &lt;pid&gt; | grep -A 20 "deadlock"</code> — JVM prints deadlock info automatically. In Spring Boot Actuator: <code>/actuator/threaddump</code></div>
+
+<h2>5. Thread Pools Deep Dive</h2>
+
+<h3>ThreadPoolExecutor Internals</h3>
+<pre><span class="cm">// Spring's @Async uses this under the hood</span>
+ThreadPoolExecutor executor = <span class="kw">new</span> ThreadPoolExecutor(
+    <span class="num">5</span>,          <span class="cm">// corePoolSize:  always alive</span>
+    <span class="num">20</span>,         <span class="cm">// maximumPoolSize: created under load</span>
+    <span class="num">60L</span>, TimeUnit.SECONDS,  <span class="cm">// keepAlive for above-core threads</span>
+    <span class="kw">new</span> LinkedBlockingQueue&lt;&gt;(<span class="num">100</span>),  <span class="cm">// task queue capacity</span>
+    <span class="kw">new</span> ThreadPoolExecutor.CallerRunsPolicy() <span class="cm">// rejection policy</span>
+);
+
+<span class="cm">// Task submission flow:</span>
+<span class="cm">// 1. Pool &lt; core?         → create new thread</span>
+<span class="cm">// 2. Queue not full?      → enqueue task</span>
+<span class="cm">// 3. Pool &lt; max?          → create new thread</span>
+<span class="cm">// 4. Queue full + at max? → RejectionHandler!</span></pre>
+
+<h3>Spring Boot @Async Configuration</h3>
+<pre><span class="an">@Configuration</span>
+<span class="an">@EnableAsync</span>
+<span class="kw">public class</span> <span class="nb">AsyncConfig</span> {
+
+    <span class="an">@Bean</span>(<span class="st">"emailExecutor"</span>)
+    <span class="kw">public</span> TaskExecutor emailExecutor() {
+        ThreadPoolTaskExecutor executor = <span class="kw">new</span> ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(<span class="num">5</span>);
+        executor.setMaxPoolSize(<span class="num">10</span>);
+        executor.setQueueCapacity(<span class="num">500</span>);
+        executor.setThreadNamePrefix(<span class="st">"Email-"</span>);
+        executor.setRejectedExecutionHandler(
+            <span class="kw">new</span> ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+        <span class="kw">return</span> executor;
+    }
+}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">EmailService</span> {
+
+    <span class="an">@Async</span>(<span class="st">"emailExecutor"</span>)
+    <span class="kw">public</span> CompletableFuture&lt;Void&gt; sendWelcomeEmail(String email) {
+        <span class="cm">// runs in Email-1..10 thread, not HTTP thread</span>
+        sendSMTP(email);
+        <span class="kw">return</span> CompletableFuture.completedFuture(<span class="kw">null</span>);
+    }
+}</pre>
+
+<h2>6. CompletableFuture — Async Pipelines</h2>
+
+<h3>Real Spring Boot Example: Parallel API Calls</h3>
+<pre><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">ProductService</span> {
+
+    <span class="kw">public</span> ProductDetail getProductDetail(<span class="kw">long</span> id) {
+        <span class="cm">// Sequential: 300ms + 200ms = 500ms</span>
+        <span class="cm">// Parallel:   max(300ms, 200ms) = 300ms</span>
+
+        CompletableFuture&lt;Product&gt; productFuture =
+            CompletableFuture.supplyAsync(
+                () -&gt; productRepo.findById(id),
+                executor  <span class="cm">// custom pool, not ForkJoin!</span>
+            );
+
+        CompletableFuture&lt;List&lt;Review&gt;&gt; reviewsFuture =
+            CompletableFuture.supplyAsync(
+                () -&gt; reviewService.getReviews(id),
+                executor
+            );
+
+        CompletableFuture&lt;Inventory&gt; inventoryFuture =
+            CompletableFuture.supplyAsync(
+                () -&gt; inventoryService.getStock(id),
+                executor
+            );
+
+        <span class="cm">// Wait for ALL to complete</span>
+        CompletableFuture.allOf(productFuture, reviewsFuture, inventoryFuture)
+            .join(); <span class="cm">// blocks current thread max until all done</span>
+
+        <span class="kw">return new</span> ProductDetail(
+            productFuture.join(),
+            reviewsFuture.join(),
+            inventoryFuture.join()
+        );
+    }
+}</pre>
+
+<h3>CompletableFuture Chaining</h3>
+<pre>CompletableFuture
+    .supplyAsync(() -&gt; fetchUser(userId))    <span class="cm">// async: returns User</span>
+    .thenApply(user -&gt; enrichUser(user))     <span class="cm">// sync transform</span>
+    .thenCompose(user -&gt; fetchOrders(user))  <span class="cm">// async flatMap</span>
+    .thenAccept(orders -&gt; saveToCache(orders))<span class="cm">// consume, no return</span>
+    .exceptionally(ex -&gt; {
+        log.error(<span class="st">"Pipeline failed"</span>, ex);
+        <span class="kw">return null</span>;                         <span class="cm">// fallback</span>
+    })
+    .orTimeout(<span class="num">5</span>, TimeUnit.SECONDS);        <span class="cm">// Java 9+ timeout</span></pre>
+
+<h2>7. Virtual Threads (Java 21 + Spring Boot 3.2)</h2>
+<pre><span class="cm">## application.properties</span>
+spring.threads.virtual.enabled=true
+
+<span class="cm">// What changes:</span>
+<span class="cm">// Platform thread: OS thread, 1MB stack, expensive</span>
+<span class="cm">// Virtual thread: JVM-managed, ~few KB, millions possible</span>
+
+<span class="cm">// BEFORE (blocks OS thread during DB query):</span>
+<span class="cm">// Worker-23 is parked → OS thread wasted</span>
+
+<span class="cm">// AFTER (virtual thread unmounts from OS thread during I/O):</span>
+<span class="cm">// Virtual-T-23 waiting for DB</span>
+<span class="cm">// OS carrier thread picks up DIFFERENT virtual thread</span>
+<span class="cm">// No blocking! 10x throughput improvement for I/O apps</span>
+
+<span class="cm">// WARNING: Don't pool virtual threads!</span>
+<span class="cm">// ❌ new ThreadPoolExecutor(200, 200, ...)</span>
+<span class="cm">// ✅ Executors.newVirtualThreadPerTaskExecutor()</span></pre>
+
+<div class="warn"><div class="warn-title">⚠️ Common Mistakes</div>
+<b>ThreadLocal with virtual threads</b>: ThreadLocal leaks between tasks if using thread pools. Use <code>ScopedValue</code> (Java 21 preview) instead.<br><br>
+<b>synchronized + virtual threads</b>: <code>synchronized</code> pins virtual thread to carrier OS thread. Use <code>ReentrantLock</code> instead for virtual-thread-safe code.</div>
+</div>
+
+<!-- ==================== GRADLE ==================== -->
+<div id="gradle" class="section">
+<h1>Gradle — Beginner to Production</h1>
+<p class="subtitle">Build lifecycle, dependency resolution, multi-module Spring Boot, CI/CD</p>
+
+<h2>1. Core Concepts</h2>
+<div class="grid3">
+<div class="card">
+<div class="card-title">📦 Project</div>
+<p>A directory with <code>build.gradle</code>. Root project + subprojects in multi-module setup.</p>
+</div>
+<div class="card">
+<div class="card-title">⚙️ Task</div>
+<p>Atomic unit of work: <code>compileJava</code>, <code>test</code>, <code>bootJar</code>. Has inputs/outputs for caching.</p>
+</div>
+<div class="card">
+<div class="card-title">🔌 Plugin</div>
+<p>Adds tasks + conventions. <code>java</code> plugin adds compile/test. <code>spring-boot</code> adds bootJar/bootRun.</p>
+</div>
+</div>
+
+<h2>2. Build Lifecycle</h2>
+<div class="diagram">
+Gradle Build = 3 phases:
+
+<span style="color:#58a6ff">Phase 1: INITIALIZATION</span>
+  Read settings.gradle
+  Determine which projects exist
+  Create Project objects
+
+<span style="color:#d2a8ff">Phase 2: CONFIGURATION</span>
+  Execute ALL build.gradle scripts
+  Build task dependency graph (DAG)
+  No code runs yet! Just "what will run"
+
+<span style="color:#3fb950">Phase 3: EXECUTION</span>
+  Execute requested tasks in DAG order
+  Only tasks needed for goal run (incremental)
+  
+<span class="arrow">./gradlew bootJar</span> triggers:
+  compileJava → processResources → classes → jar → bootJar
+</div>
+
+<h2>3. Build Script Anatomy (Kotlin DSL)</h2>
+<pre><span class="cm">// build.gradle.kts</span>
+plugins {
+    kotlin(<span class="st">"jvm"</span>) version <span class="st">"1.9.22"</span>          <span class="cm">// adds compileKotlin task</span>
+    kotlin(<span class="st">"plugin.spring"</span>) version <span class="st">"1.9.22"</span> <span class="cm">// open classes for Spring</span>
+    id(<span class="st">"org.springframework.boot"</span>) version <span class="st">"3.2.0"</span>
+    id(<span class="st">"io.spring.dependency-management"</span>) version <span class="st">"1.1.4"</span>
+}
+
+group = <span class="st">"com.example"</span>
+version = <span class="st">"1.0.0"</span>
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()                  <span class="cm">// primary repo</span>
+    maven { url = uri(<span class="st">"https://repo.spring.io/milestone"</span>) }
+}
+
+dependencies {
+    implementation(<span class="st">"org.springframework.boot:spring-boot-starter-web"</span>)
+    implementation(<span class="st">"org.springframework.boot:spring-boot-starter-data-jpa"</span>)
+    runtimeOnly(<span class="st">"com.h2database:h2"</span>)       <span class="cm">// runtime only</span>
+    testImplementation(<span class="st">"org.springframework.boot:spring-boot-starter-test"</span>)
+    annotationProcessor(<span class="st">"org.projectlombok:lombok"</span>)
+    compileOnly(<span class="st">"org.projectlombok:lombok"</span>) <span class="cm">// compile only, not in jar</span>
+}
+
+tasks.withType&lt;Test&gt; {
+    useJUnitPlatform()
+}</pre>
+
+<h2>4. Dependency Configurations Explained</h2>
+<table>
+<tr><th>Configuration</th><th>Compile?</th><th>Runtime?</th><th>Exported?</th><th>Use Case</th></tr>
+<tr><td><code>implementation</code></td><td>✅</td><td>✅</td><td>❌</td><td>Most dependencies. Not leaked to consumers.</td></tr>
+<tr><td><code>api</code></td><td>✅</td><td>✅</td><td>✅</td><td>Library modules exposing types to consumers.</td></tr>
+<tr><td><code>compileOnly</code></td><td>✅</td><td>❌</td><td>❌</td><td>Lombok, annotation processors</td></tr>
+<tr><td><code>runtimeOnly</code></td><td>❌</td><td>✅</td><td>❌</td><td>JDBC drivers, logging impl</td></tr>
+<tr><td><code>testImplementation</code></td><td>Test ✅</td><td>Test ✅</td><td>❌</td><td>JUnit, Mockito</td></tr>
+</table>
+
+<h2>5. Dependency Resolution & Conflict Resolution</h2>
+<pre><span class="cm">// Gradle uses "newest wins" strategy by default</span>
+<span class="cm">// If A requires Jackson 2.14 and B requires 2.16 → uses 2.16</span>
+
+<span class="cm">// Force a specific version:</span>
+configurations.all {
+    resolutionStrategy {
+        force(<span class="st">"com.fasterxml.jackson.core:jackson-databind:2.16.1"</span>)
+    }
+}
+
+<span class="cm">// Exclude transitive dependency:</span>
+implementation(<span class="st">"org.springframework.boot:spring-boot-starter-web"</span>) {
+    exclude(group = <span class="st">"org.springframework.boot"</span>, module = <span class="st">"spring-boot-starter-tomcat"</span>)
+}
+implementation(<span class="st">"org.springframework.boot:spring-boot-starter-undertow"</span>)
+
+<span class="cm">// View dependency tree:</span>
+<span class="cm">// ./gradlew dependencies --configuration runtimeClasspath</span>
+<span class="cm">// ./gradlew dependencyInsight --dependency jackson-databind</span></pre>
+
+<h2>6. Multi-Module Spring Boot Project</h2>
+
+<h3>Project Structure</h3>
+<div class="diagram">myapp/
+├── settings.gradle.kts          ← root: declares all modules
+├── build.gradle.kts             ← root: common config
+│
+├── api/                         ← REST layer
+│   ├── build.gradle.kts
+│   └── src/main/java/...
+│
+├── service/                     ← Business logic
+│   ├── build.gradle.kts
+│   └── src/main/java/...
+│
+├── repository/                  ← Data access
+│   ├── build.gradle.kts
+│   └── src/main/java/...
+│
+└── common/                      ← Shared DTOs, utilities
+    ├── build.gradle.kts
+    └── src/main/java/...</div>
+
+<h3>settings.gradle.kts</h3>
+<pre>rootProject.name = <span class="st">"myapp"</span>
+
+include(
+    <span class="st">":api"</span>,
+    <span class="st">":service"</span>,
+    <span class="st">":repository"</span>,
+    <span class="st">":common"</span>
+)</pre>
+
+<h3>Root build.gradle.kts (shared config)</h3>
+<pre>plugins {
+    id(<span class="st">"org.springframework.boot"</span>) version <span class="st">"3.2.0"</span> apply <span class="kw">false</span>
+    id(<span class="st">"io.spring.dependency-management"</span>) version <span class="st">"1.1.4"</span> apply <span class="kw">false</span>
+}
+
+subprojects {
+    apply(plugin = <span class="st">"java"</span>)
+    apply(plugin = <span class="st">"io.spring.dependency-management"</span>)
+
+    group = <span class="st">"com.example"</span>
+    version = <span class="st">"1.0.0"</span>
+
+    java { sourceCompatibility = JavaVersion.VERSION_21 }
+
+    repositories { mavenCentral() }
+
+    dependencyManagement {
+        imports {
+            mavenBom(<span class="st">"org.springframework.boot:spring-boot-dependencies:3.2.0"</span>)
+        }
+    }
+
+    dependencies {
+        testImplementation(<span class="st">"org.springframework.boot:spring-boot-starter-test"</span>)
+    }
+}</pre>
+
+<h3>api/build.gradle.kts</h3>
+<pre>plugins {
+    id(<span class="st">"org.springframework.boot"</span>)  <span class="cm">// only api module has bootJar</span>
+}
+
+dependencies {
+    implementation(project(<span class="st">":service"</span>))  <span class="cm">// module dependency</span>
+    implementation(project(<span class="st">":common"</span>))
+    implementation(<span class="st">"org.springframework.boot:spring-boot-starter-web"</span>)
+}
+
+<span class="cm">// Only api produces the executable fat JAR</span>
+tasks.bootJar { enabled = true }
+tasks.jar { enabled = false }</pre>
+
+<h3>service/build.gradle.kts</h3>
+<pre>plugins {
+    id(<span class="st">"org.springframework.boot"</span>) apply <span class="kw">false</span>
+}
+
+dependencies {
+    implementation(project(<span class="st">":repository"</span>))
+    implementation(project(<span class="st">":common"</span>))
+    implementation(<span class="st">"org.springframework.boot:spring-boot-starter"</span>)
+}
+
+<span class="cm">// Library modules: plain JAR only</span>
+tasks.bootJar { enabled = false }
+tasks.jar { enabled = true }</pre>
+
+<h2>7. Fat JAR vs Thin JAR</h2>
+<pre><span class="cm">// Fat JAR (Spring Boot default): all deps inside</span>
+./gradlew bootJar  <span class="cm">// → api/build/libs/api-1.0.0.jar (50MB)</span>
+java -jar api/build/libs/api-1.0.0.jar  <span class="cm">// self-contained</span>
+
+<span class="cm">// Thin JAR: just your code, deps on classpath</span>
+<span class="cm">// For Docker: better layer caching</span>
+<span class="cm">// Dockerfile:</span>
+FROM eclipse-temurin:21-jre
+COPY build/libs/dependencies/ BOOT-INF/lib/
+COPY build/libs/snapshot-dependencies/ BOOT-INF/lib/
+COPY build/libs/application/ .
+ENTRYPOINT [<span class="st">"java"</span>,<span class="st">"org.springframework.boot.loader.JarLauncher"</span>]</pre>
+
+<h2>8. Build Cache & Performance</h2>
+<pre><span class="cm"># gradle.properties</span>
+org.gradle.caching=true
+org.gradle.parallel=true
+org.gradle.daemon=true
+org.gradle.jvmargs=-Xmx2g -XX:+UseG1GC
+
+<span class="cm"># Tasks are skipped if inputs unchanged:</span>
+<span class="cm"># ./gradlew compileJava</span>
+<span class="cm"># > Task :service:compileJava UP-TO-DATE  ← from cache!</span>
+
+<span class="cm"># Remote build cache (CI/CD):</span>
+buildCache {
+    remote(HttpBuildCache::class) {
+        url = uri(<span class="st">"https://your-build-cache-server/"</span>)
+        isPush = System.getenv(<span class="st">"CI"</span>) != <span class="kw">null</span>
+    }
+}</pre>
+
+<h2>9. CI/CD Integration (GitHub Actions)</h2>
+<pre><span class="cm"># .github/workflows/build.yml</span>
+name: Build and Test
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: <span class="st">'21'</span>
+          distribution: <span class="st">'temurin'</span>
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles(<span class="st">'**/*.gradle.kts'</span>, <span class="st">'gradle-wrapper.properties'</span>) }}
+
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-jar
+          path: api/build/libs/*.jar</pre>
+
+<h3>Custom Tasks</h3>
+<pre><span class="cm">// Custom task in build.gradle.kts</span>
+tasks.register(<span class="st">"generateBuildInfo"</span>) {
+    val outputFile = file(<span class="st">"src/main/resources/build-info.properties"</span>)
+
+    doLast {
+        outputFile.writeText(<span class="st">"""
+            build.version=${project.version}
+            build.time=${java.time.Instant.now()}
+            build.git=${exec { commandLine("git", "rev-parse", "--short", "HEAD") }}
+        """</span>.trimIndent())
+    }
+}
+
+tasks.named(<span class="st">"processResources"</span>) {
+    dependsOn(<span class="st">"generateBuildInfo"</span>)  <span class="cm">// runs before processResources</span>
+}</pre>
+
+<div class="tip"><div class="tip-title">💡 Key Gradle Commands</div>
+<code>./gradlew tasks</code> — list all tasks &nbsp;|&nbsp;
+<code>./gradlew build</code> — full build &nbsp;|&nbsp;
+<code>./gradlew :api:bootRun</code> — run specific module &nbsp;|&nbsp;
+<code>./gradlew test --tests "*.UserServiceTest"</code> — run specific test &nbsp;|&nbsp;
+<code>./gradlew --profile</code> — generate performance report
+</div>
+</div>
+
+<!-- ==================== DESIGN PATTERNS ==================== -->
+<div id="patterns" class="section">
+<h1>Design Patterns</h1>
+<p class="subtitle">GoF patterns with Java, Spring Boot internals, and real production use cases</p>
+
+<div class="tab-inner">
+  <button class="tab-inner-btn active" onclick="innerTab(this,'p-singleton')">Singleton</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'p-strategy')">Strategy</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'p-observer')">Observer</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'p-factory')">Factory</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'p-builder')">Builder</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'p-adapter')">Adapter</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'p-decorator')">Decorator</button>
+</div>
+
+<!-- SINGLETON -->
+<div id="p-singleton" class="tab-content active">
+<h2>Singleton Pattern</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Ensure a class has exactly one instance. <span class="badge badge-blue">Creational</span></p>
+
+<h3>Thread-Safe Implementations</h3>
+<div class="tab-inner">
+  <button class="tab-inner-btn active" onclick="innerTab(this,'s1')">Enum (Best)</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'s2')">Double-Checked</button>
+  <button class="tab-inner-btn" onclick="innerTab(this,'s3')">Broken</button>
+</div>
+<div id="s1" class="tab-content active">
+<pre><span class="cm">// ✅ BEST: Enum Singleton - JVM guarantees uniqueness</span>
+<span class="kw">public enum</span> <span class="nb">DatabaseConfig</span> {
+    INSTANCE;
+
+    <span class="kw">private final</span> String url;
+    <span class="kw">private final int</span> maxConnections;
+
+    DatabaseConfig() {
+        <span class="cm">// initialized once, thread-safe by JVM</span>
+        <span class="kw">this</span>.url = System.getenv(<span class="st">"DB_URL"</span>);
+        <span class="kw">this</span>.maxConnections = <span class="num">20</span>;
+    }
+
+    <span class="kw">public</span> String getUrl() { <span class="kw">return</span> url; }
+    <span class="kw">public int</span> getMaxConnections() { <span class="kw">return</span> maxConnections; }
+}
+
+<span class="cm">// Usage:</span>
+DatabaseConfig.INSTANCE.getUrl()
+<span class="cm">// Serialization-safe, reflection-safe</span></pre>
+</div>
+<div id="s2" class="tab-content">
+<pre><span class="kw">public class</span> <span class="nb">AppRegistry</span> {
+    <span class="cm">// volatile: prevents CPU reordering</span>
+    <span class="kw">private static volatile</span> AppRegistry instance;
+
+    <span class="kw">private</span> AppRegistry() {
+        <span class="cm">// private constructor</span>
+    }
+
+    <span class="kw">public static</span> AppRegistry getInstance() {
+        <span class="kw">if</span> (instance == <span class="kw">null</span>) {        <span class="cm">// first check (no lock)</span>
+            <span class="kw">synchronized</span>(AppRegistry.<span class="kw">class</span>) {
+                <span class="kw">if</span> (instance == <span class="kw">null</span>) { <span class="cm">// second check (locked)</span>
+                    instance = <span class="kw">new</span> AppRegistry();
+                }
+            }
+        }
+        <span class="kw">return</span> instance;
+    }
+}
+<span class="cm">// volatile is CRITICAL: without it, another thread</span>
+<span class="cm">// may see a partially constructed object!</span></pre>
+</div>
+<div id="s3" class="tab-content">
+<pre><span class="cm">// ❌ BROKEN: Not thread-safe!</span>
+<span class="kw">public class</span> <span class="nb">BrokenSingleton</span> {
+    <span class="kw">private static</span> BrokenSingleton instance;
+
+    <span class="kw">public static</span> BrokenSingleton getInstance() {
+        <span class="kw">if</span> (instance == <span class="kw">null</span>) {
+            <span class="cm">// Two threads can BOTH see null here!</span>
+            <span class="cm">// → create TWO instances!</span>
+            instance = <span class="kw">new</span> BrokenSingleton();
+        }
+        <span class="kw">return</span> instance;
+    }
+}
+<span class="cm">// Race window: Thread-A checks null → yield</span>
+<span class="cm">// Thread-B checks null → creates instance</span>
+<span class="cm">// Thread-A resumes → creates SECOND instance!</span></pre>
+</div>
+
+<h3>Spring Boot: Singleton by Default</h3>
+<pre><span class="an">@Service</span>   <span class="cm">// @Component, @Repository, @Controller</span>
+<span class="kw">public class</span> <span class="nb">UserService</span> {
+    <span class="cm">// Spring creates EXACTLY ONE instance in ApplicationContext</span>
+    <span class="cm">// Shared across ALL HTTP requests (200+ threads)</span>
+
+    <span class="cm">// ✅ SAFE: stateless service, inject stateless deps</span>
+    <span class="kw">private final</span> UserRepository repo;
+
+    <span class="cm">// ❌ DANGEROUS: instance-level state</span>
+    <span class="kw">private</span> User currentUser;   <span class="cm">// shared by ALL threads!</span>
+    <span class="kw">private int</span> counter = <span class="num">0</span>;   <span class="cm">// race condition!</span>
+}
+
+<span class="cm">// Scope options:</span>
+<span class="an">@Scope</span>(<span class="st">"prototype"</span>) <span class="cm">// new instance per injection</span>
+<span class="an">@Scope</span>(<span class="st">"request"</span>)   <span class="cm">// new instance per HTTP request</span>
+<span class="an">@Scope</span>(<span class="st">"session"</span>)   <span class="cm">// new instance per HTTP session</span></pre>
+
+<div class="warn"><div class="warn-title">⚠️ Most Common Mistake</div>Storing mutable state in a singleton Spring service. Because it's shared, state leaks between requests. Always make services stateless.</div>
+</div>
+
+<!-- STRATEGY -->
+<div id="p-strategy" class="tab-content">
+<h2>Strategy Pattern</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Define a family of algorithms, encapsulate each, and make them interchangeable. <span class="badge badge-purple">Behavioral</span></p>
+
+<pre><span class="cm">// Context: Payment processing with multiple providers</span>
+
+<span class="cm">// Strategy interface</span>
+<span class="kw">public interface</span> <span class="nb">PaymentStrategy</span> {
+    PaymentResult process(PaymentRequest request);
+    <span class="kw">boolean</span> supports(String paymentType);
+}
+
+<span class="cm">// Concrete strategies</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">StripePaymentStrategy</span> <span class="kw">implements</span> PaymentStrategy {
+    <span class="an">@Override</span>
+    <span class="kw">public</span> PaymentResult process(PaymentRequest req) {
+        <span class="cm">// Stripe API call</span>
+        <span class="kw">return</span> stripeClient.charge(req.getAmount(), req.getToken());
+    }
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> supports(String type) { <span class="kw">return</span> <span class="st">"STRIPE"</span>.equals(type); }
+}
+
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">PaypalPaymentStrategy</span> <span class="kw">implements</span> PaymentStrategy {
+    <span class="an">@Override</span>
+    <span class="kw">public</span> PaymentResult process(PaymentRequest req) {
+        <span class="kw">return</span> paypalClient.capture(req);
+    }
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> supports(String type) { <span class="kw">return</span> <span class="st">"PAYPAL"</span>.equals(type); }
+}
+
+<span class="cm">// Context — Spring auto-injects ALL PaymentStrategy beans</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">PaymentService</span> {
+    <span class="kw">private final</span> List&lt;PaymentStrategy&gt; strategies;
+
+    <span class="kw">public</span> PaymentService(List&lt;PaymentStrategy&gt; strategies) {
+        <span class="kw">this</span>.strategies = strategies;   <span class="cm">// injected automatically!</span>
+    }
+
+    <span class="kw">public</span> PaymentResult pay(PaymentRequest request) {
+        <span class="kw">return</span> strategies.stream()
+            .filter(s -&gt; s.supports(request.getType()))
+            .findFirst()
+            .orElseThrow(() -&gt; <span class="kw">new</span> UnsupportedOperationException(
+                <span class="st">"No handler for: "</span> + request.getType()))
+            .process(request);
+    }
+}
+<span class="cm">// Adding new payment provider = new @Component class!</span>
+<span class="cm">// Open/Closed principle: open for extension, closed for modification</span></pre>
+
+<div class="highlight-box">
+<h4>Spring Boot Internal Usage</h4>
+<p style="font-size:13px;color:#8b949e">Spring's <code>HandlerMapping</code> strategy selects which controller handles a request. Spring Security uses strategy for <code>AuthenticationProvider</code>. <code>ResourceResolver</code> strategies in static resource handling.</p>
+</div>
+</div>
+
+<!-- OBSERVER -->
+<div id="p-observer" class="tab-content">
+<h2>Observer Pattern</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Define a one-to-many dependency so that when one object changes, all dependents are notified. <span class="badge badge-purple">Behavioral</span></p>
+
+<pre><span class="cm">// Event (the observable change)</span>
+<span class="kw">public class</span> <span class="nb">OrderPlacedEvent</span> <span class="kw">extends</span> ApplicationEvent {
+    <span class="kw">private final</span> Order order;
+
+    <span class="kw">public</span> OrderPlacedEvent(Object source, Order order) {
+        <span class="kw">super</span>(source);
+        <span class="kw">this</span>.order = order;
+    }
+    <span class="kw">public</span> Order getOrder() { <span class="kw">return</span> order; }
+}
+
+<span class="cm">// Publisher (Subject)</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="kw">private final</span> ApplicationEventPublisher eventPublisher;
+
+    <span class="kw">public</span> Order placeOrder(OrderRequest request) {
+        Order order = createOrder(request);
+        orderRepo.save(order);
+
+        <span class="cm">// Fire event — decoupled from listeners!</span>
+        eventPublisher.publishEvent(<span class="kw">new</span> OrderPlacedEvent(<span class="kw">this</span>, order));
+
+        <span class="kw">return</span> order;
+    }
+}
+
+<span class="cm">// Observer 1: Email notification</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">EmailNotificationListener</span> {
+
+    <span class="an">@EventListener</span>
+    <span class="kw">public void</span> onOrderPlaced(OrderPlacedEvent event) {
+        emailService.sendOrderConfirmation(event.getOrder());
+    }
+}
+
+<span class="cm">// Observer 2: Inventory deduction</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">InventoryListener</span> {
+
+    <span class="an">@EventListener</span>
+    <span class="an">@Async</span>  <span class="cm">// run in separate thread!</span>
+    <span class="kw">public void</span> onOrderPlaced(OrderPlacedEvent event) {
+        inventoryService.deductStock(event.getOrder().getItems());
+    }
+}
+
+<span class="cm">// Observer 3: Transactional — fires only after commit</span>
+<span class="an">@TransactionalEventListener</span>(<span class="cm">phase = TransactionPhase.AFTER_COMMIT</span>)
+<span class="kw">public void</span> onOrderPlaced(OrderPlacedEvent event) {
+    analyticsService.trackPurchase(event.getOrder());
+    <span class="cm">// Only runs if the DB transaction succeeded</span>
+}</pre>
+
+<div class="tip"><div class="tip-title">💡 @TransactionalEventListener</div>Always use this for listeners that trigger side effects (emails, 3rd-party APIs). Without it, listeners fire even if the transaction rolls back, sending duplicate emails for failed orders.</div>
+</div>
+
+<!-- FACTORY -->
+<div id="p-factory" class="tab-content">
+<h2>Factory Method & Abstract Factory</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Define an interface for creating objects, subclasses decide which class to instantiate. <span class="badge badge-orange">Creational</span></p>
+
+<pre><span class="cm">// Factory Method Pattern: Notification system</span>
+
+<span class="kw">public interface</span> <span class="nb">Notification</span> {
+    <span class="kw">void</span> send(String message, String recipient);
+}
+
+<span class="kw">public class</span> <span class="nb">EmailNotification</span> <span class="kw">implements</span> Notification { <span class="cm">/*...*/</span> }
+<span class="kw">public class</span> <span class="nb">SmsNotification</span> <span class="kw">implements</span> Notification { <span class="cm">/*...*/</span> }
+<span class="kw">public class</span> <span class="nb">PushNotification</span> <span class="kw">implements</span> Notification { <span class="cm">/*...*/</span> }
+
+<span class="cm">// Factory</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">NotificationFactory</span> {
+    <span class="kw">private final</span> Map&lt;String, Notification&gt; registry;
+
+    <span class="cm">// Spring injects all Notification beans into map!</span>
+    <span class="cm">// Key = bean name (by default, lowercase class name)</span>
+    <span class="kw">public</span> NotificationFactory(Map&lt;String, Notification&gt; registry) {
+        <span class="kw">this</span>.registry = registry;
+    }
+
+    <span class="kw">public</span> Notification create(String channel) {
+        Notification notification = registry.get(channel.toLowerCase() + <span class="st">"Notification"</span>);
+        <span class="kw">if</span> (notification == <span class="kw">null</span>) {
+            <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"Unknown channel: "</span> + channel);
+        }
+        <span class="kw">return</span> notification;
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">public void</span> notifyUser(String channel, String message, String recipient) {
+    notificationFactory.create(channel).send(message, recipient);
+}
+notifyUser(<span class="st">"email"</span>, <span class="st">"Order shipped!"</span>, <span class="st">"user@example.com"</span>);
+notifyUser(<span class="st">"sms"</span>, <span class="st">"Order shipped!"</span>, <span class="st">"+1234567890"</span>);
+<span class="cm">// Adding new channel = new @Component class, zero factory change</span></pre>
+
+<h3>Spring BeanFactory IS a Factory Pattern</h3>
+<pre><span class="cm">// Spring's ApplicationContext.getBean() is Factory Method</span>
+ApplicationContext ctx = <span class="kw">new</span> AnnotationConfigApplicationContext(AppConfig.<span class="kw">class</span>);
+UserService service = ctx.getBean(UserService.<span class="kw">class</span>); <span class="cm">// Factory!</span>
+
+<span class="cm">// Abstract Factory: Profile-based factory</span>
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="nb">StorageConfig</span> {
+
+    <span class="an">@Bean</span>
+    <span class="an">@Profile</span>(<span class="st">"prod"</span>)
+    <span class="kw">public</span> StorageService s3Storage() { <span class="kw">return new</span> S3StorageService(); }
+
+    <span class="an">@Bean</span>
+    <span class="an">@Profile</span>(<span class="st">"dev"</span>)
+    <span class="kw">public</span> StorageService localStorage() { <span class="kw">return new</span> LocalStorageService(); }
+}
+<span class="cm">// Spring auto-selects based on active profile = Abstract Factory!</span></pre>
+</div>
+
+<!-- BUILDER -->
+<div id="p-builder" class="tab-content">
+<h2>Builder Pattern</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Construct complex objects step by step. <span class="badge badge-orange">Creational</span></p>
+
+<pre><span class="cm">// Without Builder: Telescoping constructor problem</span>
+<span class="kw">new</span> HttpRequest(<span class="st">"GET"</span>, url, <span class="kw">null</span>, <span class="kw">null</span>, <span class="num">5000</span>, <span class="kw">true</span>, <span class="kw">false</span>);
+<span class="cm">// What does each null mean? Unreadable!</span>
+
+<span class="cm">// Builder Pattern:</span>
+<span class="an">@Value</span>  <span class="cm">// Lombok — generates builder automatically</span>
+<span class="an">@Builder</span>
+<span class="kw">public class</span> <span class="nb">EmailRequest</span> {
+    <span class="kw">private final</span> String to;
+    <span class="kw">private final</span> String from;
+    <span class="kw">private final</span> String subject;
+    <span class="kw">private final</span> String body;
+    <span class="an">@Builder.Default</span> <span class="kw">private final</span> String contentType = <span class="st">"text/html"</span>;
+    <span class="an">@Builder.Default</span> <span class="kw">private final int</span> retryCount = <span class="num">3</span>;
+    <span class="kw">private final</span> List&lt;String&gt; cc;
+    <span class="kw">private final</span> List&lt;String&gt; bcc;
+    <span class="kw">private final</span> LocalDateTime scheduledAt;
+}
+
+<span class="cm">// Readable, safe construction:</span>
+EmailRequest request = EmailRequest.builder()
+    .to(<span class="st">"user@example.com"</span>)
+    .from(<span class="st">"noreply@myapp.com"</span>)
+    .subject(<span class="st">"Order Confirmation #1234"</span>)
+    .body(renderTemplate(<span class="st">"order-confirmation"</span>, order))
+    .cc(List.of(<span class="st">"support@myapp.com"</span>))
+    .scheduledAt(LocalDateTime.now().plusMinutes(<span class="num">5</span>))
+    .build();  <span class="cm">// immutable! thread-safe!</span></pre>
+
+<h3>Manual Builder with Validation</h3>
+<pre><span class="kw">public class</span> <span class="nb">DatabaseConnection</span> {
+    <span class="kw">private final</span> String host;
+    <span class="kw">private final int</span> port;
+    <span class="kw">private final int</span> poolSize;
+    <span class="kw">private final</span> Duration timeout;
+
+    <span class="kw">private</span> DatabaseConnection(Builder b) {
+        <span class="kw">this</span>.host = b.host; <span class="kw">this</span>.port = b.port;
+        <span class="kw">this</span>.poolSize = b.poolSize; <span class="kw">this</span>.timeout = b.timeout;
+    }
+
+    <span class="kw">public static class</span> Builder {
+        <span class="kw">private final</span> String host;
+        <span class="kw">private int</span> port = <span class="num">5432</span>;
+        <span class="kw">private int</span> poolSize = <span class="num">10</span>;
+        <span class="kw">private</span> Duration timeout = Duration.ofSeconds(<span class="num">30</span>);
+
+        <span class="kw">public</span> Builder(String host) { <span class="kw">this</span>.host = Objects.requireNonNull(host); }
+        <span class="kw">public</span> Builder port(<span class="kw">int</span> p) { this.port = p; <span class="kw">return this</span>; }
+        <span class="kw">public</span> Builder poolSize(<span class="kw">int</span> s) {
+            if (s &lt; <span class="num">1</span> || s &gt; <span class="num">100</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"poolSize 1-100"</span>);
+            <span class="kw">this</span>.poolSize = s; <span class="kw">return this</span>;
+        }
+        <span class="kw">public</span> Builder timeout(Duration t) { <span class="kw">this</span>.timeout = t; <span class="kw">return this</span>; }
+        <span class="kw">public</span> DatabaseConnection build() { <span class="kw">return new</span> DatabaseConnection(<span class="kw">this</span>); }
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">var</span> conn = <span class="kw">new</span> DatabaseConnection.Builder(<span class="st">"db.prod.internal"</span>)
+    .port(<span class="num">5432</span>).poolSize(<span class="num">20</span>).timeout(Duration.ofSeconds(<span class="num">10</span>)).build();</pre>
+
+<h3>Spring uses Builder internally</h3>
+<pre><span class="cm">// MockMvc request builder:</span>
+mockMvc.perform(MockMvcRequestBuilders.post(<span class="st">"/api/orders"</span>)
+    .contentType(MediaType.APPLICATION_JSON)
+    .header(<span class="st">"Authorization"</span>, <span class="st">"Bearer token"</span>)
+    .content(objectMapper.writeValueAsString(request)))
+    .andExpect(status().isCreated());
+
+<span class="cm">// ResponseEntity builder:</span>
+<span class="kw">return</span> ResponseEntity.created(location)
+    .header(<span class="st">"X-Order-Id"</span>, order.getId().toString())
+    .body(order);
+
+<span class="cm">// UriComponentsBuilder:</span>
+URI location = UriComponentsBuilder.fromPath(<span class="st">"/api/orders/{id}"</span>)
+    .buildAndExpand(order.getId()).toUri();</pre>
+</div>
+
+<!-- ADAPTER -->
+<div id="p-adapter" class="tab-content">
+<h2>Adapter Pattern</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Convert the interface of a class into another interface that clients expect. <span class="badge badge-green">Structural</span></p>
+
+<pre><span class="cm">// Scenario: Integrating legacy payment system with modern interface</span>
+
+<span class="cm">// Target interface (what our app expects)</span>
+<span class="kw">public interface</span> <span class="nb">ModernPaymentGateway</span> {
+    PaymentResult charge(BigDecimal amount, String currency, String customerId);
+    RefundResult refund(String transactionId, BigDecimal amount);
+}
+
+<span class="cm">// Legacy system we can't modify</span>
+<span class="kw">public class</span> <span class="nb">LegacyPaymentSystem</span> {
+    <span class="kw">public int</span> processTransaction(<span class="kw">double</span> amountCents, String txType, String cid) { <span class="cm">/**/</span> }
+    <span class="kw">public boolean</span> reverseTransaction(String txId, <span class="kw">double</span> amountCents) { <span class="cm">/**/</span> }
+}
+
+<span class="cm">// Adapter bridges the two</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">LegacyPaymentAdapter</span> <span class="kw">implements</span> ModernPaymentGateway {
+    <span class="kw">private final</span> LegacyPaymentSystem legacy;
+
+    <span class="kw">public</span> LegacyPaymentAdapter(LegacyPaymentSystem legacy) {
+        <span class="kw">this</span>.legacy = legacy;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> PaymentResult charge(BigDecimal amount, String currency, String customerId) {
+        <span class="cm">// Adapt: BigDecimal → double cents, add "CHARGE" txType</span>
+        <span class="kw">double</span> cents = amount.multiply(BigDecimal.valueOf(<span class="num">100</span>)).doubleValue();
+        <span class="kw">int</span> txId = legacy.processTransaction(cents, <span class="st">"CHARGE"</span>, customerId);
+        <span class="kw">return new</span> PaymentResult(String.valueOf(txId), <span class="st">"SUCCESS"</span>);
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> RefundResult refund(String transactionId, BigDecimal amount) {
+        <span class="kw">double</span> cents = amount.multiply(BigDecimal.valueOf(<span class="num">100</span>)).doubleValue();
+        <span class="kw">boolean</span> ok = legacy.reverseTransaction(transactionId, cents);
+        <span class="kw">return new</span> RefundResult(ok ? <span class="st">"SUCCESS"</span> : <span class="st">"FAILED"</span>);
+    }
+}
+
+<span class="cm">// Service uses only ModernPaymentGateway interface!</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">CheckoutService</span> {
+    <span class="kw">private final</span> ModernPaymentGateway gateway; <span class="cm">// injected as LegacyPaymentAdapter</span>
+}</pre>
+
+<h3>Spring Boot Adapters Everywhere</h3>
+<pre><span class="cm">// 1. HandlerAdapter: adapts @Controller methods to DispatcherServlet</span>
+<span class="cm">// DispatcherServlet doesn't know about @RequestMapping</span>
+<span class="cm">// RequestMappingHandlerAdapter ADAPTS controllers to servlet contract</span>
+
+<span class="cm">// 2. JpaRepository — Adapter over EntityManager</span>
+<span class="kw">public interface</span> <span class="nb">UserRepository</span> <span class="kw">extends</span> JpaRepository&lt;User, Long&gt; { }
+<span class="cm">// Spring Data adapts JPA EntityManager → clean CRUD interface</span>
+
+<span class="cm">// 3. WebMvcConfigurer — Adapter pattern for optional MVC config</span>
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="nb">WebConfig</span> <span class="kw">implements</span> WebMvcConfigurer {
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> addCorsMappings(CorsRegistry registry) {
+        registry.addMapping(<span class="st">"/api/**"</span>).allowedOrigins(<span class="st">"https://frontend.com"</span>);
+    }
+    <span class="cm">// Only override methods you need — others have default no-op impl</span>
+}</pre>
+</div>
+
+<!-- DECORATOR -->
+<div id="p-decorator" class="tab-content">
+<h2>Decorator Pattern</h2>
+<p style="font-size:13px;color:#8b949e;margin-bottom:14px">Attach additional responsibilities to an object dynamically. Flexible alternative to subclassing. <span class="badge badge-green">Structural</span></p>
+
+<pre><span class="cm">// Base interface</span>
+<span class="kw">public interface</span> <span class="nb">UserService</span> {
+    UserDto findById(<span class="kw">long</span> id);
+    List&lt;UserDto&gt; findAll();
+}
+
+<span class="cm">// Core implementation</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">UserServiceImpl</span> <span class="kw">implements</span> UserService {
+    <span class="kw">public</span> UserDto findById(<span class="kw">long</span> id) { <span class="kw">return</span> repo.findById(id); }
+    <span class="kw">public</span> List&lt;UserDto&gt; findAll() { <span class="kw">return</span> repo.findAll(); }
+}
+
+<span class="cm">// Decorator 1: Caching</span>
+<span class="kw">public class</span> <span class="nb">CachingUserService</span> <span class="kw">implements</span> UserService {
+    <span class="kw">private final</span> UserService delegate;
+    <span class="kw">private final</span> Cache&lt;Long, UserDto&gt; cache;
+
+    <span class="kw">public</span> CachingUserService(UserService delegate) {
+        <span class="kw">this</span>.delegate = delegate;
+        <span class="kw">this</span>.cache = Caffeine.newBuilder().maximumSize(<span class="num">1000</span>)
+            .expireAfterWrite(<span class="num">5</span>, TimeUnit.MINUTES).build();
+    }
+
+    <span class="kw">public</span> UserDto findById(<span class="kw">long</span> id) {
+        <span class="kw">return</span> cache.get(id, k -&gt; delegate.findById(k));  <span class="cm">// wraps!</span>
+    }
+    <span class="kw">public</span> List&lt;UserDto&gt; findAll() { <span class="kw">return</span> delegate.findAll(); }
+}
+
+<span class="cm">// Decorator 2: Logging + Metrics</span>
+<span class="kw">public class</span> <span class="nb">LoggingUserService</span> <span class="kw">implements</span> UserService {
+    <span class="kw">private final</span> UserService delegate;
+
+    <span class="kw">public</span> UserDto findById(<span class="kw">long</span> id) {
+        <span class="kw">long</span> start = System.currentTimeMillis();
+        <span class="kw">try</span> {
+            UserDto result = delegate.findById(id);
+            log.info(<span class="st">"findById({}) took {}ms"</span>, id, System.currentTimeMillis()-start);
+            <span class="kw">return</span> result;
+        } <span class="kw">catch</span> (Exception e) {
+            log.error(<span class="st">"findById({}) failed"</span>, id, e);
+            <span class="kw">throw</span> e;
+        }
+    }
+    <span class="kw">public</span> List&lt;UserDto&gt; findAll() { <span class="kw">return</span> delegate.findAll(); }
+}
+
+<span class="cm">// Compose decorators (order matters!)</span>
+<span class="an">@Bean</span>
+<span class="kw">public</span> UserService userService(UserServiceImpl core) {
+    <span class="kw">return new</span> LoggingUserService(      <span class="cm">// outermost: logs AFTER cache check</span>
+        <span class="kw">new</span> CachingUserService(core)    <span class="cm">// innermost: cache before DB</span>
+    );
+}</pre>
+
+<h3>Spring AOP is Decorator via Proxy</h3>
+<pre><span class="cm">// @Transactional, @Cacheable, @PreAuthorize = Decorators!</span>
+<span class="cm">// Spring creates a PROXY wrapping your bean:</span>
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+
+    <span class="an">@Cacheable</span>(<span class="st">"orders"</span>)          <span class="cm">// Decorator: check cache first</span>
+    <span class="an">@PreAuthorize</span>(<span class="st">"hasRole('USER')"</span>) <span class="cm">// Decorator: check auth first</span>
+    <span class="an">@Transactional</span>                 <span class="cm">// Decorator: wrap in transaction</span>
+    <span class="kw">public</span> Order findById(<span class="kw">long</span> id) {
+        <span class="kw">return</span> orderRepo.findById(id);
+    }
+    <span class="cm">// What actually runs (proxy chain):</span>
+    <span class="cm">// Auth check → cache check → tx begin → DB → tx commit → cache put → return</span>
+}
+
+<span class="cm">// Spring generates a proxy class at startup:</span>
+<span class="cm">// class OrderService$$SpringCGLIB$$0 extends OrderService {</span>
+<span class="cm">//     void findById(long id) {</span>
+<span class="cm">//         // security interceptor</span>
+<span class="cm">//         // caching interceptor</span>
+<span class="cm">//         // transaction interceptor</span>
+<span class="cm">//         super.findById(id);</span>
+<span class="cm">//     }</span>
+<span class="cm">// }</span></pre>
+
+<div class="success">Spring AOP uses either JDK Dynamic Proxy (for interface-based beans) or CGLIB (for class-based beans). Both implement the Decorator pattern at the bytecode level.</div>
+</div>
+
+<h2>Pattern Quick Reference</h2>
+<table>
+<tr><th>Pattern</th><th>Type</th><th>Solves</th><th>Spring Usage</th></tr>
+<tr><td><b>Singleton</b></td><td>Creational</td><td>Single shared instance</td><td>All <code>@Component</code> beans (default scope)</td></tr>
+<tr><td><b>Strategy</b></td><td>Behavioral</td><td>Interchangeable algorithms</td><td><code>HandlerMapping</code>, <code>AuthenticationProvider</code></td></tr>
+<tr><td><b>Observer</b></td><td>Behavioral</td><td>Decoupled event notifications</td><td><code>ApplicationEventPublisher</code>, <code>@EventListener</code></td></tr>
+<tr><td><b>Factory</b></td><td>Creational</td><td>Object creation without specifying class</td><td><code>BeanFactory</code>, <code>@Profile</code> beans</td></tr>
+<tr><td><b>Builder</b></td><td>Creational</td><td>Complex object step-by-step</td><td><code>UriComponentsBuilder</code>, <code>MockMvc</code></td></tr>
+<tr><td><b>Adapter</b></td><td>Structural</td><td>Incompatible interface bridge</td><td><code>HandlerAdapter</code>, Spring Data</td></tr>
+<tr><td><b>Decorator</b></td><td>Structural</td><td>Add behavior without subclassing</td><td><code>@Transactional</code>, <code>@Cacheable</code> (AOP proxies)</td></tr>
+</table>
+</div>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function innerTab(btn, contentId) {
+  const container = btn.closest('.section') || btn.closest('div[id]');
+  const tabGroup = btn.closest('.tab-inner');
+  tabGroup.querySelectorAll('.tab-inner-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Find tab-content siblings: look after the tab-inner parent
+  let el = tabGroup.nextElementSibling;
+  while (el) {
+    if (el.classList.contains('tab-content')) {
+      el.classList.remove('active');
+    }
+    el = el.nextElementSibling;
+  }
+  document.getElementById(contentId).classList.add('active');
+}
+</script>
+</body>
+</html>

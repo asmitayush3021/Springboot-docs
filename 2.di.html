@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot Deep Guide</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6;font-size:15px}
+.topnav{display:flex;border-bottom:1px solid #21262d;background:#161b22;padding:0 20px;gap:4px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.nav-btn{padding:11px 16px;border:none;background:none;color:#8b949e;cursor:pointer;font-size:13px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;white-space:nowrap}
+.nav-btn:hover{color:#e6edf3}
+.nav-btn.active{color:#58a6ff;border-bottom-color:#58a6ff}
+.section{display:none;padding:24px 20px;max-width:1000px;margin:0 auto}
+.section.active{display:block}
+h1{font-size:26px;font-weight:700;color:#e6edf3;margin:0 0 6px}
+h2{font-size:19px;font-weight:600;color:#e6edf3;margin:30px 0 10px;padding-bottom:6px;border-bottom:1px solid #21262d}
+h3{font-size:15px;font-weight:600;color:#79c0ff;margin:18px 0 8px}
+h4{font-size:14px;font-weight:600;color:#d2a8ff;margin:14px 0 6px}
+.subtitle{color:#8b949e;font-size:14px;margin-bottom:24px}
+pre{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px;overflow-x:auto;font-family:'Consolas','Monaco',monospace;font-size:12.5px;line-height:1.6;margin:10px 0}
+.kw{color:#ff7b72}.cm{color:#8b949e;font-style:italic}.st{color:#a5d6ff}
+.an{color:#d2a8ff}.nb{color:#79c0ff}.nf{color:#d2a8ff}.num{color:#79c0ff}
+.ic{background:#21262d;color:#f0883e;padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:12px 0}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px}
+.card-title{font-size:13px;font-weight:600;color:#58a6ff;margin-bottom:8px}
+.card p,.card pre{font-size:12.5px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin:2px}
+.badge-blue{background:#1f3a5f;color:#58a6ff}.badge-green{background:#1a3a2a;color:#3fb950}
+.badge-orange{background:#3d2800;color:#f0883e}.badge-red{background:#3d1f1f;color:#ff7b72}
+.badge-purple{background:#2d1f3d;color:#d2a8ff}.badge-yellow{background:#3d3000;color:#e3b341}
+.tip{background:#0d2339;border-left:3px solid #58a6ff;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px}
+.tip-t{font-size:11px;font-weight:700;color:#58a6ff;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.warn{background:#2d1f00;border-left:3px solid #e3b341;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#c9b060}
+.warn-t{font-size:11px;font-weight:700;color:#e3b341;margin-bottom:4px;text-transform:uppercase}
+.danger{background:#3d0f0f;border-left:3px solid #ff7b72;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#ffa0a0}
+.danger-t{font-size:11px;font-weight:700;color:#ff7b72;margin-bottom:4px;text-transform:uppercase}
+.success{background:#0d2a1a;border-left:3px solid #3fb950;padding:12px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:13px;color:#7ee787}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th{background:#21262d;color:#8b949e;padding:8px 12px;text-align:left;font-weight:600;border:1px solid #30363d}
+td{padding:8px 12px;border:1px solid #21262d;color:#c9d1d9;vertical-align:top}
+tr:nth-child(even) td{background:#0d1117}
+.diagram{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:18px 20px;margin:14px 0;font-family:monospace;font-size:12px;line-height:2;overflow-x:auto;color:#c9d1d9}
+.diagram .hl{color:#58a6ff}.diagram .ok{color:#3fb950}.diagram .warn-c{color:#e3b341}.diagram .err{color:#ff7b72}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.tab-btn{padding:5px 12px;border:1px solid #30363d;border-radius:6px;background:#0d1117;color:#8b949e;cursor:pointer;font-size:12px;transition:all .2s}
+.tab-btn.active,.tab-btn:hover{background:#21262d;color:#e6edf3;border-color:#58a6ff}
+.tc{display:none}.tc.active{display:block}
+.compare{display:flex;gap:14px;margin:12px 0}
+.bad{flex:1;background:#2d1212;border:1px solid #5a2020;border-radius:8px;padding:14px}
+.good{flex:1;background:#0d2a1a;border:1px solid #204020;border-radius:8px;padding:14px}
+.clabel{font-size:11px;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.bad .clabel{color:#ff7b72}.good .clabel{color:#3fb950}
+.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.pill-blue{background:#1f3a5f;color:#58a6ff}
+.pill-green{background:#1a3a2a;color:#3fb950}
+.pill-red{background:#3d1f1f;color:#ff7b72}
+.pill-yellow{background:#3d3000;color:#e3b341}
+.pill-purple{background:#2d1f3d;color:#d2a8ff}
+.flow-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.flow-box{background:#1f3a5f;border:1px solid #2d5a8e;border-radius:6px;padding:6px 12px;font-size:12px;color:#79c0ff;white-space:nowrap}
+.flow-arrow{color:#f0883e;font-size:16px}
+.hl-box{background:#1a2332;border:1px solid #2d4a6b;border-radius:8px;padding:14px;margin:12px 0}
+details{margin:10px 0;background:#161b22;border:1px solid #30363d;border-radius:8px}
+summary{cursor:pointer;color:#58a6ff;font-size:14px;font-weight:500;padding:12px 14px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▶ ';font-size:11px}
+details[open] summary::before{content:'▼ '}
+details[open]{padding-bottom:14px}
+details pre,details p,details .grid2{margin:0 14px}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <button class="nav-btn active" onclick="show('di')">💉 Dependency Injection</button>
+  <button class="nav-btn" onclick="show('rest')">🌐 REST APIs</button>
+  <button class="nav-btn" onclick="show('sec')">🔐 Security</button>
+  <button class="nav-btn" onclick="show('aop')">🎯 AOP</button>
+</div>
+
+<!-- ===================== DI ===================== -->
+<div id="di" class="section active">
+<h1>Dependency Injection & IoC</h1>
+<p class="subtitle">IoC container, bean lifecycle, scopes, injection types, circular deps — deeply explained</p>
+
+<h2>1. What Is IoC and Why It Matters</h2>
+<div class="compare">
+<div class="bad">
+<div class="clabel">❌ Without IoC — tight coupling</div>
+<pre style="font-size:12px"><span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="cm">// You control creation — tightly coupled</span>
+    <span class="kw">private</span> UserRepository repo =
+        <span class="kw">new</span> JdbcUserRepository(
+            <span class="kw">new</span> DataSource(<span class="st">"jdbc:..."</span>)
+        );
+    <span class="cm">// Hard to test, hard to swap</span>
+    <span class="cm">// DB connection created on class load</span>
+}</pre>
+</div>
+<div class="good">
+<div class="clabel">✅ With IoC — decoupled</div>
+<pre style="font-size:12px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="cm">// Container controls creation</span>
+    <span class="kw">private final</span> UserRepository repo;
+
+    <span class="kw">public</span> OrderService(UserRepository repo) {
+        <span class="kw">this</span>.repo = repo;
+    }
+    <span class="cm">// Easy to test (inject mock)</span>
+    <span class="cm">// Swap JdbcRepo → JpaRepo: 0 changes</span>
+}</pre>
+</div>
+</div>
+
+<h2>2. The ApplicationContext Explained</h2>
+<div class="diagram">
+<span class="hl">ApplicationContext (IoC Container)</span>
+│
+├── <span class="ok">BeanDefinitionRegistry</span>     — metadata about all beans (class, scope, deps)
+├── <span class="ok">BeanFactory</span>               — core: getBean(), containsBean()
+├── <span class="ok">MessageSource</span>             — i18n
+├── <span class="ok">ApplicationEventPublisher</span> — event system
+└── <span class="ok">ResourceLoader</span>            — classpath://  file://  https://
+
+<span class="hl">AnnotationConfigApplicationContext</span> (Spring Boot's choice)
+  │ reads @Component, @Service, @Repository, @Controller, @Configuration
+  └── <span class="warn-c">BeanDefinition</span> per class → instantiate → wire → register
+</div>
+
+<h3>How Spring Scans and Creates Beans</h3>
+<div class="diagram">
+Startup sequence:
+
+1. <span class="hl">ComponentScan</span> → find all @Component classes in packages
+2. <span class="hl">BeanDefinition</span> created for each (scope, lazy, primary, deps list)
+3. <span class="hl">BeanFactoryPostProcessor</span> runs → can modify definitions (<span class="warn-c">@PropertySource</span> reads here)
+4. <span class="hl">BeanPostProcessor</span>s registered (<span class="warn-c">AutowiredAnnotationBPP</span>, <span class="warn-c">AopProxyBPP</span>)
+5. <span class="hl">Singleton</span> beans instantiated eagerly (unless @Lazy)
+6. <span class="hl">Dependency injection</span> performed (constructor → setter → field)
+7. <span class="hl">@PostConstruct</span> called
+8. <span class="hl">InitializingBean.afterPropertiesSet()</span> called
+9. Context is ready — app handles requests
+10. On shutdown: <span class="err">@PreDestroy</span> → <span class="err">DisposableBean.destroy()</span>
+</div>
+
+<h2>3. Bean Lifecycle In Full Detail</h2>
+<pre><span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">ConnectionPool</span> <span class="kw">implements</span> InitializingBean, DisposableBean {
+
+    <span class="kw">private</span> HikariDataSource dataSource;
+
+    <span class="cm">// Phase 1: Constructor called by Spring</span>
+    <span class="kw">public</span> ConnectionPool() {
+        System.out.println(<span class="st">"1. Constructor"</span>);
+    }
+
+    <span class="cm">// Phase 2: Dependencies injected</span>
+    <span class="an">@Value</span>(<span class="st">"${db.url}"</span>)
+    <span class="kw">private</span> String dbUrl;    <span class="cm">// injected after construction</span>
+
+    <span class="cm">// Phase 3: BeanPostProcessor.postProcessBeforeInitialization()</span>
+    <span class="cm">// (Spring AOP proxies created here)</span>
+
+    <span class="cm">// Phase 4: @PostConstruct (PREFERRED)</span>
+    <span class="an">@PostConstruct</span>
+    <span class="kw">public void</span> init() {
+        System.out.println(<span class="st">"3. @PostConstruct — dbUrl available: "</span> + dbUrl);
+        dataSource = <span class="kw">new</span> HikariDataSource();
+        dataSource.setJdbcUrl(dbUrl);
+        dataSource.setMaximumPoolSize(<span class="num">20</span>);
+    }
+
+    <span class="cm">// Phase 5: InitializingBean.afterPropertiesSet() (same timing as @PostConstruct)</span>
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> afterPropertiesSet() {
+        System.out.println(<span class="st">"4. afterPropertiesSet"</span>);
+    }
+
+    <span class="cm">// Phase 6: BeanPostProcessor.postProcessAfterInitialization()</span>
+
+    <span class="cm">// ... bean serves requests ...</span>
+
+    <span class="cm">// Phase 7: @PreDestroy (on context shutdown)</span>
+    <span class="an">@PreDestroy</span>
+    <span class="kw">public void</span> cleanup() {
+        System.out.println(<span class="st">"7. @PreDestroy — closing pool"</span>);
+        dataSource.close();
+    }
+
+    <span class="cm">// Phase 8: DisposableBean.destroy()</span>
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> destroy() {
+        System.out.println(<span class="st">"8. destroy()"</span>);
+    }
+}
+
+<span class="cm">// Output order:</span>
+<span class="cm">// 1. Constructor</span>
+<span class="cm">// 3. @PostConstruct — dbUrl available: jdbc:postgresql://...</span>
+<span class="cm">// 4. afterPropertiesSet</span>
+<span class="cm">// [app runs]</span>
+<span class="cm">// 7. @PreDestroy — closing pool</span>
+<span class="cm">// 8. destroy()</span></pre>
+
+<h2>4. Singleton vs Prototype Scope</h2>
+<div class="grid2">
+<div class="card">
+<div class="card-title">🔵 Singleton (default)</div>
+<pre style="font-size:12px"><span class="an">@Service</span>  <span class="cm">// = @Scope("singleton")</span>
+<span class="kw">public class</span> <span class="nb">UserService</span> {
+    <span class="cm">// ONE instance in entire context</span>
+    <span class="cm">// Shared across ALL threads</span>
+    <span class="cm">// Created at startup</span>
+}
+
+<span class="cm">// ctx.getBean(UserService.class) twice</span>
+<span class="cm">// → returns SAME object both times</span>
+<span class="cm">// a == b → true</span></pre>
+</div>
+<div class="card">
+<div class="card-title">🟠 Prototype</div>
+<pre style="font-size:12px"><span class="an">@Component</span>
+<span class="an">@Scope</span>(<span class="st">"prototype"</span>)
+<span class="kw">public class</span> <span class="nb">ReportGenerator</span> {
+    <span class="cm">// NEW instance every injection</span>
+    <span class="cm">// @PreDestroy NOT called!</span>
+    <span class="cm">// You manage lifecycle</span>
+}
+
+<span class="cm">// ctx.getBean() twice</span>
+<span class="cm">// → returns DIFFERENT objects</span>
+<span class="cm">// a == b → false</span></pre>
+</div>
+</div>
+
+<h3>The Scope Trap — Prototype in Singleton</h3>
+<div class="compare">
+<div class="bad">
+<div class="clabel">❌ BROKEN: Singleton holds Prototype — always same instance!</div>
+<pre style="font-size:12px"><span class="an">@Service</span>  <span class="cm">// singleton</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="an">@Autowired</span>
+    <span class="kw">private</span> ShoppingCart cart; <span class="cm">// prototype</span>
+    <span class="cm">// cart NEVER changes!</span>
+    <span class="cm">// Spring injects once at startup</span>
+    <span class="cm">// All users share same cart!</span>
+}</pre>
+</div>
+<div class="good">
+<div class="clabel">✅ Fix: ApplicationContext or Provider</div>
+<pre style="font-size:12px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="an">@Autowired</span>
+    <span class="kw">private</span> ApplicationContext ctx;
+
+    <span class="kw">public</span> ShoppingCart newCart() {
+        <span class="cm">// fresh prototype each call</span>
+        <span class="kw">return</span> ctx.getBean(ShoppingCart.<span class="kw">class</span>);
+    }
+    <span class="cm">// OR: @Lookup method injection</span>
+    <span class="an">@Lookup</span>
+    <span class="kw">public</span> ShoppingCart getCart() { <span class="kw">return null</span>; }
+    <span class="cm">// Spring overrides this at runtime!</span>
+}</pre>
+</div>
+</div>
+
+<h3>All Scopes</h3>
+<table>
+<tr><th>Scope</th><th>Instances</th><th>Lifecycle</th><th>Use Case</th></tr>
+<tr><td><span class="pill pill-blue">singleton</span></td><td>1 per context</td><td>Context lifetime</td><td>Services, repositories, controllers</td></tr>
+<tr><td><span class="pill pill-yellow">prototype</span></td><td>1 per injection</td><td>You manage it</td><td>Stateful report/job objects</td></tr>
+<tr><td><span class="pill pill-green">request</span></td><td>1 per HTTP request</td><td>Request lifetime</td><td>Web: current user context</td></tr>
+<tr><td><span class="pill pill-green">session</span></td><td>1 per HTTP session</td><td>Session lifetime</td><td>Web: shopping cart</td></tr>
+<tr><td><span class="pill pill-purple">application</span></td><td>1 per ServletContext</td><td>App lifetime</td><td>Servlet-wide config</td></tr>
+</table>
+
+<h2>5. Constructor vs Field vs Setter Injection</h2>
+<div class="tabs">
+  <button class="tab-btn active" onclick="tab(this,'inj-c')">Constructor ✅</button>
+  <button class="tab-btn" onclick="tab(this,'inj-f')">Field ⚠️</button>
+  <button class="tab-btn" onclick="tab(this,'inj-s')">Setter</button>
+</div>
+<div id="inj-c" class="tc active">
+<pre><span class="cm">// ✅ RECOMMENDED: Constructor Injection</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">PaymentService</span> {
+    <span class="cm">// final fields = immutable after construction</span>
+    <span class="kw">private final</span> PaymentGateway gateway;
+    <span class="kw">private final</span> OrderRepository orderRepo;
+    <span class="kw">private final</span> EmailService emailService;
+
+    <span class="cm">// @Autowired not needed (single constructor)</span>
+    <span class="kw">public</span> PaymentService(PaymentGateway gateway,
+                          OrderRepository orderRepo,
+                          EmailService emailService) {
+        <span class="kw">this</span>.gateway     = Objects.requireNonNull(gateway);
+        <span class="kw">this</span>.orderRepo   = Objects.requireNonNull(orderRepo);
+        <span class="kw">this</span>.emailService = Objects.requireNonNull(emailService);
+    }
+}
+<span class="cm">// Benefits:</span>
+<span class="cm">// 1. Dependencies explicit — can't miss them</span>
+<span class="cm">// 2. Fields can be final (thread-safe)</span>
+<span class="cm">// 3. Easy to test: new PaymentService(mockGW, mockRepo, mockEmail)</span>
+<span class="cm">// 4. Circular dependency detected EARLY at startup</span>
+<span class="cm">// 5. No Spring dependency in test code</span></pre>
+</div>
+<div id="inj-f" class="tc">
+<pre><span class="cm">// ⚠️ Field injection — convenient but problematic</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">PaymentService</span> {
+    <span class="an">@Autowired</span>  <span class="cm">// Spring uses reflection to inject</span>
+    <span class="kw">private</span> PaymentGateway gateway;
+
+    <span class="an">@Autowired</span>
+    <span class="kw">private</span> OrderRepository orderRepo;
+}
+<span class="cm">// Problems:</span>
+<span class="cm">// 1. Can't be final (mutable!)</span>
+<span class="cm">// 2. Hidden dependencies (you don't see them in constructor)</span>
+<span class="cm">// 3. Testing requires Spring context OR reflection hacks:</span>
+<span class="cm">//    ReflectionTestUtils.setField(service, "gateway", mockGW);</span>
+<span class="cm">// 4. NPE outside Spring context (unit test: gateway is null)</span>
+<span class="cm">// 5. Circular deps detected LATE (at first use, not startup)</span></pre>
+</div>
+<div id="inj-s" class="tc">
+<pre><span class="cm">// Setter injection — for optional dependencies</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">NotificationService</span> {
+    <span class="kw">private</span> SmsProvider smsProvider;  <span class="cm">// optional</span>
+
+    <span class="cm">// @Autowired(required = false) — ok if bean missing</span>
+    <span class="an">@Autowired</span>(required = <span class="kw">false</span>)
+    <span class="kw">public void</span> setSmsProvider(SmsProvider smsProvider) {
+        <span class="kw">this</span>.smsProvider = smsProvider;
+    }
+
+    <span class="kw">public void</span> notify(String msg) {
+        <span class="kw">if</span> (smsProvider != <span class="kw">null</span>) smsProvider.send(msg);
+    }
+}
+<span class="cm">// Use setter injection when dependency is truly optional</span></pre>
+</div>
+
+<h2>6. Bean Qualifier & Primary</h2>
+<pre><span class="cm">// Multiple implementations: which one?</span>
+<span class="kw">public interface</span> <span class="nb">MessageSender</span> { <span class="kw">void</span> send(String msg); }
+
+<span class="an">@Component</span>(<span class="st">"emailSender"</span>)
+<span class="kw">public class</span> <span class="nb">EmailSender</span> <span class="kw">implements</span> MessageSender { <span class="cm">/**/</span> }
+
+<span class="an">@Component</span>(<span class="st">"smsSender"</span>)
+<span class="an">@Primary</span>   <span class="cm">// default when no qualifier specified</span>
+<span class="kw">public class</span> <span class="nb">SmsSender</span> <span class="kw">implements</span> MessageSender { <span class="cm">/**/</span> }
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">AlertService</span> {
+    <span class="kw">private final</span> MessageSender primary;   <span class="cm">// SmsSender (Primary)</span>
+    <span class="kw">private final</span> MessageSender secondary; <span class="cm">// EmailSender (qualified)</span>
+
+    <span class="kw">public</span> AlertService(
+            MessageSender primary,
+            <span class="an">@Qualifier</span>(<span class="st">"emailSender"</span>) MessageSender secondary) {
+        <span class="kw">this</span>.primary = primary;
+        <span class="kw">this</span>.secondary = secondary;
+    }
+}
+
+<span class="cm">// Inject ALL implementations:</span>
+<span class="an">@Autowired</span>
+<span class="kw">private</span> List&lt;MessageSender&gt; allSenders;  <span class="cm">// [EmailSender, SmsSender]</span>
+
+<span class="an">@Autowired</span>
+<span class="kw">private</span> Map&lt;String, MessageSender&gt; senderMap;
+<span class="cm">// {"emailSender": EmailSender, "smsSender": SmsSender}</span></pre>
+
+<h2>7. Circular Dependencies</h2>
+<div class="compare">
+<div class="bad">
+<div class="clabel">❌ Circular Dep — startup crash</div>
+<pre style="font-size:12px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">A</span> {
+    <span class="kw">private final</span> B b;
+    <span class="kw">public</span> A(B b) { <span class="kw">this</span>.b = b; }
+}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">B</span> {
+    <span class="kw">private final</span> A a;
+    <span class="kw">public</span> B(A a) { <span class="kw">this</span>.a = a; }
+}
+<span class="cm">// BeanCreationException:</span>
+<span class="cm">// Circular dependency:</span>
+<span class="cm">// A → B → A</span>
+<span class="cm">// Spring can't create either!</span></pre>
+</div>
+<div class="good">
+<div class="clabel">✅ Refactor: extract shared service</div>
+<pre style="font-size:12px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">SharedService</span> {
+    <span class="cm">// extract common logic here</span>
+}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">A</span> {
+    <span class="kw">private final</span> SharedService shared;
+}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">B</span> {
+    <span class="kw">private final</span> SharedService shared;
+}
+<span class="cm">// A and B no longer depend</span>
+<span class="cm">// on each other directly!</span></pre>
+</div>
+</div>
+
+<h3>Emergency Workarounds (use reluctantly)</h3>
+<pre><span class="cm">// Option 1: @Lazy — delays bean creation, breaks cycle</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">A</span> {
+    <span class="kw">public</span> A(<span class="an">@Lazy</span> B b) { <span class="kw">this</span>.b = b; }  <span class="cm">// B is a proxy until first use</span>
+}
+
+<span class="cm">// Option 2: setter injection (not recommended but works)</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">A</span> {
+    <span class="kw">private</span> B b;
+    <span class="an">@Autowired</span>
+    <span class="kw">public void</span> setB(B b) { <span class="kw">this</span>.b = b; }  <span class="cm">// set after both constructed</span>
+}
+
+<span class="cm">// Option 3: ApplicationContext lookup (lazy resolution)</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">A</span> <span class="kw">implements</span> ApplicationContextAware {
+    <span class="kw">private</span> ApplicationContext ctx;
+    <span class="kw">private</span> B getB() { <span class="kw">return</span> ctx.getBean(B.<span class="kw">class</span>); }  <span class="cm">// resolved on demand</span>
+}
+
+<span class="cm">// Circular dependency is usually a design smell:</span>
+<span class="cm">// → Split the class (SRP violation)</span>
+<span class="cm">// → Extract interface + use events (@EventPublisher)</span></pre>
+
+<h2>8. How Spring Resolves Beans Internally</h2>
+<div class="diagram">
+getBean("orderService"):
+
+1. Check <span class="hl">singletonObjects</span> cache (3-level cache)
+   └─ Level 1: fully-initialized singletons → return immediately
+   └─ Level 2: early references (partially initialized) → for circular deps
+   └─ Level 3: singletonFactories → ObjectFactory for early expose
+
+2. Not in cache → <span class="hl">createBean()</span>
+   ├── instantiateBean() → constructor called → Object in L3 cache
+   ├── populateBean()    → @Autowired fields resolved (recursive getBean)
+   └── initializeBean()  → BPP.postProcess + @PostConstruct + afterPropertiesSet
+
+3. Move from L3 → L1 (fully initialized)
+
+<span class="warn-c">Circular dependency (A needs B, B needs A):</span>
+  Create A shell → put in L3 → inject B → B needs A
+  → getBean(A) finds A in L2 early-reference cache ✓
+  → B complete → inject into A → A complete → move to L1
+</div>
+
+<div class="tip"><div class="tip-t">💡 Spring Internals Insight</div>The three-level singleton cache is how Spring solves <em>some</em> circular dependencies automatically (field/setter injection). Constructor injection disables the early reference mechanism — which is why it forces you to fix design instead of silently papering over it.</div>
+</div>
+
+<!-- ===================== REST ===================== -->
+<div id="rest" class="section">
+<h1>REST API Development</h1>
+<p class="subtitle">Production-grade Spring Boot REST: validation, pagination, HATEOAS, versioning, idempotency</p>
+
+<h2>1. HTTP Semantics — GET the Basics Right</h2>
+<table>
+<tr><th>Method</th><th>Semantics</th><th>Body</th><th>Idempotent</th><th>Safe</th></tr>
+<tr><td><span class="pill pill-green">GET</span></td><td>Read resource</td><td>No</td><td>✅</td><td>✅</td></tr>
+<tr><td><span class="pill pill-blue">POST</span></td><td>Create / process</td><td>Yes</td><td>❌</td><td>❌</td></tr>
+<tr><td><span class="pill pill-yellow">PUT</span></td><td>Full replace</td><td>Yes</td><td>✅</td><td>❌</td></tr>
+<tr><td><span class="pill pill-purple">PATCH</span></td><td>Partial update</td><td>Yes</td><td>✅*</td><td>❌</td></tr>
+<tr><td><span class="pill pill-red">DELETE</span></td><td>Remove</td><td>No</td><td>✅</td><td>❌</td></tr>
+</table>
+
+<h2>2. Controller Layer — Production Pattern</h2>
+<pre><span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/v1/orders"</span>)
+<span class="an">@RequiredArgsConstructor</span>   <span class="cm">// Lombok constructor injection</span>
+<span class="an">@Tag</span>(name = <span class="st">"Orders"</span>, description = <span class="st">"Order management API"</span>)
+<span class="kw">public class</span> <span class="nb">OrderController</span> {
+
+    <span class="kw">private final</span> OrderService orderService;
+
+    <span class="cm">// GET /api/v1/orders?status=PENDING&page=0&size=20&sort=createdAt,desc</span>
+    <span class="an">@GetMapping</span>
+    <span class="kw">public</span> ResponseEntity&lt;Page&lt;OrderSummaryDto&gt;&gt; getOrders(
+            <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) OrderStatus status,
+            <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) String customerId,
+            <span class="an">@PageableDefault</span>(size = <span class="num">20</span>, sort = <span class="st">"createdAt"</span>,
+                             direction = Sort.Direction.DESC) Pageable pageable) {
+        <span class="kw">return</span> ResponseEntity.ok(orderService.findOrders(status, customerId, pageable));
+    }
+
+    <span class="cm">// GET /api/v1/orders/42</span>
+    <span class="an">@GetMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;OrderDetailDto&gt; getOrder(<span class="an">@PathVariable</span> <span class="kw">long</span> id) {
+        <span class="kw">return</span> orderService.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    <span class="cm">// POST /api/v1/orders</span>
+    <span class="an">@PostMapping</span>
+    <span class="kw">public</span> ResponseEntity&lt;OrderDetailDto&gt; createOrder(
+            <span class="an">@Valid</span> <span class="an">@RequestBody</span> CreateOrderRequest request,
+            UriComponentsBuilder ucb,
+            <span class="an">@RequestHeader</span>(value = <span class="st">"Idempotency-Key"</span>, required = <span class="kw">false</span>) String idempotencyKey) {
+
+        OrderDetailDto order = orderService.createOrder(request, idempotencyKey);
+
+        URI location = ucb.path(<span class="st">"/api/v1/orders/{id}"</span>)
+            .buildAndExpand(order.getId()).toUri();
+
+        <span class="kw">return</span> ResponseEntity.created(location).body(order);  <span class="cm">// 201 Created</span>
+    }
+
+    <span class="cm">// PATCH /api/v1/orders/42</span>
+    <span class="an">@PatchMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;OrderDetailDto&gt; patchOrder(
+            <span class="an">@PathVariable</span> <span class="kw">long</span> id,
+            <span class="an">@Valid</span> <span class="an">@RequestBody</span> PatchOrderRequest request) {
+        <span class="kw">return</span> ResponseEntity.ok(orderService.patchOrder(id, request));
+    }
+
+    <span class="cm">// DELETE /api/v1/orders/42</span>
+    <span class="an">@DeleteMapping</span>(<span class="st">"/{id}"</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.NO_CONTENT)  <span class="cm">// 204</span>
+    <span class="kw">public void</span> deleteOrder(<span class="an">@PathVariable</span> <span class="kw">long</span> id) {
+        orderService.deleteOrder(id);
+    }
+}</pre>
+
+<h2>3. DTO Design & Validation</h2>
+<pre><span class="cm">// Request DTO — strict validation</span>
+<span class="an">@Data</span>
+<span class="kw">public class</span> <span class="nb">CreateOrderRequest</span> {
+
+    <span class="an">@NotNull</span>
+    <span class="an">@Size</span>(min = <span class="num">1</span>, max = <span class="num">3</span>, message = <span class="st">"1 to 3 items per order"</span>)
+    <span class="kw">private</span> List&lt;<span class="an">@Valid</span> OrderItemRequest&gt; items;
+
+    <span class="an">@NotBlank</span>
+    <span class="an">@Pattern</span>(regexp = <span class="st">"^CUST-[0-9]{6}$"</span>, message = <span class="st">"Invalid customer ID format"</span>)
+    <span class="kw">private</span> String customerId;
+
+    <span class="an">@Valid</span>
+    <span class="an">@NotNull</span>
+    <span class="kw">private</span> ShippingAddressRequest shippingAddress;
+
+    <span class="an">@FutureOrPresent</span>
+    <span class="kw">private</span> LocalDate requestedDeliveryDate;
+}
+
+<span class="an">@Data</span>
+<span class="kw">public class</span> <span class="nb">OrderItemRequest</span> {
+
+    <span class="an">@NotBlank</span>
+    <span class="kw">private</span> String productId;
+
+    <span class="an">@Min</span>(<span class="num">1</span>) <span class="an">@Max</span>(<span class="num">100</span>)
+    <span class="kw">private int</span> quantity;
+
+    <span class="an">@NotNull</span>
+    <span class="an">@DecimalMin</span>(<span class="st">"0.01"</span>)
+    <span class="an">@Digits</span>(integer = <span class="num">10</span>, fraction = <span class="num">2</span>)
+    <span class="kw">private</span> BigDecimal unitPrice;
+}
+
+<span class="cm">// Response DTO — never expose entity directly!</span>
+<span class="an">@Value</span>   <span class="cm">// immutable Lombok</span>
+<span class="an">@Builder</span>
+<span class="kw">public class</span> <span class="nb">OrderDetailDto</span> {
+    <span class="kw">private final</span> String id;
+    <span class="kw">private final</span> String customerId;
+    <span class="kw">private final</span> OrderStatus status;
+    <span class="kw">private final</span> List&lt;OrderItemDto&gt; items;
+    <span class="kw">private final</span> BigDecimal totalAmount;
+    <span class="kw">private final</span> Instant createdAt;
+    <span class="cm">// Never include: entity references, internal IDs, passwords</span>
+}
+
+<span class="cm">// Custom validator</span>
+<span class="an">@Constraint</span>(validatedBy = ValidCouponValidator.<span class="kw">class</span>)
+<span class="an">@Target</span>({ ElementType.FIELD })
+<span class="an">@Retention</span>(RetentionPolicy.RUNTIME)
+<span class="kw">public @interface</span> <span class="nb">ValidCoupon</span> {
+    String message() <span class="kw">default</span> <span class="st">"Invalid coupon code"</span>;
+    Class&lt;?&gt;[] groups() <span class="kw">default</span> {};
+    Class&lt;? extends Payload&gt;[] payload() <span class="kw">default</span> {};
+}
+
+<span class="kw">public class</span> <span class="nb">ValidCouponValidator</span>
+        <span class="kw">implements</span> ConstraintValidator&lt;ValidCoupon, String&gt; {
+
+    <span class="kw">private final</span> CouponService couponService;  <span class="cm">// can inject Spring beans!</span>
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> isValid(String code, ConstraintValidatorContext ctx) {
+        <span class="kw">if</span> (code == <span class="kw">null</span>) <span class="kw">return true</span>;
+        <span class="kw">return</span> couponService.isActive(code);
+    }
+}</pre>
+
+<h2>4. Global Error Handling</h2>
+<pre><span class="an">@RestControllerAdvice</span>
+<span class="kw">public class</span> <span class="nb">GlobalExceptionHandler</span> {
+
+    <span class="an">@ExceptionHandler</span>(MethodArgumentNotValidException.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.BAD_REQUEST)
+    <span class="kw">public</span> ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+        Map&lt;String, String&gt; errors = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+        ex.getBindingResult().getFieldErrors().forEach(e ->
+            errors.put(e.getField(), e.getDefaultMessage()));
+
+        <span class="kw">return</span> ErrorResponse.builder()
+            .status(<span class="num">400</span>)
+            .error(<span class="st">"Validation Failed"</span>)
+            .details(errors)
+            .timestamp(Instant.now())
+            .build();
+    }
+
+    <span class="an">@ExceptionHandler</span>(EntityNotFoundException.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.NOT_FOUND)
+    <span class="kw">public</span> ErrorResponse handleNotFound(EntityNotFoundException ex) {
+        <span class="kw">return</span> ErrorResponse.of(<span class="num">404</span>, ex.getMessage());
+    }
+
+    <span class="an">@ExceptionHandler</span>(Exception.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.INTERNAL_SERVER_ERROR)
+    <span class="kw">public</span> ErrorResponse handleGeneral(Exception ex) {
+        log.error(<span class="st">"Unhandled exception"</span>, ex);
+        <span class="cm">// NEVER expose stack trace to client!</span>
+        <span class="kw">return</span> ErrorResponse.of(<span class="num">500</span>, <span class="st">"Internal server error"</span>);
+    }
+}</pre>
+
+<h2>5. Pagination & Filtering</h2>
+<pre><span class="cm">// Service layer with JPA Specification (dynamic queries)</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+
+    <span class="kw">public</span> Page&lt;OrderSummaryDto&gt; findOrders(
+            OrderStatus status, String customerId, Pageable pageable) {
+
+        Specification&lt;Order&gt; spec = Specification.where(<span class="kw">null</span>);
+
+        <span class="kw">if</span> (status != <span class="kw">null</span>)
+            spec = spec.and((root, q, cb) ->
+                cb.equal(root.get(<span class="st">"status"</span>), status));
+
+        <span class="kw">if</span> (customerId != <span class="kw">null</span>)
+            spec = spec.and((root, q, cb) ->
+                cb.equal(root.get(<span class="st">"customerId"</span>), customerId));
+
+        <span class="kw">return</span> orderRepo.findAll(spec, pageable)
+            .map(orderMapper::toSummaryDto);
+    }
+}
+
+<span class="cm">// Response format with pagination metadata</span>
+<span class="cm">// GET /api/v1/orders?page=2&size=5</span>
+<span class="cm">// {</span>
+<span class="cm">//   "content": [...],</span>
+<span class="cm">//   "page": { "number": 2, "size": 5, "totalElements": 47, "totalPages": 10 }</span>
+<span class="cm">// }</span>
+
+<span class="cm">// Cursor-based pagination (better for large datasets)</span>
+<span class="an">@GetMapping</span>
+<span class="kw">public</span> CursorPage&lt;OrderSummaryDto&gt; getOrders(
+        <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) String cursor,
+        <span class="an">@RequestParam</span>(defaultValue = <span class="st">"20"</span>) <span class="kw">int</span> size) {
+    <span class="kw">return</span> orderService.findOrdersAfterCursor(cursor, size);
+}
+<span class="cm">// cursor = base64(lastSeenId + lastSeenCreatedAt)</span>
+<span class="cm">// SELECT * FROM orders WHERE created_at < ? ORDER BY created_at DESC LIMIT ?</span></pre>
+
+<h2>6. Idempotency</h2>
+<pre><span class="cm">// Client sends Idempotency-Key header with POST</span>
+<span class="cm">// Duplicate requests with same key return cached response</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">IdempotencyService</span> {
+
+    <span class="kw">private final</span> RedisTemplate&lt;String, IdempotencyRecord&gt; redis;
+
+    <span class="kw">public</span> &lt;T&gt; T executeIdempotently(
+            String key,
+            Class&lt;T&gt; responseType,
+            Supplier&lt;T&gt; operation) {
+
+        String cacheKey = <span class="st">"idempotency:"</span> + key;
+
+        <span class="cm">// Check if this key was already processed</span>
+        IdempotencyRecord existing = redis.opsForValue().get(cacheKey);
+        <span class="kw">if</span> (existing != <span class="kw">null</span>) {
+            log.info(<span class="st">"Idempotent replay for key: {}"</span>, key);
+            <span class="kw">return</span> responseType.cast(existing.getResponse());
+        }
+
+        <span class="cm">// Execute the operation</span>
+        T result = operation.get();
+
+        <span class="cm">// Cache result for 24 hours</span>
+        redis.opsForValue().set(
+            cacheKey,
+            <span class="kw">new</span> IdempotencyRecord(result),
+            Duration.ofHours(<span class="num">24</span>)
+        );
+
+        <span class="kw">return</span> result;
+    }
+}
+
+<span class="cm">// Usage in controller:</span>
+<span class="an">@PostMapping</span>
+<span class="kw">public</span> ResponseEntity&lt;OrderDetailDto&gt; createOrder(
+        <span class="an">@Valid</span> <span class="an">@RequestBody</span> CreateOrderRequest req,
+        <span class="an">@RequestHeader</span>(<span class="st">"Idempotency-Key"</span>) String idempotencyKey) {
+
+    OrderDetailDto order = idempotencyService.executeIdempotently(
+        idempotencyKey,
+        OrderDetailDto.<span class="kw">class</span>,
+        () -&gt; orderService.createOrder(req)
+    );
+    <span class="kw">return</span> ResponseEntity.ok(order);
+}</pre>
+
+<h2>7. API Versioning Strategies</h2>
+<div class="tabs">
+  <button class="tab-btn active" onclick="tab(this,'ver-url')">URL Path</button>
+  <button class="tab-btn" onclick="tab(this,'ver-hdr')">Header</button>
+  <button class="tab-btn" onclick="tab(this,'ver-ctype')">Content-Type</button>
+</div>
+<div id="ver-url" class="tc active">
+<pre><span class="cm">// ✅ Most common: /api/v1/orders, /api/v2/orders</span>
+<span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/v1/orders"</span>)
+<span class="kw">public class</span> <span class="nb">OrderControllerV1</span> { <span class="cm">/**/</span> }
+
+<span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/v2/orders"</span>)
+<span class="kw">public class</span> <span class="nb">OrderControllerV2</span> { <span class="cm">/**/</span> }
+<span class="cm">// Pros: Simple, cacheable, easy to test in browser</span>
+<span class="cm">// Cons: "Impure REST" — version not part of resource identity</span></pre>
+</div>
+<div id="ver-hdr" class="tc">
+<pre><span class="cm">// Header-based: X-API-Version: 2</span>
+<span class="an">@GetMapping</span>(headers = <span class="st">"X-API-Version=1"</span>)
+<span class="kw">public</span> OrderV1Dto getOrderV1(<span class="an">@PathVariable</span> <span class="kw">long</span> id) { <span class="cm">/**/</span> }
+
+<span class="an">@GetMapping</span>(headers = <span class="st">"X-API-Version=2"</span>)
+<span class="kw">public</span> OrderV2Dto getOrderV2(<span class="an">@PathVariable</span> <span class="kw">long</span> id) { <span class="cm">/**/</span> }
+<span class="cm">// Pros: Clean URLs, version doesn't pollute resource address</span>
+<span class="cm">// Cons: Not cacheable easily, harder to test</span></pre>
+</div>
+<div id="ver-ctype" class="tc">
+<pre><span class="cm">// Accept header: application/vnd.myapp.order.v2+json</span>
+<span class="an">@GetMapping</span>(produces = <span class="st">"application/vnd.myapp.order.v1+json"</span>)
+<span class="kw">public</span> OrderV1Dto getOrderV1() { <span class="cm">/**/</span> }
+
+<span class="an">@GetMapping</span>(produces = <span class="st">"application/vnd.myapp.order.v2+json"</span>)
+<span class="kw">public</span> OrderV2Dto getOrderV2() { <span class="cm">/**/</span> }
+<span class="cm">// Pros: True REST, uses HTTP content negotiation</span>
+<span class="cm">// Cons: Complex for clients, poor browser support</span></pre>
+</div>
+
+<h2>8. HATEOAS</h2>
+<pre><span class="cm">// dependency: spring-boot-starter-hateoas</span>
+<span class="kw">public class</span> <span class="nb">OrderModel</span> <span class="kw">extends</span> RepresentationModel&lt;OrderModel&gt; {
+    <span class="kw">private</span> String id;
+    <span class="kw">private</span> OrderStatus status;
+    <span class="kw">private</span> BigDecimal totalAmount;
+}
+
+<span class="an">@GetMapping</span>(<span class="st">"/{id}"</span>)
+<span class="kw">public</span> EntityModel&lt;OrderModel&gt; getOrder(<span class="an">@PathVariable</span> <span class="kw">long</span> id) {
+    OrderModel order = orderService.findById(id);
+
+    <span class="kw">return</span> EntityModel.of(order,
+        linkTo(methodOn(OrderController.<span class="kw">class</span>).getOrder(id)).withSelfRel(),
+        linkTo(methodOn(OrderController.<span class="kw">class</span>).getOrders(<span class="kw">null</span>,<span class="kw">null</span>,<span class="kw">null</span>)).withRel(<span class="st">"orders"</span>),
+        <span class="cm">// Conditional links based on business state</span>
+        order.getStatus() == PENDING
+            ? linkTo(methodOn(OrderController.<span class="kw">class</span>).cancelOrder(id)).withRel(<span class="st">"cancel"</span>)
+            : <span class="kw">null</span>
+    );
+}
+<span class="cm">// Response:</span>
+<span class="cm">// {</span>
+<span class="cm">//   "id": "42", "status": "PENDING", "totalAmount": 99.99,</span>
+<span class="cm">//   "_links": {</span>
+<span class="cm">//     "self":   { "href": "/api/v1/orders/42" },</span>
+<span class="cm">//     "orders": { "href": "/api/v1/orders" },</span>
+<span class="cm">//     "cancel": { "href": "/api/v1/orders/42/cancel" }</span>
+<span class="cm">//   }</span>
+<span class="cm">// }</span></pre>
+
+<div class="tip"><div class="tip-t">💡 REST Design Rules</div>
+Use nouns, not verbs: <code>/orders</code> not <code>/createOrder</code> &nbsp;·&nbsp;
+Use plural: <code>/orders/42</code> &nbsp;·&nbsp;
+422 for semantic errors, 400 for malformed JSON &nbsp;·&nbsp;
+Always return <code>Location</code> header after POST &nbsp;·&nbsp;
+Use <code>ETag</code> + <code>If-None-Match</code> for conditional GETs
+</div>
+</div>
+
+<!-- ===================== SECURITY ===================== -->
+<div id="sec" class="section">
+<h1>Spring Security & JWT</h1>
+<p class="subtitle">Filter chain, JWT auth, RBAC, refresh tokens, and vulnerability defence — full implementation</p>
+
+<h2>1. Spring Security Architecture</h2>
+<div class="diagram">
+Incoming HTTP Request
+        │
+        ▼
+<span class="hl">DelegatingFilterProxy</span> (Servlet container bridge)
+        │
+        ▼
+<span class="hl">FilterChainProxy</span>  (Spring Security's main entry point)
+        │
+        ▼
+<span class="hl">SecurityFilterChain</span> (ordered filter list)
+   │
+   ├── <span class="ok">DisableEncodeUrlFilter</span>         — prevent session token in URL
+   ├── <span class="ok">WebAsyncManagerIntegrationFilter</span> — async SecurityContext propagation
+   ├── <span class="ok">SecurityContextHolderFilter</span>      — load/save SecurityContext
+   ├── <span class="ok">HeaderWriterFilter</span>               — X-Content-Type, X-Frame-Options
+   ├── <span class="ok">CorsFilter</span>                        — CORS preflight
+   ├── <span class="ok">CsrfFilter</span>                        — CSRF token validation
+   ├── <span class="warn-c">UsernamePasswordAuthenticationFilter</span> — form login
+   ├── <span class="warn-c">JwtAuthenticationFilter</span>           — YOUR custom JWT filter
+   ├── <span class="warn-c">BasicAuthenticationFilter</span>
+   ├── <span class="ok">ExceptionTranslationFilter</span>        — maps 403/401
+   └── <span class="ok">AuthorizationFilter</span>               — final access decision
+        │
+        ▼ (if authenticated)
+   DispatcherServlet → Controller
+</div>
+
+<h2>2. Complete JWT Implementation</h2>
+<div class="tabs">
+  <button class="tab-btn active" onclick="tab(this,'jwt-util')">JwtService</button>
+  <button class="tab-btn" onclick="tab(this,'jwt-filter')">JwtFilter</button>
+  <button class="tab-btn" onclick="tab(this,'jwt-config')">SecurityConfig</button>
+  <button class="tab-btn" onclick="tab(this,'jwt-auth')">AuthController</button>
+  <button class="tab-btn" onclick="tab(this,'jwt-refresh')">Refresh Tokens</button>
+</div>
+
+<div id="jwt-util" class="tc active">
+<pre><span class="cm">// dependency: io.jsonwebtoken:jjwt-api:0.12.3 + jjwt-impl + jjwt-jackson</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">JwtService</span> {
+
+    <span class="an">@Value</span>(<span class="st">"${jwt.secret}"</span>)  <span class="cm">// 256-bit base64 key in application.properties</span>
+    <span class="kw">private</span> String secretKey;
+
+    <span class="an">@Value</span>(<span class="st">"${jwt.access-token-expiry-ms:900000}"</span>)  <span class="cm">// 15 minutes</span>
+    <span class="kw">private long</span> accessExpiry;
+
+    <span class="kw">private</span> SecretKey getSigningKey() {
+        <span class="kw">byte</span>[] keyBytes = Decoders.BASE64.decode(secretKey);
+        <span class="kw">return</span> Keys.hmacShaKeyFor(keyBytes);  <span class="cm">// HMAC-SHA256</span>
+    }
+
+    <span class="kw">public</span> String generateAccessToken(UserDetails user) {
+        Map&lt;String, Object&gt; claims = <span class="kw">new</span> HashMap&lt;&gt;();
+        <span class="cm">// Add roles to token</span>
+        claims.put(<span class="st">"roles"</span>, user.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority).toList());
+
+        <span class="kw">return</span> Jwts.builder()
+            .subject(user.getUsername())
+            .claims(claims)
+            .issuedAt(<span class="kw">new</span> Date())
+            .expiration(<span class="kw">new</span> Date(System.currentTimeMillis() + accessExpiry))
+            .signWith(getSigningKey())  <span class="cm">// HS256</span>
+            .compact();
+    }
+
+    <span class="kw">public</span> String extractUsername(String token) {
+        <span class="kw">return</span> extractClaim(token, Claims::getSubject);
+    }
+
+    <span class="kw">public boolean</span> isTokenValid(String token, UserDetails userDetails) {
+        <span class="kw">final</span> String username = extractUsername(token);
+        <span class="kw">return</span> username.equals(userDetails.getUsername()) &amp;&amp; !isTokenExpired(token);
+    }
+
+    <span class="kw">private boolean</span> isTokenExpired(String token) {
+        <span class="kw">return</span> extractClaim(token, Claims::getExpiration).before(<span class="kw">new</span> Date());
+    }
+
+    <span class="kw">private</span> &lt;T&gt; T extractClaim(String token, Function&lt;Claims, T&gt; claimsResolver) {
+        <span class="kw">final</span> Claims claims = Jwts.parser()
+            .verifyWith(getSigningKey())
+            .build()
+            .parseSignedClaims(token)   <span class="cm">// throws if invalid/expired</span>
+            .getPayload();
+        <span class="kw">return</span> claimsResolver.apply(claims);
+    }
+}</pre>
+</div>
+
+<div id="jwt-filter" class="tc">
+<pre><span class="an">@Component</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="nb">JwtAuthenticationFilter</span> <span class="kw">extends</span> OncePerRequestFilter {
+
+    <span class="kw">private final</span> JwtService jwtService;
+    <span class="kw">private final</span> UserDetailsService userDetailsService;
+
+    <span class="an">@Override</span>
+    <span class="kw">protected void</span> doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) <span class="kw">throws</span> ServletException, IOException {
+
+        <span class="cm">// 1. Extract Bearer token</span>
+        <span class="kw">final</span> String authHeader = request.getHeader(<span class="st">"Authorization"</span>);
+        <span class="kw">if</span> (authHeader == <span class="kw">null</span> || !authHeader.startsWith(<span class="st">"Bearer "</span>)) {
+            filterChain.doFilter(request, response);  <span class="cm">// no token, pass through</span>
+            <span class="kw">return</span>;
+        }
+
+        <span class="kw">final</span> String jwt = authHeader.substring(<span class="num">7</span>);  <span class="cm">// strip "Bearer "</span>
+
+        <span class="kw">try</span> {
+            <span class="cm">// 2. Extract username from JWT</span>
+            <span class="kw">final</span> String username = jwtService.extractUsername(jwt);
+
+            <span class="cm">// 3. Only authenticate if not already authenticated</span>
+            <span class="kw">if</span> (username != <span class="kw">null</span> &amp;&amp;
+                SecurityContextHolder.getContext().getAuthentication() == <span class="kw">null</span>) {
+
+                <span class="cm">// 4. Load user from DB (checks if user still active)</span>
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                <span class="cm">// 5. Validate token (signature + expiry + username match)</span>
+                <span class="kw">if</span> (jwtService.isTokenValid(jwt, userDetails)) {
+
+                    <span class="cm">// 6. Create authentication and set in context</span>
+                    UsernamePasswordAuthenticationToken auth =
+                        <span class="kw">new</span> UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            <span class="kw">null</span>,
+                            userDetails.getAuthorities()  <span class="cm">// roles</span>
+                        );
+                    auth.setDetails(<span class="kw">new</span> WebAuthenticationDetailsSource()
+                        .buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    <span class="cm">// downstream controllers can now call SecurityContextHolder.getContext()</span>
+                }
+            }
+        } <span class="kw">catch</span> (JwtException e) {
+            <span class="cm">// Invalid/expired token — just don't authenticate</span>
+            log.warn(<span class="st">"JWT validation failed: {}"</span>, e.getMessage());
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">protected boolean</span> shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        <span class="kw">return</span> path.startsWith(<span class="st">"/api/auth/"</span>);  <span class="cm">// skip for login/register</span>
+    }
+}</pre>
+</div>
+
+<div id="jwt-config" class="tc">
+<pre><span class="an">@Configuration</span>
+<span class="an">@EnableWebSecurity</span>
+<span class="an">@EnableMethodSecurity</span>   <span class="cm">// enables @PreAuthorize on methods</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="nb">SecurityConfig</span> {
+
+    <span class="kw">private final</span> JwtAuthenticationFilter jwtFilter;
+    <span class="kw">private final</span> UserDetailsService userDetailsService;
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> SecurityFilterChain filterChain(HttpSecurity http) <span class="kw">throws</span> Exception {
+        <span class="kw">return</span> http
+            <span class="cm">// Stateless: no sessions</span>
+            .sessionManagement(s -&gt; s.sessionCreationPolicy(STATELESS))
+            <span class="cm">// CSRF disabled for REST APIs (stateless = no cookies)</span>
+            .csrf(AbstractHttpConfigurer::disable)
+            <span class="cm">// CORS config</span>
+            .cors(cors -&gt; cors.configurationSource(corsConfigSource()))
+            <span class="cm">// Authorization rules</span>
+            .authorizeHttpRequests(auth -&gt; auth
+                .requestMatchers(<span class="st">"/api/auth/**"</span>).permitAll()
+                .requestMatchers(<span class="st">"/actuator/health"</span>).permitAll()
+                .requestMatchers(HttpMethod.GET, <span class="st">"/api/v1/products/**"</span>).permitAll()
+                .requestMatchers(<span class="st">"/api/admin/**"</span>).hasRole(<span class="st">"ADMIN"</span>)
+                .anyRequest().authenticated()
+            )
+            <span class="cm">// Add JWT filter before standard UsernamePassword filter</span>
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.<span class="kw">class</span>)
+            <span class="cm">// Custom 401/403 handlers</span>
+            .exceptionHandling(ex -&gt; ex
+                .authenticationEntryPoint((req, res, e) -&gt; {
+                    res.setStatus(<span class="num">401</span>);
+                    res.setContentType(<span class="st">"application/json"</span>);
+                    res.getWriter().write(<span class="st">"""
+                        {"error":"Unauthorized","message":"Token required"}"""</span>);
+                })
+                .accessDeniedHandler((req, res, e) -&gt; {
+                    res.setStatus(<span class="num">403</span>);
+                    res.setContentType(<span class="st">"application/json"</span>);
+                    res.getWriter().write(<span class="st">"""
+                        {"error":"Forbidden","message":"Insufficient permissions"}"""</span>);
+                })
+            )
+            .build();
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> PasswordEncoder passwordEncoder() {
+        <span class="kw">return new</span> BCryptPasswordEncoder(<span class="num">12</span>);  <span class="cm">// cost factor 12</span>
+    }
+
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config) <span class="kw">throws</span> Exception {
+        <span class="kw">return</span> config.getAuthenticationManager();
+    }
+}</pre>
+</div>
+
+<div id="jwt-auth" class="tc">
+<pre><span class="an">@RestController</span>
+<span class="an">@RequestMapping</span>(<span class="st">"/api/auth"</span>)
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="nb">AuthController</span> {
+
+    <span class="kw">private final</span> AuthenticationManager authManager;
+    <span class="kw">private final</span> JwtService jwtService;
+    <span class="kw">private final</span> UserDetailsService userDetailsService;
+    <span class="kw">private final</span> RefreshTokenService refreshTokenService;
+
+    <span class="an">@PostMapping</span>(<span class="st">"/login"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;AuthResponse&gt; login(
+            <span class="an">@Valid</span> <span class="an">@RequestBody</span> LoginRequest request) {
+        <span class="kw">try</span> {
+            <span class="cm">// Throws if credentials wrong</span>
+            authManager.authenticate(
+                <span class="kw">new</span> UsernamePasswordAuthenticationToken(
+                    request.getEmail(), request.getPassword())
+            );
+        } <span class="kw">catch</span> (AuthenticationException e) {
+            <span class="kw">throw new</span> ResponseStatusException(HttpStatus.UNAUTHORIZED, <span class="st">"Invalid credentials"</span>);
+        }
+
+        UserDetails user = userDetailsService.loadUserByUsername(request.getEmail());
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = refreshTokenService.create(user.getUsername());
+
+        <span class="kw">return</span> ResponseEntity.ok(AuthResponse.builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .expiresIn(<span class="num">900</span>)   <span class="cm">// 15 minutes in seconds</span>
+            .build());
+    }
+
+    <span class="an">@PostMapping</span>(<span class="st">"/register"</span>)
+    <span class="kw">public</span> ResponseEntity&lt;UserDto&gt; register(<span class="an">@Valid</span> <span class="an">@RequestBody</span> RegisterRequest req) {
+        <span class="kw">return</span> ResponseEntity.status(<span class="num">201</span>).body(userService.register(req));
+    }
+}
+
+<span class="cm">// Protecting endpoints with RBAC:</span>
+<span class="an">@RestController</span>
+<span class="kw">public class</span> <span class="nb">AdminController</span> {
+
+    <span class="an">@GetMapping</span>(<span class="st">"/api/admin/users"</span>)
+    <span class="an">@PreAuthorize</span>(<span class="st">"hasRole('ADMIN')"</span>)
+    <span class="kw">public</span> List&lt;UserDto&gt; getAllUsers() { <span class="cm">/**/</span> }
+
+    <span class="an">@DeleteMapping</span>(<span class="st">"/api/admin/users/{id}"</span>)
+    <span class="an">@PreAuthorize</span>(<span class="st">"hasRole('ADMIN') and #id != principal.id"</span>)
+    <span class="kw">public void</span> deleteUser(<span class="an">@PathVariable</span> Long id) { <span class="cm">/**/</span> }
+
+    <span class="cm">// Resource-level check: only owner or admin can see their order</span>
+    <span class="an">@GetMapping</span>(<span class="st">"/api/orders/{id}"</span>)
+    <span class="an">@PreAuthorize</span>(<span class="st">"hasRole('ADMIN') or @orderSecurity.isOwner(#id, principal)"</span>)
+    <span class="kw">public</span> OrderDetailDto getOrder(<span class="an">@PathVariable</span> Long id) { <span class="cm">/**/</span> }
+}</pre>
+</div>
+
+<div id="jwt-refresh" class="tc">
+<pre><span class="an">@Service</span>
+<span class="an">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="nb">RefreshTokenService</span> {
+
+    <span class="kw">private final</span> RefreshTokenRepository tokenRepo;
+
+    <span class="kw">public</span> String create(String username) {
+        <span class="cm">// Invalidate all existing refresh tokens for user (rotation)</span>
+        tokenRepo.deleteByUsername(username);
+
+        String token = UUID.randomUUID().toString();
+        RefreshToken entity = RefreshToken.builder()
+            .token(token)
+            .username(username)
+            .expiresAt(Instant.now().plus(<span class="num">7</span>, ChronoUnit.DAYS))
+            .build();
+
+        tokenRepo.save(entity);
+        <span class="kw">return</span> token;
+    }
+
+    <span class="kw">public</span> AuthResponse refresh(String refreshToken) {
+        RefreshToken entity = tokenRepo.findByToken(refreshToken)
+            .orElseThrow(() -&gt; <span class="kw">new</span> ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, <span class="st">"Invalid refresh token"</span>));
+
+        <span class="kw">if</span> (entity.getExpiresAt().isBefore(Instant.now())) {
+            tokenRepo.delete(entity);
+            <span class="kw">throw new</span> ResponseStatusException(
+                HttpStatus.UNAUTHORIZED, <span class="st">"Refresh token expired"</span>);
+        }
+
+        UserDetails user = userDetailsService.loadUserByUsername(entity.getUsername());
+
+        <span class="cm">// Token rotation: issue new refresh token on each use</span>
+        String newAccessToken = jwtService.generateAccessToken(user);
+        String newRefreshToken = create(user.getUsername());  <span class="cm">// revokes old!</span>
+
+        <span class="kw">return</span> AuthResponse.builder()
+            .accessToken(newAccessToken)
+            .refreshToken(newRefreshToken)
+            .expiresIn(<span class="num">900</span>).build();
+    }
+}
+
+<span class="cm">// RefreshToken table:</span>
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="nb">RefreshToken</span> {
+    <span class="an">@Id</span> <span class="kw">private</span> String token;     <span class="cm">// UUID</span>
+    <span class="kw">private</span> String username;
+    <span class="kw">private</span> Instant expiresAt;
+    <span class="kw">private</span> Instant usedAt;       <span class="cm">// detect reuse attacks</span>
+}</pre>
+</div>
+
+<h2>3. RBAC — Role-Based Access Control</h2>
+<pre><span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="nb">User</span> <span class="kw">implements</span> UserDetails {
+    <span class="an">@Id</span> <span class="kw">private</span> Long id;
+    <span class="kw">private</span> String email;
+    <span class="kw">private</span> String password;
+    <span class="kw">private boolean</span> enabled;
+
+    <span class="an">@ElementCollection</span>(fetch = FetchType.EAGER)
+    <span class="an">@Enumerated</span>(EnumType.STRING)
+    <span class="kw">private</span> Set&lt;Role&gt; roles = <span class="kw">new</span> HashSet&lt;&gt;();
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+        <span class="kw">return</span> roles.stream()
+            .map(role -&gt; <span class="kw">new</span> SimpleGrantedAuthority(<span class="st">"ROLE_"</span> + role.name()))
+            .toList();
+    }
+    <span class="cm">// ROLE_ADMIN, ROLE_USER, ROLE_MODERATOR</span>
+}
+
+<span class="kw">public enum</span> <span class="nb">Role</span> { USER, MODERATOR, ADMIN }
+
+<span class="cm">// Method-level security expressions:</span>
+<span class="an">@PreAuthorize</span>(<span class="st">"hasRole('ADMIN')"</span>)            <span class="cm">// must have ROLE_ADMIN</span>
+<span class="an">@PreAuthorize</span>(<span class="st">"hasAnyRole('ADMIN','MOD')"</span>)    <span class="cm">// either role</span>
+<span class="an">@PreAuthorize</span>(<span class="st">"isAuthenticated()"</span>)            <span class="cm">// any logged-in user</span>
+<span class="an">@PreAuthorize</span>(<span class="st">"#username == principal.username"</span>)<span class="cm">// param matches current user</span>
+<span class="an">@PostAuthorize</span>(<span class="st">"returnObject.userId == principal.id"</span>) <span class="cm">// check return value</span></pre>
+
+<h2>4. Security Vulnerabilities to Defend Against</h2>
+<div class="grid2">
+<div class="card">
+<div class="card-title">🛡️ JWT Security Issues</div>
+<pre style="font-size:12px"><span class="cm">// ❌ NEVER accept "none" algorithm</span>
+<span class="cm">// jjwt rejects it by default ✓</span>
+
+<span class="cm">// ❌ Weak secret key (too short)</span>
+<span class="cm">// Must be 256-bit minimum for HS256</span>
+
+<span class="cm">// ❌ Storing JWT in localStorage</span>
+<span class="cm">// XSS can steal it!</span>
+<span class="cm">// ✅ HttpOnly cookie (CSRF risk)</span>
+<span class="cm">// OR short-lived + refresh token rotation</span>
+
+<span class="cm">// ❌ Sensitive data in payload</span>
+<span class="cm">// Payload is base64 NOT encrypted!</span>
+<span class="cm">// ✅ Only include: sub, exp, roles</span></pre>
+</div>
+<div class="card">
+<div class="card-title">🛡️ Common Attack Prevention</div>
+<pre style="font-size:12px"><span class="cm">// SQL Injection: use JPA/parameterized</span>
+<span class="cm">// ❌ "SELECT * WHERE id=" + id</span>
+<span class="cm">// ✅ repo.findById(id)</span>
+
+<span class="cm">// XSS: sanitize HTML output</span>
+implementation(<span class="st">"org.owasp.antisamy:antisamy"</span>)
+
+<span class="cm">// CSRF: token (for cookie auth)</span>
+.csrf(csrf -&gt; csrf.csrfTokenRepository(
+    CookieCsrfTokenRepository.withHttpOnlyFalse()))
+
+<span class="cm">// Rate limiting: Bucket4j</span>
+<span class="kw">if</span> (!bucket.tryConsume(<span class="num">1</span>)) {
+    <span class="kw">return</span> ResponseEntity.status(<span class="num">429</span>).build();
+}</pre>
+</div>
+</div>
+<div class="grid2">
+<div class="card">
+<div class="card-title">🛡️ Password Security</div>
+<pre style="font-size:12px"><span class="cm">// ✅ BCrypt cost=12 (default=10)</span>
+<span class="kw">new</span> BCryptPasswordEncoder(<span class="num">12</span>);
+<span class="cm">// each increment doubles time</span>
+
+<span class="cm">// ✅ Never log passwords</span>
+<span class="cm">// ✅ Never return in response</span>
+<span class="cm">// ✅ Argon2 for new projects:</span>
+<span class="kw">new</span> Argon2PasswordEncoder(
+    <span class="num">16</span>, <span class="num">32</span>, <span class="num">1</span>, <span class="num">60000</span>, <span class="num">10</span>);
+<span class="cm">// winner of Password Hashing Competition</span></pre>
+</div>
+<div class="card">
+<div class="card-title">🛡️ Security Headers</div>
+<pre style="font-size:12px"><span class="cm">// Spring Security adds by default:</span>
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 0
+
+<span class="cm">// Add in config:</span>
+http.headers(h -&gt; h
+  .contentSecurityPolicy(csp -&gt; csp
+    .policyDirectives(
+      <span class="st">"default-src 'self'"</span>))
+  .httpStrictTransportSecurity(hsts -&gt; hsts
+    .includeSubDomains(<span class="kw">true</span>)
+    .maxAgeInSeconds(<span class="num">31536000</span>)));</pre>
+</div>
+</div>
+
+<div class="danger"><div class="danger-t">🚨 Critical: Refresh Token Reuse Attack</div>If an attacker steals a refresh token, detect reuse: save <code>usedAt</code> timestamp. If a refresh token is used after already being rotated, <strong>revoke ALL sessions for that user</strong> — someone has their tokens.</div>
+</div>
+
+<!-- ===================== AOP ===================== -->
+<div id="aop" class="section">
+<h1>Aspect-Oriented Programming</h1>
+<p class="subtitle">Proxy mechanics, pointcuts, advice types, logging, tracing, transactions — Spring AOP deep dive</p>
+
+<h2>1. The Problem AOP Solves</h2>
+<div class="compare">
+<div class="bad">
+<div class="clabel">❌ Cross-cutting concerns scattered everywhere</div>
+<pre style="font-size:12px"><span class="kw">public</span> Order createOrder(OrderRequest req) {
+    log.info(<span class="st">"START createOrder: {}"</span>, req);   <span class="cm">// logging concern</span>
+    <span class="kw">if</span> (!secCtx.hasRole(<span class="st">"USER"</span>)) <span class="kw">throw</span>...;   <span class="cm">// security concern</span>
+    Span span = tracer.startSpan(...);           <span class="cm">// tracing concern</span>
+    <span class="kw">try</span> {
+        <span class="cm">// ← actual 3 lines of business logic</span>
+        log.info(<span class="st">"END createOrder"</span>);
+        span.finish(); <span class="kw">return</span> result;
+    } <span class="kw">catch</span> (Exception e) {
+        log.error(<span class="st">"ERROR createOrder"</span>, e);
+        span.error(e); <span class="kw">throw</span> e;
+    }
+}
+<span class="cm">// Repeated in every method. Impossible to maintain.</span></pre>
+</div>
+<div class="good">
+<div class="clabel">✅ With AOP: clean business code</div>
+<pre style="font-size:12px"><span class="an">@Transactional</span>
+<span class="an">@Logged</span>           <span class="cm">// custom annotation</span>
+<span class="an">@Traced</span>           <span class="cm">// custom annotation</span>
+<span class="kw">public</span> Order createOrder(OrderRequest req) {
+    <span class="cm">// ONLY business logic here!</span>
+    Order order = <span class="kw">new</span> Order(req);
+    orderRepo.save(order);
+    eventPublisher.publishEvent(...);
+    <span class="kw">return</span> order;
+}
+<span class="cm">// Logging, tracing, tx handled by Aspects</span>
+<span class="cm">// Applied to ALL annotated methods</span></pre>
+</div>
+</div>
+
+<h2>2. Proxy Mechanics — How AOP Works</h2>
+<div class="diagram">
+<span class="hl">Two proxy strategies:</span>
+
+1. <span class="ok">JDK Dynamic Proxy</span> (when bean implements interface)
+   Bean implements → Proxy implements same interface
+   Proxy.method() → InvocationHandler.invoke() → interceptors → real bean
+
+2. <span class="ok">CGLIB Proxy</span> (when bean is concrete class, no interface)
+   Spring subclasses your class at runtime (bytecode generation)
+   Proxy extends YourClass
+   Proxy.method() → MethodInterceptor.intercept() → interceptors → super.method()
+
+<span class="warn-c">Spring Boot default: CGLIB for @Configuration, JDK for interfaces</span>
+Spring AOP 6: prefer interface → JDK proxy for better performance
+
+<span class="err">Self-invocation limitation:</span>
+  this.anotherMethod()  ← calls on REAL object, bypasses proxy!
+  → @Transactional inside same class won't work
+  → Fix: inject self OR use ApplicationContext.getBean()
+</div>
+
+<h3>AOP Key Terminology</h3>
+<table>
+<tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><b>Join Point</b></td><td>A point in execution where advice CAN apply</td><td>Method call, exception throw</td></tr>
+<tr><td><b>Pointcut</b></td><td>Expression that SELECTS join points</td><td><code>execution(* com.app.service.*.*(..))</code></td></tr>
+<tr><td><b>Advice</b></td><td>Code to run at a join point</td><td>Log before method, commit after</td></tr>
+<tr><td><b>Aspect</b></td><td>Module containing pointcuts + advice</td><td>LoggingAspect, SecurityAspect</td></tr>
+<tr><td><b>Weaving</b></td><td>Process of applying aspects to targets</td><td>Spring: runtime weaving via proxies</td></tr>
+</table>
+
+<h2>3. Advice Types with Examples</h2>
+<pre><span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">ServiceAuditAspect</span> {
+
+    <span class="cm">// Pointcut: all methods in @Service classes</span>
+    <span class="an">@Pointcut</span>(<span class="st">"within(@org.springframework.stereotype.Service *)"</span>)
+    <span class="kw">public void</span> serviceLayer() {}
+
+    <span class="cm">// Pointcut: all public methods</span>
+    <span class="an">@Pointcut</span>(<span class="st">"execution(public * *(..))"</span>)
+    <span class="kw">public void</span> publicMethods() {}
+
+    <span class="cm">// @Before: runs before method, can't stop execution (except throw)</span>
+    <span class="an">@Before</span>(<span class="st">"serviceLayer() && publicMethods()"</span>)
+    <span class="kw">public void</span> logEntry(JoinPoint jp) {
+        log.debug(<span class="st">"→ {}.{}({})"</span>,
+            jp.getTarget().getClass().getSimpleName(),
+            jp.getSignature().getName(),
+            Arrays.toString(jp.getArgs())
+        );
+    }
+
+    <span class="cm">// @AfterReturning: runs only on SUCCESS, can see return value</span>
+    <span class="an">@AfterReturning</span>(pointcut = <span class="st">"serviceLayer()"</span>, returning = <span class="st">"result"</span>)
+    <span class="kw">public void</span> logSuccess(JoinPoint jp, Object result) {
+        log.debug(<span class="st">"← {} returned: {}"</span>, jp.getSignature().getName(), result);
+    }
+
+    <span class="cm">// @AfterThrowing: runs only on EXCEPTION, can see it</span>
+    <span class="an">@AfterThrowing</span>(pointcut = <span class="st">"serviceLayer()"</span>, throwing = <span class="st">"ex"</span>)
+    <span class="kw">public void</span> logError(JoinPoint jp, Throwable ex) {
+        log.error(<span class="st">"✗ {} threw: {}"</span>, jp.getSignature().getName(), ex.getMessage());
+    }
+
+    <span class="cm">// @After: always runs (like finally)</span>
+    <span class="an">@After</span>(<span class="st">"serviceLayer()"</span>)
+    <span class="kw">public void</span> auditTrail(JoinPoint jp) {
+        auditService.record(jp.getSignature().toShortString(), Instant.now());
+    }
+
+    <span class="cm">// @Around: full control, MOST powerful</span>
+    <span class="an">@Around</span>(<span class="st">"serviceLayer() && publicMethods()"</span>)
+    <span class="kw">public</span> Object measureTime(ProceedingJoinPoint pjp) <span class="kw">throws</span> Throwable {
+        <span class="kw">long</span> start = System.currentTimeMillis();
+        <span class="kw">try</span> {
+            Object result = pjp.proceed();   <span class="cm">// actually call the method</span>
+            <span class="kw">long</span> elapsed = System.currentTimeMillis() - start;
+            log.info(<span class="st">"⏱ {} took {}ms"</span>, pjp.getSignature().toShortString(), elapsed);
+            <span class="cm">// push to Micrometer metrics</span>
+            meterRegistry.timer(<span class="st">"service.method"</span>,
+                <span class="st">"class"</span>, pjp.getTarget().getClass().getSimpleName(),
+                <span class="st">"method"</span>, pjp.getSignature().getName()
+            ).record(elapsed, TimeUnit.MILLISECONDS);
+            <span class="kw">return</span> result;
+        } <span class="kw">catch</span> (Throwable t) {
+            log.error(<span class="st">"Method failed after {}ms"</span>, System.currentTimeMillis()-start);
+            <span class="kw">throw</span> t;  <span class="cm">// must rethrow!</span>
+        }
+    }
+}</pre>
+
+<h2>4. Pointcut Expressions</h2>
+<pre><span class="cm">// execution: most used — matches method execution</span>
+<span class="an">@Pointcut</span>(<span class="st">"execution(* com.example.service.*.*(..))"</span>)
+<span class="cm">//          return  package       class  method  args
+//          *       any service    *      *       any</span>
+
+<span class="an">@Pointcut</span>(<span class="st">"execution(public String com.example..*Service.find*(..))"</span>)
+<span class="cm">// public String methods, any package under com.example,</span>
+<span class="cm">// classes ending in Service, methods starting with find</span>
+
+<span class="cm">// within: all methods in class/package</span>
+<span class="an">@Pointcut</span>(<span class="st">"within(com.example.service..*)"</span>)  <span class="cm">// .. = any subpackage</span>
+
+<span class="cm">// @annotation: methods annotated with something</span>
+<span class="an">@Pointcut</span>(<span class="st">"@annotation(com.example.annotation.Logged)"</span>)
+
+<span class="cm">// @within: class-level annotation</span>
+<span class="an">@Pointcut</span>(<span class="st">"@within(org.springframework.stereotype.Service)"</span>)
+
+<span class="cm">// args: methods with specific argument types</span>
+<span class="an">@Pointcut</span>(<span class="st">"execution(* *(com.example.dto.OrderRequest, ..))"</span>)
+
+<span class="cm">// bean: by Spring bean name</span>
+<span class="an">@Pointcut</span>(<span class="st">"bean(orderService)"</span>)
+<span class="an">@Pointcut</span>(<span class="st">"bean(*Service)"</span>)  <span class="cm">// all beans ending in Service</span>
+
+<span class="cm">// Combining:</span>
+<span class="an">@Pointcut</span>(<span class="st">"execution(* com.example..*(..)) && !execution(* com.example.mapper..*(..))"</span>)
+<span class="cm">// all in package EXCEPT mapper classes</span></pre>
+
+<h2>5. Custom Annotation-Based AOP</h2>
+<pre><span class="cm">// Step 1: Define the annotation</span>
+<span class="an">@Target</span>(ElementType.METHOD)
+<span class="an">@Retention</span>(RetentionPolicy.RUNTIME)
+<span class="kw">public @interface</span> <span class="nb">RateLimit</span> {
+    <span class="kw">int</span> requests() <span class="kw">default</span> <span class="num">100</span>;
+    <span class="kw">int</span> windowSeconds() <span class="kw">default</span> <span class="num">60</span>;
+    String keyExpression() <span class="kw">default</span> <span class="st">"user"</span>;  <span class="cm">// SpEL</span>
+}
+
+<span class="cm">// Step 2: Create the Aspect</span>
+<span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">RateLimitAspect</span> {
+
+    <span class="kw">private final</span> RateLimiter rateLimiter;
+
+    <span class="an">@Around</span>(<span class="st">"@annotation(rateLimit)"</span>)  <span class="cm">// binds annotation to param</span>
+    <span class="kw">public</span> Object enforceRateLimit(ProceedingJoinPoint pjp, RateLimit rateLimit)
+            <span class="kw">throws</span> Throwable {
+
+        <span class="cm">// Resolve key from SpEL expression</span>
+        String key = resolveKey(rateLimit.keyExpression(), pjp);
+
+        <span class="kw">if</span> (!rateLimiter.tryAcquire(key, rateLimit.requests(), rateLimit.windowSeconds())) {
+            <span class="kw">throw new</span> ResponseStatusException(
+                HttpStatus.TOO_MANY_REQUESTS,
+                <span class="st">"Rate limit exceeded: "</span> + rateLimit.requests() + <span class="st">" req/"</span> + rateLimit.windowSeconds() + <span class="st">"s"</span>);
+        }
+        <span class="kw">return</span> pjp.proceed();
+    }
+
+    <span class="kw">private</span> String resolveKey(String expression, ProceedingJoinPoint pjp) {
+        <span class="kw">if</span> (<span class="st">"user"</span>.equals(expression)) {
+            <span class="kw">return</span> SecurityContextHolder.getContext()
+                .getAuthentication().getName();
+        }
+        <span class="cm">// Use SpEL parser for complex expressions like "#req.userId"</span>
+        <span class="kw">return</span> expression;
+    }
+}
+
+<span class="cm">// Step 3: Use it!</span>
+<span class="an">@RestController</span>
+<span class="kw">public class</span> <span class="nb">SearchController</span> {
+
+    <span class="an">@GetMapping</span>(<span class="st">"/search"</span>)
+    <span class="an">@RateLimit</span>(requests = <span class="num">10</span>, windowSeconds = <span class="num">60</span>, keyExpression = <span class="st">"user"</span>)
+    <span class="kw">public</span> List&lt;Result&gt; search(<span class="an">@RequestParam</span> String q) {
+        <span class="kw">return</span> searchService.search(q);  <span class="cm">// 10 searches/minute/user</span>
+    }
+}</pre>
+
+<h2>6. Distributed Tracing Aspect (OpenTelemetry)</h2>
+<pre><span class="an">@Aspect</span>
+<span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">TracingAspect</span> {
+
+    <span class="kw">private final</span> Tracer tracer;  <span class="cm">// OpenTelemetry or Micrometer Brave</span>
+
+    <span class="an">@Around</span>(<span class="st">"@annotation(traced)"</span>)
+    <span class="kw">public</span> Object trace(ProceedingJoinPoint pjp, Traced traced) <span class="kw">throws</span> Throwable {
+        String spanName = traced.value().isEmpty()
+            ? pjp.getSignature().toShortString()
+            : traced.value();
+
+        Span span = tracer.nextSpan().name(spanName).start();
+
+        <span class="kw">try</span> (Tracer.SpanInScope ws = tracer.withSpan(span)) {
+            <span class="cm">// Add method args as span tags</span>
+            MethodSignature sig = (MethodSignature) pjp.getSignature();
+            String[] params = sig.getParameterNames();
+            Object[] args = pjp.getArgs();
+            <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; params.length; i++) {
+                <span class="kw">if</span> (isTaggable(args[i])) {
+                    span.tag(params[i], String.valueOf(args[i]));
+                }
+            }
+
+            Object result = pjp.proceed();
+            span.tag(<span class="st">"outcome"</span>, <span class="st">"success"</span>);
+            <span class="kw">return</span> result;
+
+        } <span class="kw">catch</span> (Throwable t) {
+            span.tag(<span class="st">"outcome"</span>, <span class="st">"error"</span>);
+            span.tag(<span class="st">"error.message"</span>, t.getMessage());
+            <span class="kw">throw</span> t;
+        } <span class="kw">finally</span> {
+            span.end();
+        }
+    }
+}
+
+<span class="cm">// Usage:</span>
+<span class="an">@Traced</span>(<span class="st">"order-processing"</span>)
+<span class="kw">public</span> Order processOrder(String orderId) { <span class="cm">/**/</span> }</pre>
+
+<h2>7. How @Transactional Works (AOP Under the Hood)</h2>
+<div class="diagram">
+@Transactional method call flow:
+
+1. Caller calls proxy.createOrder(req)
+2. <span class="hl">TransactionInterceptor</span> (Around advice) fires:
+   a. <span class="ok">TransactionManager.getTransaction()</span>     — get or create TX
+   b. TX bound to current thread via <span class="warn-c">ThreadLocal</span>
+   c. <span class="ok">pjp.proceed()</span>                          — actual method
+   d. (if no exception): <span class="ok">commit()</span>
+   e. (if RuntimeException): <span class="err">rollback()</span>
+   f. (if CheckedException): commit by DEFAULT (unless rollbackFor set)
+   g. TX removed from ThreadLocal
+
+<span class="warn-c">Propagation behaviors:</span>
+REQUIRED     (default) — join existing TX or create new
+REQUIRES_NEW — always new TX, suspend existing
+NESTED       — savepoint within existing TX
+SUPPORTS     — join if exists, otherwise no TX
+NOT_SUPPORTED — suspend TX, run without
+NEVER        — throw if TX exists
+MANDATORY    — throw if NO TX exists
+</div>
+
+<pre><span class="cm">// Common @Transactional mistakes:</span>
+
+<span class="cm">// ❌ 1. CheckedException doesn't rollback by default</span>
+<span class="an">@Transactional</span>
+<span class="kw">public void</span> transfer() <span class="kw">throws</span> InsufficientFundsException {
+    debit(); <span class="kw">throw new</span> InsufficientFundsException();
+    <span class="cm">// COMMITS! CheckedException = no rollback</span>
+}
+<span class="cm">// ✅ Fix:</span>
+<span class="an">@Transactional</span>(rollbackFor = InsufficientFundsException.<span class="kw">class</span>)
+
+<span class="cm">// ❌ 2. Self-invocation bypasses proxy</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="an">@Transactional</span>
+    <span class="kw">public void</span> createOrder() { saveOrder(); }  <span class="cm">// ✅ proxy intercepted</span>
+
+    <span class="an">@Transactional</span>(propagation = Propagation.REQUIRES_NEW)
+    <span class="kw">public void</span> saveOrder() { <span class="cm">/**/</span> }
+    <span class="cm">// ❌ called via this.saveOrder() — new TX NOT created!</span>
+}
+
+<span class="cm">// ❌ 3. @Transactional on private method — ignored!</span>
+<span class="an">@Transactional</span>  <span class="cm">// has NO effect on private methods</span>
+<span class="kw">private void</span> internalSave() { <span class="cm">/**/</span> }</pre>
+
+<div class="tip"><div class="tip-t">💡 Aspect Ordering</div>Multiple aspects on same method execute in order. Control with <code>@Order(1)</code> on the aspect class. Lower number = higher priority = outermost wrapper. Spring's own aspects: Security=100, Transaction=200, Caching=300. Your aspects default to lowest priority (last). Add <code>@Order(50)</code> to run before transaction begins.</div>
+
+<div class="warn"><div class="warn-t">⚠️ AOP Limitations in Spring</div>
+<b>Only public methods</b> — Spring AOP proxies can only intercept public method calls from outside the bean.<br>
+<b>Same-class calls bypass proxy</b> — <code>this.annotatedMethod()</code> calls the real object, not the proxy.<br>
+<b>Final methods can't be proxied by CGLIB</b> — don't make Spring beans or their methods final.</div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function tab(btn, id) {
+  const group = btn.closest('.tabs');
+  group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  let el = group.nextElementSibling;
+  while (el && (el.classList.contains('tc') || el.nodeName !== 'DIV' || !el.classList.contains('tc'))) {
+    if (el.classList && el.classList.contains('tc')) el.classList.remove('active');
+    else if (!el.classList || !el.classList.contains('tc')) break;
+    el = el.nextElementSibling;
+  }
+  // Deactivate all tc siblings
+  let sibling = group.nextElementSibling;
+  while (sibling) {
+    if (sibling.classList.contains('tc')) {
+      sibling.classList.remove('active');
+    } else {
+      break;
+    }
+    sibling = sibling.nextElementSibling;
+  }
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+}
+</script>
+</body>
+</html>

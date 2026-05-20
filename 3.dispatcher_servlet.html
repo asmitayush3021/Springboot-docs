@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spring Boot Internals — Deep Reference</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:#30363d;--border2:#21262d;
+  --text:#e6edf3;--text2:#c9d1d9;--text3:#8b949e;
+  --blue:#58a6ff;--blue-bg:#1f3a5f;--blue-border:#2d5a8e;
+  --green:#3fb950;--green-bg:#1a3a2a;
+  --orange:#f0883e;--orange-bg:#3d2800;
+  --red:#ff7b72;--red-bg:#3d0f0f;
+  --purple:#d2a8ff;--purple-bg:#2d1f3d;
+  --yellow:#e3b341;--yellow-bg:#3d3000;
+  --teal:#39d353;--pink:#f778ba;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:14px;min-height:100vh}
+/* ── NAV ── */
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.topbar-inner{display:flex;align-items:center;gap:0;overflow-x:auto;padding:0 12px}
+.nb{padding:10px 13px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:12px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.nb:hover{color:var(--text)}
+.nb.active{color:var(--blue);border-bottom-color:var(--blue)}
+/* ── LAYOUT ── */
+.page{display:none;padding:20px 16px;max-width:980px;margin:0 auto}
+.page.on{display:block}
+h1{font-size:24px;font-weight:700;color:var(--text);margin:0 0 4px}
+h2{font-size:17px;font-weight:600;color:var(--text);margin:28px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--border2)}
+h3{font-size:14px;font-weight:600;color:var(--blue);margin:16px 0 7px}
+h4{font-size:13px;font-weight:600;color:var(--purple);margin:12px 0 5px}
+.sub{color:var(--text3);font-size:13px;margin-bottom:20px}
+/* ── CODE ── */
+pre{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:14px 16px;overflow-x:auto;font-family:'Consolas','Cascadia Code',monospace;font-size:12px;line-height:1.6;margin:9px 0;tab-size:2}
+.kw{color:#ff7b72}.cm{color:var(--text3);font-style:italic}.st{color:#a5d6ff}
+.an{color:var(--purple)}.nb2{color:#79c0ff}.num{color:#79c0ff}
+.gt{color:var(--green)}.yt{color:var(--yellow)}.rt{color:var(--red)}
+/* ── DIAGRAM ── */
+.diag{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin:12px 0;font-family:'Consolas',monospace;font-size:11.5px;line-height:2;overflow-x:auto;color:var(--text2)}
+.diag .b{color:var(--blue)}.diag .g{color:var(--green)}.diag .y{color:var(--yellow)}
+.diag .r{color:var(--red)}.diag .p{color:var(--purple)}.diag .o{color:var(--orange)}
+/* ── CARDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:10px 0}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:10px 0}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:14px}
+.card-t{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:7px}
+.card p,.card pre{font-size:12px}
+/* ── ALERTS ── */
+.tip{background:#0d2339;border-left:3px solid var(--blue);padding:11px 13px;border-radius:0 7px 7px 0;margin:10px 0;font-size:12.5px}
+.tip-t{font-size:10.5px;font-weight:700;color:var(--blue);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.warn{background:var(--yellow-bg);border-left:3px solid var(--yellow);padding:11px 13px;border-radius:0 7px 7px 0;margin:10px 0;font-size:12.5px;color:#c9b060}
+.warn-t{font-size:10.5px;font-weight:700;color:var(--yellow);margin-bottom:3px;text-transform:uppercase}
+.danger{background:var(--red-bg);border-left:3px solid var(--red);padding:11px 13px;border-radius:0 7px 7px 0;margin:10px 0;font-size:12.5px;color:#ffa0a0}
+.danger-t{font-size:10.5px;font-weight:700;color:var(--red);margin-bottom:3px;text-transform:uppercase}
+.ok{background:var(--green-bg);border-left:3px solid var(--green);padding:11px 13px;border-radius:0 7px 7px 0;margin:10px 0;font-size:12.5px;color:#7ee787}
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+th{background:var(--bg3);color:var(--text3);padding:7px 11px;text-align:left;font-weight:600;border:1px solid var(--border)}
+td{padding:7px 11px;border:1px solid var(--border2);color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#0a0e13}
+/* ── COMPARE ── */
+.cmp{display:flex;gap:12px;margin:10px 0}
+.bad{flex:1;background:#2d1212;border:1px solid #5a2020;border-radius:8px;padding:13px}
+.good{flex:1;background:#0d2a1a;border:1px solid #204020;border-radius:8px;padding:13px}
+.clbl{font-size:10.5px;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.bad .clbl{color:var(--red)}.good .clbl{color:var(--green)}
+/* ── TABS ── */
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.tb{padding:4px 11px;border:1px solid var(--border);border-radius:5px;background:var(--bg);color:var(--text3);cursor:pointer;font-size:11.5px;transition:all .15s}
+.tb.on,.tb:hover{background:var(--bg3);color:var(--text);border-color:var(--blue)}
+.tc{display:none}.tc.on{display:block}
+/* ── FLOW STEPS ── */
+.flow{display:flex;flex-direction:column;gap:0;margin:10px 0}
+.fstep{display:flex;gap:12px;position:relative}
+.fnum{min-width:24px;height:24px;background:var(--blue-bg);color:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;z-index:1}
+.fstep:not(:last-child) .fnum::after{content:'';position:absolute;left:11px;top:26px;width:2px;height:calc(100% - 10px);background:var(--blue-bg)}
+.fbody{padding-bottom:14px;flex:1}
+.fbody strong{font-size:13px;color:var(--text);display:block;margin-bottom:3px}
+.fbody p{font-size:12px;color:var(--text3)}
+/* ── BADGE ── */
+.pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600}
+.pb{background:var(--blue-bg);color:var(--blue)}.pg{background:var(--green-bg);color:var(--green)}
+.po{background:var(--orange-bg);color:var(--orange)}.pr{background:var(--red-bg);color:var(--red)}
+.pp{background:var(--purple-bg);color:var(--purple)}.py{background:var(--yellow-bg);color:var(--yellow)}
+/* ── TIMELINE ── */
+.timeline{margin:10px 0}
+.tevent{display:flex;align-items:baseline;gap:10px;margin:4px 0}
+.ttime{color:var(--yellow);font-family:monospace;font-size:11.5px;min-width:72px;text-align:right}
+.ttext{font-size:12.5px;color:var(--text2)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<div class="topbar-inner">
+  <button class="nb active" onclick="go('mvc')">① MVC Internals</button>
+  <button class="nb" onclick="go('tomcat')">② Tomcat</button>
+  <button class="nb" onclick="go('hikari')">③ HikariCP</button>
+  <button class="nb" onclick="go('restarch')">④ REST Architecture</button>
+  <button class="nb" onclick="go('autoconf')">⑤ Auto-Config</button>
+  <button class="nb" onclick="go('tx')">⑥ Transactions</button>
+  <button class="nb" onclick="go('jackson')">⑦ Jackson</button>
+  <button class="nb" onclick="go('valid')">⑧ Validation</button>
+  <button class="nb" onclick="go('threads')">⑨ Threading</button>
+  <button class="nb" onclick="go('lifecycle')">⑩ Full Lifecycle</button>
+</div>
+</div>
+
+<!-- ═══════════════════════ 1. MVC ═══════════════════════ -->
+<div id="mvc" class="page on">
+<h1>DispatcherServlet & Spring MVC Internals</h1>
+<p class="sub">Full journey: HTTP byte arrival → matched controller → Jackson → response bytes</p>
+
+<h2>1. Servlet Container to DispatcherServlet</h2>
+<div class="diag">
+NIC → OS TCP stack → Tomcat Acceptor thread
+  → NioChannel / HTTP/1.1 parser
+  → Request object assembled
+  → <span class="b">FilterChain</span> execution (SecurityFilter, CorsFilter, LoggingFilter ...)
+  → <span class="b">DispatcherServlet.service()</span>   ← Spring MVC entry point
+       │
+       ├─ <span class="g">checkMultipart()</span>          if multipart → MultipartResolver
+       ├─ <span class="g">getHandler()</span>              iterate HandlerMappings → HandlerExecutionChain
+       ├─ <span class="g">getHandlerAdapter()</span>       find adapter that can invoke handler
+       ├─ <span class="g">applyPreHandle()</span>          all interceptors preHandle (can abort)
+       ├─ <span class="g">ha.handle()</span>               invoke controller method
+       ├─ <span class="g">applyPostHandle()</span>         interceptors postHandle (can modify ModelAndView)
+       ├─ <span class="g">processDispatchResult()</span>   render view OR write response body
+       └─ <span class="g">afterCompletion()</span>        interceptors cleanup (always runs)
+</div>
+
+<h2>2. HandlerMapping Resolution</h2>
+<p style="font-size:12.5px;color:var(--text3);margin-bottom:8px">Spring keeps an ordered list of <code>HandlerMapping</code> beans. First match wins.</p>
+<div class="g3">
+<div class="card">
+<div class="card-t">RequestMappingHandlerMapping</div>
+<pre style="font-size:11.5px"><span class="cm">// Scans @RequestMapping at startup</span>
+<span class="cm">// builds lookup tree:</span>
+<span class="cm">// POST /api/orders → OrderController#create</span>
+<span class="cm">// GET  /api/orders/{id} → OrderController#get</span>
+<span class="cm">// Priority: 0 (highest)</span></pre>
+</div>
+<div class="card">
+<div class="card-t">BeanNameUrlHandlerMapping</div>
+<pre style="font-size:11.5px"><span class="cm">// Bean names starting with "/"</span>
+<span class="cm">// @Component("/api/legacy")</span>
+<span class="cm">// class LegacyController</span>
+<span class="cm">//   implements Controller</span>
+<span class="cm">// Priority: 2</span></pre>
+</div>
+<div class="card">
+<div class="card-t">RouterFunctionMapping</div>
+<pre style="font-size:11.5px"><span class="cm">// Functional style routing</span>
+<span class="cm">// RouterFunction&lt;ServerResponse&gt;</span>
+<span class="cm">// GET("/fn", handler::method)</span>
+<span class="cm">// Spring WebFlux, also WebMVC 5.2+</span>
+<span class="cm">// Priority: -1 (before RMHM)</span></pre>
+</div>
+</div>
+
+<h3>HandlerExecutionChain</h3>
+<pre><span class="cm">// getHandler() returns a chain: handler + interceptors</span>
+HandlerExecutionChain {
+    handler:      OrderController#createOrder  <span class="cm">// the actual method handle</span>
+    interceptors: [
+        SecurityContextInterceptor,   <span class="cm">// order 0</span>
+        LoggingInterceptor,           <span class="cm">// order 1</span>
+        MdcInterceptor,               <span class="cm">// order 2</span>
+    ]
+}
+
+<span class="cm">// Interceptor vs Filter:</span>
+<span class="cm">// Filter:      Servlet-level, wraps entire request (before DS)</span>
+<span class="cm">// Interceptor: Spring MVC-level, inside DS, knows about controller</span></pre>
+
+<h2>3. HandlerAdapter — Method Invocation</h2>
+<div class="diag">
+<span class="b">RequestMappingHandlerAdapter.handle()</span>
+  │
+  ├─ <span class="g">ServletInvocableHandlerMethod.invokeAndHandle()</span>
+  │    │
+  │    ├─ <span class="y">resolveArguments()</span>  ← HandlerMethodArgumentResolver chain
+  │    │    ├─ @RequestBody      → HttpMessageConverter.read(JSON → Java object)
+  │    │    ├─ @PathVariable     → UriTemplateVariables map lookup
+  │    │    ├─ @RequestParam     → request.getParameter()
+  │    │    ├─ @RequestHeader    → request.getHeader()
+  │    │    ├─ @Valid            → triggers Bean Validation BEFORE method call
+  │    │    ├─ HttpServletRequest→ passed directly
+  │    │    └─ Principal         → SecurityContextHolder.getContext().getAuthentication()
+  │    │
+  │    └─ <span class="y">method.invoke(controller, resolvedArgs)</span>  ← reflection call
+  │
+  └─ <span class="g">handleReturnValue()</span>  ← HandlerMethodReturnValueHandler chain
+       ├─ @ResponseBody / @RestController → HttpMessageConverter.write(Java → JSON)
+       ├─ ResponseEntity → extract status + headers + body
+       ├─ String         → ViewResolver (for MVC views)
+       └─ void           → nothing (interceptors may have written response)
+</div>
+
+<h2>4. Filters vs Interceptors vs AOP — When Each Runs</h2>
+<div class="diag">
+HTTP Request
+    │
+    ▼
+<span class="b">── FILTER CHAIN (javax.servlet.Filter) ──────────────────────────</span>
+    │  CharacterEncodingFilter    (sets UTF-8)
+    │  CorsFilter                 (OPTIONS preflight)
+    │  SecurityFilterChain        (JWT validation, auth)
+    │  CommonsRequestLoggingFilter
+    ▼
+<span class="b">── DispatcherServlet ─────────────────────────────────────────────</span>
+    │
+    ▼
+<span class="y">── INTERCEPTOR preHandle() ──────────────────────────────────────</span>
+    │  MdcInterceptor.preHandle()     (set traceId in MDC)
+    │  RateLimitInterceptor.preHandle()
+    ▼
+<span class="p">── AOP @Around advice ───────────────────────────────────────────</span>
+    │  TransactionInterceptor          (begin TX)
+    │  CachingInterceptor              (cache check)
+    │  CustomMetricsAspect             (start timer)
+    ▼
+<span class="g">── CONTROLLER METHOD EXECUTES ───────────────────────────────────</span>
+    ▼
+<span class="p">── AOP @Around advice (return) ──────────────────────────────────</span>
+    ▼
+<span class="y">── INTERCEPTOR postHandle() ─────────────────────────────────────</span>
+    ▼
+<span class="b">── HttpMessageConverter writes response ─────────────────────────</span>
+    ▼
+<span class="y">── INTERCEPTOR afterCompletion() ────────────────────────────────</span>
+    ▼
+<span class="b">── FILTER doFilter() continues (after chain.doFilter()) ─────────</span>
+    ▼
+HTTP Response
+</div>
+
+<h2>5. Jackson Serialization in the Response Pipeline</h2>
+<pre><span class="cm">// 1. HandlerAdapter sees @ResponseBody on controller</span>
+<span class="cm">// 2. Iterates registered HttpMessageConverters</span>
+<span class="cm">// 3. MappingJackson2HttpMessageConverter selected (supports application/json)</span>
+<span class="cm">// 4. ObjectMapper.writeValue(response.getOutputStream(), returnValue)</span>
+
+<span class="cm">// Customise ObjectMapper globally:</span>
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="nb">JacksonConfig</span> {
+    <span class="an">@Bean</span>
+    <span class="kw">public</span> ObjectMapper objectMapper() {
+        <span class="kw">return</span> JsonMapper.builder()
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, <span class="kw">false</span>)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, <span class="kw">false</span>)
+            .addModule(<span class="kw">new</span> JavaTimeModule())
+            .serializationInclusion(JsonInclude.Include.NON_NULL)
+            .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .build();
+    }
+}</pre>
+
+<h2>6. Custom Interceptor Implementation</h2>
+<pre><span class="an">@Component</span>
+<span class="kw">public class</span> <span class="nb">RequestTracingInterceptor</span> <span class="kw">implements</span> HandlerInterceptor {
+
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> preHandle(HttpServletRequest req, HttpServletResponse res,
+                              Object handler) {
+        String traceId = Optional.ofNullable(req.getHeader(<span class="st">"X-Trace-Id"</span>))
+            .orElse(UUID.randomUUID().toString().substring(<span class="num">0</span>, <span class="num">8</span>));
+
+        MDC.put(<span class="st">"traceId"</span>, traceId);
+        res.setHeader(<span class="st">"X-Trace-Id"</span>, traceId);
+        req.setAttribute(<span class="st">"startTime"</span>, System.currentTimeMillis());
+
+        <span class="kw">if</span> (handler <span class="kw">instanceof</span> HandlerMethod hm) {
+            log.info(<span class="st">"[{}] {} {} → {}.{}"</span>, traceId,
+                req.getMethod(), req.getRequestURI(),
+                hm.getBeanType().getSimpleName(),
+                hm.getMethod().getName());
+        }
+        <span class="kw">return true</span>;  <span class="cm">// false = abort, write your own 4xx</span>
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> afterCompletion(HttpServletRequest req, HttpServletResponse res,
+                                 Object handler, Exception ex) {
+        <span class="kw">long</span> elapsed = System.currentTimeMillis() -
+            (Long) req.getAttribute(<span class="st">"startTime"</span>);
+        log.info(<span class="st">"[{}] {} {} → {} in {}ms"</span>,
+            MDC.get(<span class="st">"traceId"</span>), req.getMethod(),
+            req.getRequestURI(), res.getStatus(), elapsed);
+        MDC.clear();  <span class="cm">// MUST clear, thread goes back to pool!</span>
+    }
+}
+
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="nb">MvcConfig</span> <span class="kw">implements</span> WebMvcConfigurer {
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(requestTracingInterceptor)
+            .addPathPatterns(<span class="st">"/api/**"</span>)
+            .excludePathPatterns(<span class="st">"/api/health"</span>, <span class="st">"/actuator/**"</span>)
+            .order(<span class="num">1</span>);
+    }
+}</pre>
+
+<h2>7. Exception Handling Flow</h2>
+<div class="diag">
+Controller throws RuntimeException
+        │
+        ▼
+<span class="b">HandlerExceptionResolver chain (ordered)</span>
+  ├─ <span class="g">ExceptionHandlerExceptionResolver</span>  — finds @ExceptionHandler methods
+  │    └─ @RestControllerAdvice scanned for matching handler
+  │         └─ handler method invoked → HttpMessageConverter writes response
+  │
+  ├─ <span class="y">ResponseStatusExceptionResolver</span>    — @ResponseStatus on exception class
+  │
+  └─ <span class="y">DefaultHandlerExceptionResolver</span>     — handles Spring MVC standard exceptions
+       (MethodArgumentNotValidException → 400, NoHandlerFoundException → 404)
+
+<span class="r">If no resolver handles it: re-thrown to servlet container → Tomcat 500 error page</span>
+</div>
+
+<h2>8. Production Debugging Scenarios</h2>
+<div class="tabs">
+<button class="tb on" onclick="tb(this,'dbg1')">404 Mystery</button>
+<button class="tb" onclick="tb(this,'dbg2')">Interceptor Not Running</button>
+<button class="tb" onclick="tb(this,'dbg3')">@RequestBody null</button>
+<button class="tb" onclick="tb(this,'dbg4')">Slow serialization</button>
+</div>
+<div id="dbg1" class="tc on">
+<pre><span class="cm">// Problem: GET /api/orders returns 404 despite controller existing</span>
+
+<span class="cm">// Debug step 1: enable handler mapping trace</span>
+<span class="cm">// application.properties:</span>
+logging.level.org.springframework.web.servlet.DispatcherServlet=TRACE
+logging.level.org.springframework.web.servlet.mvc.method.annotation=DEBUG
+
+<span class="cm">// Common causes:</span>
+<span class="cm">// 1. Controller not in component scan package</span>
+<span class="cm">// 2. @RequestMapping on class + method produces /api/orders/orders</span>
+<span class="cm">// 3. Context path set: server.servlet.context-path=/app</span>
+<span class="cm">//    → URL must be /app/api/orders</span>
+<span class="cm">// 4. Static resource mapping conflicts:</span>
+spring.mvc.static-path-pattern=<span class="st">/static/**</span>  <span class="cm">// add this to free up /api</span></pre>
+</div>
+<div id="dbg2" class="tc">
+<pre><span class="cm">// Problem: Interceptor.preHandle() never called</span>
+<span class="cm">// Cause: addInterceptors() uses wrong path pattern</span>
+
+<span class="cm">// ❌ WRONG: /api/** doesn't match /api (no trailing path)</span>
+registry.addInterceptor(i).addPathPatterns(<span class="st">"/api/**"</span>);
+
+<span class="cm">// ✅ Match both /api and /api/anything:</span>
+registry.addInterceptor(i).addPathPatterns(<span class="st">"/api"</span>, <span class="st">"/api/**"</span>);
+
+<span class="cm">// Cause 2: WebFlux on classpath — DispatcherHandler not DispatcherServlet</span>
+<span class="cm">// WebMvcConfigurer interceptors only work with Spring MVC (Servlet stack)</span></pre>
+</div>
+<div id="dbg3" class="tc">
+<pre><span class="cm">// Problem: @RequestBody object has all null fields</span>
+
+<span class="cm">// Cause 1: Content-Type header missing or wrong</span>
+<span class="cm">// Must send: Content-Type: application/json</span>
+curl -X POST /api/orders \
+  -H <span class="st">"Content-Type: application/json"</span> \   <span class="cm">// REQUIRED</span>
+  -d <span class="st">'{"customerId":"C001"}'</span>
+
+<span class="cm">// Cause 2: JSON property names don't match DTO field names</span>
+<span class="cm">// Java: private String customerId;  → JSON: "customer_id" (mismatch)</span>
+<span class="cm">// Fix: @JsonProperty("customer_id") or configure SNAKE_CASE globally</span>
+
+<span class="cm">// Cause 3: Missing default constructor (Jackson needs it)</span>
+<span class="cm">// @Data but no @NoArgsConstructor — fix: add @NoArgsConstructor</span>
+
+<span class="cm">// Debug:</span>
+logging.level.com.fasterxml.jackson=DEBUG</pre>
+</div>
+<div id="dbg4" class="tc">
+<pre><span class="cm">// Problem: serializing large lists takes 2+ seconds</span>
+
+<span class="cm">// Cause 1: N+1 via Hibernate lazy loading inside Jackson</span>
+<span class="cm">// Entity.getOrders() triggers N DB queries during serialization</span>
+<span class="cm">// Fix: Use projection DTOs with JOIN FETCH queries</span>
+
+<span class="cm">// Cause 2: Huge response — serialize to stream not buffer</span>
+<span class="an">@GetMapping</span>(produces = MediaType.APPLICATION_NDJSON_VALUE)
+<span class="kw">public</span> StreamingResponseBody streamOrders() {
+    <span class="kw">return</span> outputStream -> {
+        objectMapper.writeValue(outputStream,
+            orderRepo.findAll()); <span class="cm">// streams directly to network</span>
+    };
+}
+
+<span class="cm">// Cause 3: Unwanted fields — exclude with @JsonIgnore or @JsonView</span>
+<span class="an">@JsonIgnore</span>
+<span class="kw">private</span> List&lt;AuditLog&gt; auditLogs;  <span class="cm">// excluded from serialization</span></pre>
+</div>
+</div>
+
+<!-- ═══════════════════════ 2. TOMCAT ═══════════════════════ -->
+<div id="tomcat" class="page">
+<h1>Embedded Tomcat Architecture</h1>
+<p class="sub">From socket accept to thread dispatch — Tomcat internals and Spring Boot production tuning</p>
+
+<h2>1. Tomcat Internal Architecture</h2>
+<div class="diag">
+<span class="b">Tomcat Server</span>
+└── <span class="b">Service</span>
+    ├── <span class="g">Connector (HTTP/1.1 port 8080)</span>
+    │    ├── ProtocolHandler: Http11NioProtocol (non-blocking I/O)
+    │    ├── Endpoint: NioEndpoint
+    │    │    ├── <span class="y">Acceptor thread</span> (1)    — accept() blocks for new connections
+    │    │    ├── <span class="y">Poller threads</span> (2)    — NIO Selector monitors active sockets
+    │    │    └── <span class="y">Executor (thread pool)</span>  — actual request processing
+    │    └── Adapter → CoyoteAdapter → Engine
+    │
+    └── <span class="g">Engine (Catalina)</span>
+         └── <span class="b">Host</span> (localhost)
+              └── <span class="b">Context</span> (/   your app)
+                   └── <span class="b">Wrapper</span> → DispatcherServlet
+</div>
+
+<h2>2. NIO Connection Handling</h2>
+<div class="diag">
+<span class="y">Phase 1 — Accept (Acceptor thread)</span>
+  ServerSocket.accept() blocks
+  New connection arrives → SocketChannel opened (non-blocking)
+  Register channel with Poller's NIO Selector
+
+<span class="y">Phase 2 — Poll (Poller thread)</span>
+  Selector.select() — waits for readable sockets
+  Request bytes arrive → socket becomes readable
+  Poller hands socket to <span class="g">Executor thread pool</span>
+
+<span class="y">Phase 3 — Process (Worker thread from pool)</span>
+  HTTP parser reads bytes → Request object
+  CoyoteAdapter.service() → Tomcat pipeline
+  StandardEngineValve → StandardHostValve → StandardContextValve
+  → ApplicationFilterChain → DispatcherServlet
+
+<span class="r">KEY INSIGHT: One worker thread is HELD for entire request duration</span>
+<span class="r">Even during DB query (thread blocks). 200 threads × 200ms avg = ~1000 req/s max</span>
+</div>
+
+<h2>3. Thread Pool Deep Dive</h2>
+<pre><span class="cm"># application.properties — Tomcat thread pool tuning</span>
+server.tomcat.threads.max=200          <span class="cm"># worker thread pool max</span>
+server.tomcat.threads.min-spare=25     <span class="cm"># always-alive minimum</span>
+server.tomcat.max-connections=10000    <span class="cm"># max simultaneous connections (NIO buffer)</span>
+server.tomcat.accept-count=100         <span class="cm"># queue depth when threads exhausted</span>
+server.tomcat.connection-timeout=20000 <span class="cm"># socket idle timeout (ms)</span>
+server.tomcat.keep-alive-timeout=60000 <span class="cm"># HTTP keep-alive timeout</span>
+
+<span class="cm"># Tuning formula for IO-bound services:</span>
+<span class="cm"># threads = (average_response_ms / average_service_ms) * target_rps</span>
+<span class="cm"># Example: 200ms avg, 20ms CPU, targeting 500 rps</span>
+<span class="cm"># threads = (200/20) * 500 = 50 threads needed</span>
+<span class="cm"># But add headroom: 100-150 threads</span></pre>
+
+<h2>4. Blocking vs Async I/O</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ Synchronous — thread starved</div>
+<pre style="font-size:11.5px"><span class="an">@GetMapping</span>(<span class="st">"/orders"</span>)
+<span class="kw">public</span> List&lt;Order&gt; getOrders() {
+    <span class="cm">// Thread HELD for 300ms</span>
+    <span class="cm">// while waiting for DB</span>
+    <span class="kw">return</span> orderRepo.findAll();
+    <span class="cm">// 200 threads × 300ms</span>
+    <span class="cm">// = 666 req/s ceiling</span>
+}</pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Async Servlet — thread released</div>
+<pre style="font-size:11.5px"><span class="an">@GetMapping</span>(<span class="st">"/orders"</span>)
+<span class="kw">public</span> CompletableFuture&lt;List&lt;Order&gt;&gt; getOrders() {
+    <span class="cm">// Worker thread returned to pool</span>
+    <span class="cm">// immediately after returning CF</span>
+    <span class="kw">return</span> CompletableFuture.supplyAsync(
+        () -&gt; orderRepo.findAll(),
+        dbExecutor
+    );
+    <span class="cm">// Tomcat resumes response when CF completes</span>
+}</pre>
+</div>
+</div>
+
+<h2>5. Request Pipeline Valves</h2>
+<pre><span class="cm">// Tomcat Valves = Filters at the container level (before Spring)</span>
+<span class="cm">// Useful for: access logs, connection limits, request dumping</span>
+
+<span class="an">@Bean</span>
+<span class="kw">public</span> TomcatServletWebServerFactory tomcatFactory() {
+    TomcatServletWebServerFactory factory = <span class="kw">new</span> TomcatServletWebServerFactory();
+
+    <span class="cm">// Access log valve</span>
+    AccessLogValve accessLog = <span class="kw">new</span> AccessLogValve();
+    accessLog.setDirectory(<span class="st">"/var/log/tomcat"</span>);
+    accessLog.setPattern(<span class="st">"%h %t \"%r\" %s %b %D"</span>);  <span class="cm">// %D = processing time ms</span>
+    accessLog.setSuffix(<span class="st">".log"</span>);
+    accessLog.setRotatable(<span class="kw">true</span>);
+
+    <span class="cm">// Connection limit valve (DDoS protection)</span>
+    RemoteAddrValve remoteAddrValve = <span class="kw">new</span> RemoteAddrValve();
+    remoteAddrValve.setDeny(<span class="st">"10\\.0\\.0\\..*"</span>);  <span class="cm">// block 10.0.0.x</span>
+
+    factory.addEngineValves(accessLog, remoteAddrValve);
+    <span class="kw">return</span> factory;
+}
+
+<span class="cm"># Or in application.properties:</span>
+server.tomcat.accesslog.enabled=true
+server.tomcat.accesslog.pattern=%t "%r" %s %D</pre>
+
+<h2>6. Production Monitoring</h2>
+<pre><span class="cm"># Actuator thread dump endpoint</span>
+curl http://localhost:8080/actuator/threaddump | jq '.threads[] | select(.threadState=="BLOCKED")'
+
+<span class="cm"># Metrics via Micrometer + Prometheus</span>
+<span class="cm"># tomcat.threads.busy           — currently busy worker threads</span>
+<span class="cm"># tomcat.threads.config.max     — max configured threads</span>
+<span class="cm"># tomcat.connections.current    — open HTTP connections</span>
+<span class="cm"># http.server.requests          — histogram: p99, p95 latencies</span>
+
+<span class="cm"># Alert when: tomcat.threads.busy / tomcat.threads.config.max > 0.8</span>
+<span class="cm"># That means 80% thread utilization → will degrade under spike</span>
+
+<span class="cm"># GracefulShutdown — drain in-flight requests before stopping</span>
+server.shutdown=graceful
+spring.lifecycle.timeout-per-shutdown-phase=30s</pre>
+</div>
+
+<!-- ═══════════════════════ 3. HIKARI ═══════════════════════ -->
+<div id="hikari" class="page">
+<h1>HikariCP — Database Connection Pooling</h1>
+<p class="sub">JDBC lifecycle, pool architecture, starvation, leaks, and tuning for production</p>
+
+<h2>1. Why Pooling Is Essential</h2>
+<div class="diag">
+<span class="r">Without pool — cost of ONE DB call:</span>
+  TCP handshake (3-way)              ~1ms
+  TLS negotiation (if SSL)          ~5ms
+  PostgreSQL auth (challenge-resp)  ~2ms
+  Connection ready                   ────
+                             Total: ~8ms overhead
+  Actual query execution:            ~2ms
+  <span class="r">Overhead = 4× query time! 1000 req/s = 8 seconds of connect time</span>
+
+<span class="g">With HikariCP:</span>
+  Pool initialised at startup        once
+  getConnection() from pool          ~0.05ms
+  Query execution                    ~2ms
+  returnConnection() to pool         ~0.01ms
+  <span class="g">Overhead ≈ 0.06ms → 133× faster</span>
+</div>
+
+<h2>2. JDBC Connection Lifecycle</h2>
+<div class="flow">
+<div class="fstep"><div class="fnum">1</div><div class="fbody"><strong>Pool initialization</strong><p>HikariCP creates <code>minimumIdle</code> physical JDBC connections at startup. Each: TCP connect → auth → idle in pool.</p></div></div>
+<div class="fstep"><div class="fnum">2</div><div class="fbody"><strong>Connection request</strong><p>Thread calls <code>dataSource.getConnection()</code>. HikariCP checks pool for idle connection. Returns instantly if available.</p></div></div>
+<div class="fstep"><div class="fnum">3</div><div class="fbody"><strong>Pool empty — wait</strong><p>If no idle connection, thread waits up to <code>connectionTimeout</code> (default 30s). If still none → <code>SQLTransientConnectionException</code>.</p></div></div>
+<div class="fstep"><div class="fnum">4</div><div class="fbody"><strong>Query execution</strong><p>Connection is <em>borrowed</em>. Thread executes SQL. Connection marked as <em>in-use</em>, not available to others.</p></div></div>
+<div class="fstep"><div class="fnum">5</div><div class="fbody"><strong>Connection return</strong><p>On <code>connection.close()</code> (usually via <code>@Transactional</code> commit/rollback), connection returned to pool, not physically closed.</p></div></div>
+<div class="fstep"><div class="fnum">6</div><div class="fbody"><strong>Eviction</strong><p>Connections idle longer than <code>idleTimeout</code> (default 10m) or older than <code>maxLifetime</code> (default 30m) are closed and replaced.</p></div></div>
+</div>
+
+<h2>3. HikariCP Configuration — Full Production Setup</h2>
+<pre><span class="cm"># application.properties</span>
+spring.datasource.url=jdbc:postgresql://db:5432/mydb?prepareThreshold=5
+spring.datasource.username=app
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+<span class="cm"># Pool sizing</span>
+spring.datasource.hikari.pool-name=MyApp-Pool
+spring.datasource.hikari.maximum-pool-size=20      <span class="cm"># max connections</span>
+spring.datasource.hikari.minimum-idle=5            <span class="cm"># always-ready connections</span>
+
+<span class="cm"># Timeouts (tune for your infrastructure)</span>
+spring.datasource.hikari.connection-timeout=3000   <span class="cm"># 3s: wait for free connection</span>
+spring.datasource.hikari.idle-timeout=600000       <span class="cm"># 10m: remove idle connections</span>
+spring.datasource.hikari.max-lifetime=1800000      <span class="cm"># 30m: replace old connections</span>
+spring.datasource.hikari.keepalive-time=60000      <span class="cm"># 1m: ping idle connections</span>
+
+<span class="cm"># Leak detection (CRITICAL for debugging)</span>
+spring.datasource.hikari.leak-detection-threshold=5000  <span class="cm"># 5s: warn if not returned</span>
+
+<span class="cm"># Connection validation</span>
+spring.datasource.hikari.connection-test-query=SELECT 1  <span class="cm"># PostgreSQL: not needed</span>
+spring.datasource.hikari.validation-timeout=2000
+
+<span class="cm"># PostgreSQL-specific</span>
+spring.datasource.hikari.data-source-properties.preparedStatementCacheQueries=256
+spring.datasource.hikari.data-source-properties.preparedStatementCacheSizeMiB=5</pre>
+
+<h2>4. Pool Sizing — The Formula</h2>
+<div class="diag">
+<span class="b">Connections = threads × (1/parallelism per thread)</span>
+
+<span class="g">Practical HikariCP formula (from HikariCP author):</span>
+  pool_size = (core_count × 2) + effective_spindle_count
+
+  For modern SSD-based PostgreSQL on 4-core server:
+  pool_size = (4 × 2) + 1 = 9  → use 10
+
+  For 8-core, network-bound (high latency to DB):
+  pool_size ≈ 8 × 2 = 16-20 is fine
+
+<span class="r">Misconception: "more connections = faster"</span>
+<span class="r">PostgreSQL with 200 connections on 8-core: 192 connections WAIT for CPU</span>
+<span class="r">Context switching overhead kills throughput</span>
+<span class="g">Fewer, focused connections outperform many competing ones</span>
+
+<span class="y">Rule: max_pool_size * num_app_instances ≤ (db_max_connections × 0.8)</span>
+<span class="y">Leave 20% for admin queries, monitoring, migrations</span>
+</div>
+
+<h2>5. Pool Starvation — Detection & Fix</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ Pool starvation scenario</div>
+<pre style="font-size:11.5px"><span class="an">@Transactional</span>
+<span class="kw">public</span> Order createOrder(req) {
+    Order o = orderRepo.save(req);
+
+    <span class="cm">// HOLDING DB connection while</span>
+    <span class="cm">// doing slow external API call!</span>
+    emailApi.sendConfirmation(o);  <span class="cm">// 2s</span>
+    paymentApi.reserve(o);         <span class="cm">// 1s</span>
+
+    <span class="kw">return</span> o;
+    <span class="cm">// Total: 3s × 20 threads</span>
+    <span class="cm">// = all 20 pool connections held!</span>
+    <span class="cm">// 21st request: SQLTransientConnectionException</span>
+}</pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Release connection before IO</div>
+<pre style="font-size:11.5px"><span class="an">@Transactional</span>
+<span class="kw">public</span> Order createOrder(req) {
+    Order o = orderRepo.save(req);
+    <span class="kw">return</span> o;
+    <span class="cm">// TX commits here, conn returned!</span>
+}
+
+<span class="cm">// Then, outside @Transactional:</span>
+<span class="kw">public</span> Order processOrder(req) {
+    Order o = createOrder(req);  <span class="cm">// TX done</span>
+    <span class="cm">// Connection already returned</span>
+    emailApi.sendConfirmation(o);
+    paymentApi.reserve(o);
+    <span class="kw">return</span> o;
+}</pre>
+</div>
+</div>
+
+<h2>6. Connection Leak Detection</h2>
+<pre><span class="cm">// Leak: code acquires connection but never closes it</span>
+<span class="kw">public void</span> buggyMethod() <span class="kw">throws</span> SQLException {
+    Connection conn = dataSource.getConnection();  <span class="cm">// acquired</span>
+    Statement stmt = conn.createStatement();
+    stmt.execute(<span class="st">"SELECT 1"</span>);
+    <span class="cm">// FORGOT conn.close()! Connection leaked forever!</span>
+}
+
+<span class="cm">// HikariCP leak detection log (after leakDetectionThreshold):</span>
+<span class="cm">// WARN  HikariPool-1 - Connection leak detection triggered for</span>
+<span class="cm">// com.zaxxer.hikari.pool.ProxyConnection@7f3c5a at stack:</span>
+<span class="cm">// com.example.BuggyService.buggyMethod(BuggyService.java:42)</span>
+<span class="cm">// ← tells you EXACTLY where the leak is!</span>
+
+<span class="cm">// Always use try-with-resources:</span>
+<span class="kw">try</span> (Connection conn = dataSource.getConnection();
+     PreparedStatement ps = conn.prepareStatement(<span class="st">"SELECT 1"</span>)) {
+    ps.execute();
+}  <span class="cm">// auto-closed, returned to pool</span>
+
+<span class="cm">// Actuator metrics to monitor pool health:</span>
+<span class="cm">// hikaricp.connections.active     — in use now</span>
+<span class="cm">// hikaricp.connections.idle       — available</span>
+<span class="cm">// hikaricp.connections.pending    — threads waiting for connection</span>
+<span class="cm">// hikaricp.connections.timeout    — connections timed out (alert on this!)</span></pre>
+
+<h2>7. Transaction Boundary & Connection Timing</h2>
+<pre><span class="cm">// @Transactional marks where connection is HELD</span>
+<span class="cm">// Connection acquired at: first database operation inside @Transactional</span>
+<span class="cm">// Connection returned at: @Transactional method exits (commit/rollback)</span>
+
+<span class="cm">// ❌ Long transaction = long connection hold</span>
+<span class="an">@Transactional</span>  <span class="cm">// connection held for ENTIRE method duration</span>
+<span class="kw">public void</span> badExample() {
+    <span class="kw">var</span> data = repo.findAll();          <span class="cm">// connection acquired here</span>
+    Thread.sleep(<span class="num">5000</span>);               <span class="cm">// HOLDS connection for 5 seconds!</span>
+    <span class="kw">for</span> (<span class="kw">var</span> item : data) process(item); <span class="cm">// each call uses same connection</span>
+}                                       <span class="cm">// connection returned here</span>
+
+<span class="cm">// ✅ Load data first, process outside transaction</span>
+<span class="kw">public void</span> goodExample() {
+    List&lt;Data&gt; data;
+    <span class="kw">try</span> (var tx = txManager.beginTransaction()) {
+        data = repo.findAll();
+    }  <span class="cm">// connection returned immediately after read</span>
+    processInMemory(data);  <span class="cm">// no connection needed</span>
+}</pre>
+</div>
+
+<!-- ═══════════════════════ 4. REST ARCH ═══════════════════════ -->
+<div id="restarch" class="page">
+<h1>REST Architecture — Properly</h1>
+<p class="sub">Fielding's constraints, HTTP semantics, resource design, caching, HATEOAS — production-grade</p>
+
+<h2>1. Roy Fielding's 6 REST Constraints</h2>
+<div class="g2">
+<div class="card"><div class="card-t">1. Client-Server</div><p>UI concerns separate from data storage. Client doesn't know DB schema. Server doesn't know UI framework. Both evolve independently.</p></div>
+<div class="card"><div class="card-t">2. Stateless</div><p>Every request contains ALL information. No session state on server between requests. State lives in client (JWT, cookies) or resource (DB).</p></div>
+<div class="card"><div class="card-t">3. Cacheable</div><p>Responses must declare themselves cacheable or not via Cache-Control. GET responses cached by CDN/browser saves bandwidth and latency.</p></div>
+<div class="card"><div class="card-t">4. Uniform Interface</div><p>The "REST" constraint. Resource identification in URI. Manipulation via representations. Self-descriptive messages. HATEOAS.</p></div>
+<div class="card"><div class="card-t">5. Layered System</div><p>Client can't tell if connected to origin or proxy. Load balancers, CDNs, API gateways are transparent layers.</p></div>
+<div class="card"><div class="card-t">6. Code on Demand (optional)</div><p>Server can extend client by sending executable code (JavaScript). Makes client lighter. Rarely used in REST APIs.</p></div>
+</div>
+
+<h2>2. HTTP Status Codes — Correct Usage</h2>
+<table>
+<tr><th>Code</th><th>Meaning</th><th>When to use</th></tr>
+<tr><td><span class="pill pg">200 OK</span></td><td>Success with body</td><td>GET, PUT, PATCH responses</td></tr>
+<tr><td><span class="pill pg">201 Created</span></td><td>Resource created</td><td>POST creating a resource. Include Location header.</td></tr>
+<tr><td><span class="pill pg">204 No Content</span></td><td>Success, no body</td><td>DELETE, PATCH where response body not needed</td></tr>
+<tr><td><span class="pill pb">301 Moved</span></td><td>Permanent redirect</td><td>API moved to new URL. Client should update bookmarks.</td></tr>
+<tr><td><span class="pill pb">304 Not Modified</span></td><td>Cache valid</td><td>GET with If-None-Match/If-Modified-Since, resource unchanged</td></tr>
+<tr><td><span class="pill po">400 Bad Request</span></td><td>Malformed request</td><td>Invalid JSON, missing required field, wrong type</td></tr>
+<tr><td><span class="pill po">401 Unauthorized</span></td><td>Not authenticated</td><td>Missing/invalid JWT. (Despite name, means unauthenticated)</td></tr>
+<tr><td><span class="pill po">403 Forbidden</span></td><td>Not authorized</td><td>Authenticated but insufficient role/permission</td></tr>
+<tr><td><span class="pill po">404 Not Found</span></td><td>Resource not found</td><td>GET /orders/999 where 999 doesn't exist</td></tr>
+<tr><td><span class="pill po">409 Conflict</span></td><td>State conflict</td><td>Duplicate create, optimistic lock conflict</td></tr>
+<tr><td><span class="pill po">422 Unprocessable</span></td><td>Semantic error</td><td>JSON valid but business rule violated</td></tr>
+<tr><td><span class="pill po">429 Too Many Req</span></td><td>Rate limited</td><td>Include Retry-After header</td></tr>
+<tr><td><span class="pill pr">500 Server Error</span></td><td>Unexpected failure</td><td>Unhandled exception. Log it, don't expose internals.</td></tr>
+<tr><td><span class="pill pr">503 Unavailable</span></td><td>Service down</td><td>DB connection failed, circuit breaker open</td></tr>
+</table>
+
+<h2>3. Resource Modeling</h2>
+<pre><span class="cm">// Resources are NOUNS, not verbs</span>
+<span class="cm">// ❌ /getOrders  /createUser  /deleteProduct</span>
+<span class="cm">// ✅ /orders     /users        /products</span>
+
+<span class="cm">// Hierarchy: sub-resources under parent</span>
+GET    /customers/42/orders          <span class="cm">// orders OF customer 42</span>
+POST   /customers/42/orders          <span class="cm">// create order for customer 42</span>
+GET    /customers/42/orders/7        <span class="cm">// specific order</span>
+DELETE /customers/42/orders/7        <span class="cm">// cancel order</span>
+
+<span class="cm">// Actions that aren't CRUD: use sub-resource or verb noun</span>
+POST /orders/7/cancellations         <span class="cm">// create a cancellation (noun)</span>
+POST /orders/7/fulfillments          <span class="cm">// fulfill the order</span>
+POST /payments/charge                <span class="cm">// acceptable when truly an action</span>
+
+<span class="cm">// Never deep nesting (max 2 levels):</span>
+<span class="cm">// ❌ /customers/42/orders/7/items/3/reviews/1</span>
+<span class="cm">// ✅ /order-items/3/reviews  (item has its own identity)</span></pre>
+
+<h2>4. HTTP Caching</h2>
+<pre><span class="cm">// Server-side caching headers</span>
+<span class="an">@GetMapping</span>(<span class="st">"/products/{id}"</span>)
+<span class="kw">public</span> ResponseEntity&lt;ProductDto&gt; getProduct(<span class="an">@PathVariable</span> Long id) {
+    Product product = productService.findById(id);
+
+    <span class="cm">// ETag: hash of content, enables conditional requests</span>
+    String etag = <span class="st">"\""</span> + Integer.toHexString(product.hashCode()) + <span class="st">"\""</span>;
+
+    <span class="kw">return</span> ResponseEntity.ok()
+        .eTag(etag)
+        .cacheControl(CacheControl.maxAge(<span class="num">1</span>, TimeUnit.HOURS)
+            .mustRevalidate())                   <span class="cm">// revalidate after 1 hour</span>
+        .lastModified(product.getUpdatedAt())    <span class="cm">// If-Modified-Since support</span>
+        .body(productMapper.toDto(product));
+}
+
+<span class="cm">// Client sends: GET /products/1  If-None-Match: "abc123"</span>
+<span class="cm">// Server: unchanged → 304 Not Modified (no body, saves bandwidth)</span>
+<span class="cm">// Server: changed  → 200 OK with new ETag</span>
+
+<span class="cm">// Cache-Control strategies:</span>
+CacheControl.noStore()                     <span class="cm">// never cache (user data, security)</span>
+CacheControl.noCache()                     <span class="cm">// cache but revalidate every request</span>
+CacheControl.maxAge(Duration.ofMinutes(5)) <span class="cm">// cache for 5 minutes</span>
+CacheControl.maxAge(Duration.ofHours(24))
+    .cachePublic()                         <span class="cm">// CDN can cache (public resource)</span></pre>
+
+<h2>5. Content Negotiation</h2>
+<pre><span class="cm">// Client states preference via Accept header:</span>
+<span class="cm">// Accept: application/json, application/xml;q=0.9, */*;q=0.8</span>
+<span class="cm">// Spring picks best match from controller's 'produces'</span>
+
+<span class="an">@GetMapping</span>(value = <span class="st">"/report"</span>,
+    produces = {MediaType.APPLICATION_JSON_VALUE,
+                MediaType.APPLICATION_PDF_VALUE,
+                <span class="st">"text/csv"</span>})
+<span class="kw">public</span> ResponseEntity&lt;?&gt; getReport(
+        <span class="an">@RequestHeader</span>(HttpHeaders.ACCEPT) String accept) {
+
+    <span class="kw">if</span> (accept.contains(<span class="st">"application/pdf"</span>)) {
+        <span class="kw">byte</span>[] pdf = reportService.generatePdf();
+        <span class="kw">return</span> ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdf);
+    }
+    <span class="kw">if</span> (accept.contains(<span class="st">"text/csv"</span>)) {
+        String csv = reportService.generateCsv();
+        <span class="kw">return</span> ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(<span class="st">"text/csv"</span>))
+            .body(csv);
+    }
+    <span class="kw">return</span> ResponseEntity.ok(reportService.generateDto());  <span class="cm">// JSON default</span>
+}</pre>
+
+<h2>6. Idempotency & Safe Methods</h2>
+<table>
+<tr><th>Method</th><th>Safe?</th><th>Idempotent?</th><th>Body?</th><th>Notes</th></tr>
+<tr><td>GET</td><td>✅ No state change</td><td>✅ Same result always</td><td>No</td><td>Can be cached, bookmarked</td></tr>
+<tr><td>HEAD</td><td>✅</td><td>✅</td><td>No</td><td>GET without body, for ETags</td></tr>
+<tr><td>OPTIONS</td><td>✅</td><td>✅</td><td>No</td><td>CORS preflight</td></tr>
+<tr><td>POST</td><td>❌</td><td>❌</td><td>Yes</td><td>Creates new resource each time</td></tr>
+<tr><td>PUT</td><td>❌</td><td>✅ Same result</td><td>Yes</td><td>Replace entire resource</td></tr>
+<tr><td>PATCH</td><td>❌</td><td>Depends*</td><td>Yes</td><td>Conditional PATCH can be idempotent</td></tr>
+<tr><td>DELETE</td><td>❌</td><td>✅</td><td>No</td><td>Deleting already-deleted → 404 or 204</td></tr>
+</table>
+
+<h2>7. Pagination Strategies</h2>
+<pre><span class="cm">// Strategy 1: Offset pagination (simple but has issues)</span>
+GET /orders?page=3&size=20&sort=createdAt,desc
+<span class="cm">// SQL: OFFSET 60 LIMIT 20</span>
+<span class="cm">// Problem: items shift between pages when new records added</span>
+<span class="cm">// Problem: OFFSET is slow on large tables (scans 60 rows to skip)</span>
+
+<span class="cm">// Strategy 2: Cursor pagination (production preferred)</span>
+GET /orders?limit=20
+<span class="cm">// Response: { "data": [...], "nextCursor": "MjAyNC0wMS0xNXwxMjM0NQ==" }</span>
+GET /orders?cursor=MjAyNC0wMS0xNXwxMjM0NQ==&limit=20
+
+<span class="cm">// Cursor = base64(lastCreatedAt + "|" + lastId)</span>
+<span class="cm">// SQL: WHERE (created_at, id) < (?, ?) ORDER BY created_at DESC, id DESC LIMIT 20</span>
+<span class="cm">// Uses composite index: CREATE INDEX idx_orders_created_id ON orders(created_at, id)</span>
+
+<span class="an">@GetMapping</span>(<span class="st">"/orders"</span>)
+<span class="kw">public</span> CursorPageResponse&lt;OrderDto&gt; getOrders(
+        <span class="an">@RequestParam</span>(required = <span class="kw">false</span>) String cursor,
+        <span class="an">@RequestParam</span>(defaultValue = <span class="st">"20"</span>) <span class="kw">int</span> limit) {
+
+    Instant afterTime = <span class="kw">null</span>;
+    Long afterId = <span class="kw">null</span>;
+
+    <span class="kw">if</span> (cursor != <span class="kw">null</span>) {
+        String decoded = <span class="kw">new</span> String(Base64.decode(cursor));
+        String[] parts = decoded.split(<span class="st">"\\|"</span>);
+        afterTime = Instant.parse(parts[<span class="num">0</span>]);
+        afterId = Long.parseLong(parts[<span class="num">1</span>]);
+    }
+
+    List&lt;Order&gt; orders = orderRepo.findAfterCursor(afterTime, afterId, limit + <span class="num">1</span>);
+    <span class="kw">boolean</span> hasMore = orders.size() > limit;
+    <span class="kw">if</span> (hasMore) orders.remove(orders.size() - <span class="num">1</span>);
+
+    String nextCursor = <span class="kw">null</span>;
+    <span class="kw">if</span> (hasMore) {
+        Order last = orders.get(orders.size() - <span class="num">1</span>);
+        nextCursor = Base64.encode(last.getCreatedAt() + <span class="st">"|"</span> + last.getId());
+    }
+    <span class="kw">return new</span> CursorPageResponse&lt;&gt;(orders.stream().map(mapper::toDto).toList(), nextCursor, hasMore);
+}</pre>
+</div>
+
+<!-- ═══════════════════════ 5. AUTO-CONFIG ═══════════════════════ -->
+<div id="autoconf" class="page">
+<h1>Spring Boot Auto-Configuration Internals</h1>
+<p class="sub">How @EnableAutoConfiguration scans, conditions evaluate, and 300+ beans get registered</p>
+
+<h2>1. The @SpringBootApplication Unpacked</h2>
+<pre><span class="cm">// @SpringBootApplication = three annotations combined:</span>
+<span class="an">@SpringBootConfiguration</span>   <span class="cm">// = @Configuration: this is a config class</span>
+<span class="an">@EnableAutoConfiguration</span>   <span class="cm">// THE key: triggers auto-config magic</span>
+<span class="an">@ComponentScan</span>             <span class="cm">// scan this package + subpackages</span>
+<span class="kw">public class</span> <span class="nb">MyApp</span> {
+    <span class="kw">public static void</span> main(String[] args) {
+        SpringApplication.run(MyApp.<span class="kw">class</span>, args);
+    }
+}</pre>
+
+<h2>2. Auto-Configuration Discovery</h2>
+<div class="diag">
+<span class="b">Java 17+ (Spring Boot 3.x):</span>
+  @EnableAutoConfiguration triggers AutoConfigurationImportSelector
+  → reads META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+  → 143+ class names listed (one per auto-config)
+
+<span class="b">Pre-Spring Boot 3 (Java 8-17):</span>
+  → reads META-INF/spring.factories
+  → key: org.springframework.boot.autoconfigure.EnableAutoConfiguration
+  → value: comma-separated list of auto-config classes
+
+Each starter JAR ships its own imports file:
+  spring-boot-autoconfigure.jar:
+    ...DataSourceAutoConfiguration
+    ...HibernateJpaAutoConfiguration
+    ...WebMvcAutoConfiguration
+    ...SecurityAutoConfiguration
+    ... (143 more)
+
+  spring-boot-starter-data-redis.jar:
+    ...RedisAutoConfiguration
+    ...RedisRepositoriesAutoConfiguration
+</div>
+
+<h2>3. Conditional Annotations — The Decision Engine</h2>
+<pre><span class="cm">// Auto-config classes are heavily conditional</span>
+<span class="cm">// Spring evaluates each condition, SKIPS if false</span>
+
+<span class="an">@AutoConfiguration</span>
+<span class="an">@ConditionalOnClass</span>(DataSource.<span class="kw">class</span>)            <span class="cm">// skip if no JDBC on classpath</span>
+<span class="an">@ConditionalOnMissingBean</span>(DataSource.<span class="kw">class</span>)      <span class="cm">// skip if you defined your own</span>
+<span class="an">@EnableConfigurationProperties</span>(DataSourceProperties.<span class="kw">class</span>)
+<span class="kw">public class</span> <span class="nb">DataSourceAutoConfiguration</span> {
+
+    <span class="an">@Bean</span>
+    <span class="an">@ConditionalOnMissingBean</span>
+    <span class="kw">public</span> DataSourceInitializerInvoker dataSourceInitializerInvoker(...) { ... }
+}
+
+<span class="cm">// Full conditional catalog:</span>
+<span class="an">@ConditionalOnClass</span>(name = <span class="st">"com.zaxxer.hikari.HikariDataSource"</span>)  <span class="cm">// by class name (safe)</span>
+<span class="an">@ConditionalOnMissingClass</span>(<span class="st">"org.h2.Driver"</span>)                       <span class="cm">// only if class absent</span>
+<span class="an">@ConditionalOnBean</span>(PasswordEncoder.<span class="kw">class</span>)                          <span class="cm">// if bean exists</span>
+<span class="an">@ConditionalOnMissingBean</span>(PasswordEncoder.<span class="kw">class</span>)                   <span class="cm">// if bean ABSENT</span>
+<span class="an">@ConditionalOnProperty</span>(name = <span class="st">"spring.datasource.url"</span>)             <span class="cm">// if property set</span>
+<span class="an">@ConditionalOnProperty</span>(name = <span class="st">"feature.x.enabled"</span>, havingValue = <span class="st">"true"</span>)
+<span class="an">@ConditionalOnWebApplication</span>(type = SERVLET)                        <span class="cm">// only in web context</span>
+<span class="an">@ConditionalOnNotWebApplication</span>                                     <span class="cm">// only in non-web</span>
+<span class="an">@ConditionalOnExpression</span>(<span class="st">"'${app.env}' == 'prod'"</span>)               <span class="cm">// SpEL expression</span>
+<span class="an">@ConditionalOnResource</span>(resources = <span class="st">"classpath:logback-spring.xml"</span>) <span class="cm">// file exists</span></pre>
+
+<h2>4. Starter Dependencies — What They Pull In</h2>
+<div class="g2">
+<div class="card">
+<div class="card-t">spring-boot-starter-web</div>
+<pre style="font-size:11.5px">spring-boot-starter
+  spring-boot-starter-tomcat
+    tomcat-embed-core
+    tomcat-embed-websocket
+  spring-webmvc
+    spring-context
+    spring-web
+  spring-boot-starter-json
+    jackson-databind
+    jackson-datatype-jdk8
+    jackson-datatype-jsr310
+
+→ auto-config: WebMvcAutoConfiguration
+  creates: DispatcherServlet, MessageConverters,
+           ContentNegotiation, ViewResolvers</pre>
+</div>
+<div class="card">
+<div class="card-t">spring-boot-starter-data-jpa</div>
+<pre style="font-size:11.5px">spring-boot-starter-jdbc
+  HikariCP
+  spring-jdbc
+hibernate-core
+spring-data-jpa
+  spring-data-commons
+
+→ auto-config: DataSourceAutoConfiguration
+               JpaRepositoriesAutoConfiguration
+               HibernateJpaAutoConfiguration
+  creates: DataSource (HikariCP), EntityManagerFactory,
+           JpaTransactionManager, all @Repository beans</pre>
+</div>
+</div>
+
+<h2>5. Application Context Initialization Sequence</h2>
+<div class="diag">
+<span class="b">SpringApplication.run()</span>
+  │
+  ├─ <span class="g">prepareEnvironment()</span>
+  │    load application.properties / .yml
+  │    resolve ${placeholders} and @Value
+  │    activate profiles (@Profile conditions)
+  │
+  ├─ <span class="g">createApplicationContext()</span>
+  │    AnnotationConfigServletWebServerApplicationContext
+  │
+  ├─ <span class="g">prepareContext()</span>
+  │    register primary source (MyApp.class)
+  │    call ApplicationContextInitializers
+  │
+  ├─ <span class="g">refreshContext()</span>   ← THE main work
+  │    invokeBeanFactoryPostProcessors()
+  │      ConfigurationClassPostProcessor
+  │        → @ComponentScan → find all @Component classes
+  │        → @Import → process auto-config imports
+  │        → evaluate @Conditional on each class
+  │        → register BeanDefinitions for passing classes
+  │    registerBeanPostProcessors()
+  │      AutowiredAnnotationBeanPostProcessor
+  │      CommonAnnotationBeanPostProcessor
+  │      AopProxyCreatingBPP
+  │    finishBeanFactoryInitialization()
+  │      instantiate all singleton beans
+  │      inject dependencies
+  │      call @PostConstruct methods
+  │      start EmbeddedWebServer (Tomcat binds to port 8080)
+  │
+  └─ <span class="g">callRunners()</span>
+       ApplicationRunner.run() → your startup code
+</div>
+
+<h2>6. Override Auto-Configuration</h2>
+<pre><span class="cm">// Override auto-configured bean (your definition wins):</span>
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="nb">MyDataSourceConfig</span> {
+    <span class="an">@Bean</span>  <span class="cm">// @ConditionalOnMissingBean means this overrides auto-config</span>
+    <span class="kw">public</span> DataSource dataSource() {
+        HikariDataSource ds = <span class="kw">new</span> HikariDataSource();
+        ds.setJdbcUrl(<span class="st">"jdbc:postgresql://primary:5432/mydb"</span>);
+        ds.setMaximumPoolSize(<span class="num">30</span>);
+        <span class="kw">return</span> ds;
+    }
+}
+
+<span class="cm">// Exclude auto-config entirely:</span>
+<span class="an">@SpringBootApplication</span>(exclude = {
+    DataSourceAutoConfiguration.<span class="kw">class</span>,
+    SecurityAutoConfiguration.<span class="kw">class</span>
+})
+
+<span class="cm">// Or in properties:</span>
+spring.autoconfigure.exclude=\
+  org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+<span class="cm">// Debug which auto-configs applied/skipped:</span>
+java -jar app.jar --debug
+<span class="cm">// Prints: "CONDITIONS EVALUATION REPORT"</span>
+<span class="cm">// Positive matches: DataSourceAutoConfiguration MATCHED</span>
+<span class="cm">// Negative matches: ElasticsearchAutoConfiguration DID NOT MATCH</span>
+<span class="cm">//   - @ConditionalOnClass: ElasticsearchClient not found</span>
+
+<span class="cm">// Or add: logging.level.org.springframework.boot.autoconfigure=DEBUG</span></pre>
+</div>
+
+<!-- ═══════════════════════ 6. TRANSACTIONS ═══════════════════════ -->
+<div id="tx" class="page">
+<h1>Transaction Management Internals</h1>
+<p class="sub">Proxy interception, propagation types, isolation levels, rollback rules, and microservice bugs</p>
+
+<h2>1. How @Transactional Works — Proxy Intercept</h2>
+<div class="diag">
+<span class="b">Startup:</span> Spring wraps OrderService in CGLIB proxy
+
+<span class="b">Runtime call:</span> orderController → proxy.createOrder(req)
+  │
+  ▼
+<span class="b">TransactionInterceptor.invoke() [AOP @Around]</span>
+  ├─ 1. Determine propagation behavior
+  ├─ 2. <span class="g">PlatformTransactionManager.getTransaction()</span>
+  │       → DataSourceTransactionManager (JDBC)
+  │       → JpaTransactionManager (JPA/Hibernate)
+  │       Check ThreadLocal: existing transaction?
+  │         No  → open new connection from pool, BEGIN
+  │         Yes → join/suspend based on Propagation
+  ├─ 3. Bind connection to current thread (ThreadLocal)
+  ├─ 4. <span class="g">pjp.proceed() → real orderService.createOrder()</span>
+  │       All DB operations in this thread use SAME connection
+  ├─ 5a. No exception: <span class="g">txManager.commit()</span>
+  │         Hibernate flush → SQL sent to DB → COMMIT
+  │         Connection returned to HikariCP pool
+  └─ 5b. RuntimeException: <span class="r">txManager.rollback()</span>
+           ROLLBACK → connection returned to pool
+</div>
+
+<h2>2. Propagation Types — All 7</h2>
+<table>
+<tr><th>Propagation</th><th>Existing TX?</th><th>Behavior</th><th>Use Case</th></tr>
+<tr><td><span class="pill pb">REQUIRED</span></td><td>Yes / No</td><td>Join existing or create new</td><td>Default. Most service methods.</td></tr>
+<tr><td><span class="pill po">REQUIRES_NEW</span></td><td>Yes → suspend</td><td>Always create new TX</td><td>Audit logs, notifications (must not rollback with caller)</td></tr>
+<tr><td><span class="pill pp">NESTED</span></td><td>Yes → savepoint</td><td>Nested within outer TX</td><td>Partial rollback within outer TX</td></tr>
+<tr><td><span class="pill py">SUPPORTS</span></td><td>Yes → join; No → no TX</td><td>Optional TX</td><td>Read-only operations that work with or without TX</td></tr>
+<tr><td><span class="pill pr">NOT_SUPPORTED</span></td><td>Yes → suspend</td><td>Run without TX</td><td>Long-running non-transactional code inside TX boundary</td></tr>
+<tr><td><span class="pill pr">NEVER</span></td><td>Yes → exception</td><td>Must NOT have TX</td><td>Operations that must never run in a transaction</td></tr>
+<tr><td><span class="pill py">MANDATORY</span></td><td>No → exception</td><td>Must HAVE TX</td><td>Repository methods that need caller to provide TX</td></tr>
+</table>
+
+<h2>3. Critical Bug: REQUIRES_NEW Within Same Bean</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ BROKEN — self-invocation bypasses proxy</div>
+<pre style="font-size:11.5px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+
+    <span class="an">@Transactional</span>
+    <span class="kw">public void</span> createOrder(Order o) {
+        orderRepo.save(o);
+        <span class="cm">// this.log() calls REAL object</span>
+        <span class="cm">// not the proxy!</span>
+        <span class="cm">// REQUIRES_NEW has NO EFFECT</span>
+        <span class="kw">this</span>.logAudit(o);
+    }
+
+    <span class="an">@Transactional</span>(propagation = REQUIRES_NEW)
+    <span class="kw">public void</span> logAudit(Order o) {
+        <span class="cm">// Runs in SAME transaction!</span>
+        <span class="cm">// If createOrder rolls back</span>
+        <span class="cm">// audit log rolls back too!</span>
+    }
+}</pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Fix: separate Spring bean</div>
+<pre style="font-size:11.5px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">OrderService</span> {
+    <span class="kw">private final</span> AuditService auditService;
+
+    <span class="an">@Transactional</span>
+    <span class="kw">public void</span> createOrder(Order o) {
+        orderRepo.save(o);
+        <span class="cm">// Calls via proxy!</span>
+        auditService.logAudit(o);
+        <span class="cm">// ↑ REQUIRES_NEW works!</span>
+        <span class="cm">// Separate connection, separate TX</span>
+        <span class="cm">// Audit survives even if order rolls back</span>
+    }
+}
+
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">AuditService</span> {
+    <span class="an">@Transactional</span>(propagation = REQUIRES_NEW)
+    <span class="kw">public void</span> logAudit(Order o) { ... }
+}</pre>
+</div>
+</div>
+
+<h2>4. Isolation Levels — Database Anomalies</h2>
+<table>
+<tr><th>Isolation Level</th><th>Dirty Read</th><th>Non-repeatable Read</th><th>Phantom Read</th><th>Performance</th></tr>
+<tr><td><span class="pill pr">READ_UNCOMMITTED</span></td><td>Possible</td><td>Possible</td><td>Possible</td><td>Highest</td></tr>
+<tr><td><span class="pill po">READ_COMMITTED</span></td><td>✅ Prevented</td><td>Possible</td><td>Possible</td><td>High (PG default)</td></tr>
+<tr><td><span class="pill py">REPEATABLE_READ</span></td><td>✅</td><td>✅ Prevented</td><td>Possible</td><td>Medium (MySQL InnoDB default)</td></tr>
+<tr><td><span class="pill pg">SERIALIZABLE</span></td><td>✅</td><td>✅</td><td>✅ Prevented</td><td>Lowest</td></tr>
+</table>
+<pre><span class="an">@Transactional</span>(isolation = Isolation.READ_COMMITTED)  <span class="cm">// default in most</span>
+<span class="kw">public</span> Order createOrder(OrderRequest req) { ... }
+
+<span class="cm">// When to use REPEATABLE_READ:</span>
+<span class="cm">// Reading balance twice in one transaction, no one can change it between reads</span>
+<span class="an">@Transactional</span>(isolation = Isolation.REPEATABLE_READ)
+<span class="kw">public void</span> transfer(Long fromId, Long toId, BigDecimal amount) {
+    Account from = accountRepo.findById(fromId);  <span class="cm">// read 1</span>
+    <span class="cm">// REPEATABLE_READ: same value if read again</span>
+    account.debit(amount);
+    accountRepo.save(from);
+}</pre>
+
+<h2>5. Rollback Rules</h2>
+<pre><span class="cm">// DEFAULT: rollback on RuntimeException (unchecked), NOT on checked Exception</span>
+<span class="an">@Transactional</span>
+<span class="kw">public void</span> save() <span class="kw">throws</span> IOException {
+    repo.save(entity);
+    <span class="kw">throw new</span> IOException(<span class="st">"I/O error"</span>);
+    <span class="cm">// COMMITS! IOException is checked = no rollback by default</span>
+}
+
+<span class="cm">// Fix: explicit rollbackFor</span>
+<span class="an">@Transactional</span>(rollbackFor = IOException.<span class="kw">class</span>)
+
+<span class="cm">// Or: extend RuntimeException (preferred)</span>
+<span class="kw">public class</span> <span class="nb">StorageException</span> <span class="kw">extends</span> RuntimeException { ... }
+
+<span class="cm">// noRollbackFor: commit despite unchecked exception</span>
+<span class="an">@Transactional</span>(noRollbackFor = OptimisticLockException.<span class="kw">class</span>)
+<span class="kw">public void</span> optimisticUpdate(Entity e) {
+    <span class="cm">// retry logic handles OptimisticLockException</span>
+    <span class="cm">// but we still want to commit the partial work</span>
+}</pre>
+
+<h2>6. @Transactional on Private Methods — Silently Ignored</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ @Transactional on private — ignored!</div>
+<pre style="font-size:11.5px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">ProductService</span> {
+    <span class="an">@Transactional</span>  <span class="cm">// IGNORED! No exception thrown!</span>
+    <span class="kw">private void</span> updateStock(Long id, int qty) {
+        <span class="cm">// No transaction! Spring proxies</span>
+        <span class="cm">// can't override private methods</span>
+    }
+}</pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Must be public</div>
+<pre style="font-size:11.5px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">ProductService</span> {
+    <span class="cm">// Public: proxy can intercept</span>
+    <span class="an">@Transactional</span>
+    <span class="kw">public void</span> updateStock(Long id, int qty) {
+        <span class="cm">// Transaction works!</span>
+    }
+    <span class="cm">// Keep it public even if only used</span>
+    <span class="cm">// within the same class via injection</span>
+}</pre>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════ 7. JACKSON ═══════════════════════ -->
+<div id="jackson" class="page">
+<h1>Jackson Serialization & Deserialization</h1>
+<p class="sub">ObjectMapper internals, reflection, custom serializers, lazy loading, circular refs, optimizations</p>
+
+<h2>1. ObjectMapper Pipeline</h2>
+<div class="diag">
+<span class="b">Serialization (Java → JSON):</span>
+ObjectMapper.writeValue(outputStream, object)
+  │
+  ├─ <span class="g">BeanSerializer</span> (selected via SerializerFactory)
+  │    introspect fields/getters via reflection once (cached in TypeFactory)
+  │    for each visible property:
+  │      ├─ field type has custom @JsonSerializer? → use it
+  │      ├─ is another POJO? → recursively serialize
+  │      ├─ is Collection? → ArraySerializer
+  │      └─ is primitive/String? → ScalarSerializer
+  │
+  └─ <span class="g">JsonGenerator</span> writes JSON tokens to stream
+
+<span class="b">Deserialization (JSON → Java):</span>
+ObjectMapper.readValue(jsonString, Order.class)
+  │
+  ├─ <span class="g">JsonParser</span> tokenises JSON stream
+  │
+  └─ <span class="g">BeanDeserializer</span>
+       create instance (no-arg constructor OR @JsonCreator)
+       for each JSON token:
+         find matching property → call setter OR direct field set
+         type coerce: "123" → int, "2024-01-15" → LocalDate
+</div>
+
+<h2>2. Visibility Rules & Annotations</h2>
+<pre><span class="cm">// Jackson sees fields/methods based on visibility rules</span>
+<span class="cm">// Default: public fields + public getters/setters</span>
+<span class="an">@JsonAutoDetect</span>(fieldVisibility = JsonAutoDetect.Visibility.ANY)  <span class="cm">// see all fields</span>
+<span class="kw">public class</span> <span class="nb">Order</span> {
+    <span class="kw">private</span> String id;               <span class="cm">// visible due to ANY</span>
+    <span class="an">@JsonIgnore</span>
+    <span class="kw">private</span> String internalNotes;    <span class="cm">// excluded from JSON</span>
+
+    <span class="an">@JsonProperty</span>(<span class="st">"order_id"</span>)
+    <span class="kw">private</span> String id;               <span class="cm">// renamed in JSON</span>
+
+    <span class="an">@JsonFormat</span>(pattern = <span class="st">"yyyy-MM-dd'T'HH:mm:ss'Z'"</span>, timezone = <span class="st">"UTC"</span>)
+    <span class="kw">private</span> LocalDateTime createdAt;
+
+    <span class="an">@JsonInclude</span>(JsonInclude.Include.NON_NULL)
+    <span class="kw">private</span> String optionalField;    <span class="cm">// omitted if null</span>
+
+    <span class="an">@JsonSerialize</span>(using = MoneySerializer.<span class="kw">class</span>)
+    <span class="an">@JsonDeserialize</span>(using = MoneyDeserializer.<span class="kw">class</span>)
+    <span class="kw">private</span> BigDecimal totalAmount;
+}</pre>
+
+<h2>3. Custom Serializer & Deserializer</h2>
+<pre><span class="cm">// Custom serializer: BigDecimal → always 2 decimal places</span>
+<span class="kw">public class</span> <span class="nb">MoneySerializer</span> <span class="kw">extends</span> JsonSerializer&lt;BigDecimal&gt; {
+    <span class="an">@Override</span>
+    <span class="kw">public void</span> serialize(BigDecimal value, JsonGenerator gen,
+                          SerializerProvider provider) <span class="kw">throws</span> IOException {
+        gen.writeString(value.setScale(<span class="num">2</span>, RoundingMode.HALF_UP).toPlainString());
+    }
+}
+
+<span class="cm">// Custom deserializer: money string → BigDecimal</span>
+<span class="kw">public class</span> <span class="nb">MoneyDeserializer</span> <span class="kw">extends</span> JsonDeserializer&lt;BigDecimal&gt; {
+    <span class="an">@Override</span>
+    <span class="kw">public</span> BigDecimal deserialize(JsonParser p, DeserializationContext ctx)
+            <span class="kw">throws</span> IOException {
+        String text = p.getText().replaceAll(<span class="st">"[,$€]"</span>, <span class="st">""</span>).trim();
+        <span class="kw">return new</span> BigDecimal(text);
+    }
+}
+
+<span class="cm">// Register globally:</span>
+<span class="an">@Bean</span>
+<span class="kw">public</span> Jackson2ObjectMapperBuilderCustomizer customizer() {
+    <span class="kw">return</span> builder -> builder
+        .serializerByType(BigDecimal.<span class="kw">class</span>, <span class="kw">new</span> MoneySerializer())
+        .deserializerByType(BigDecimal.<span class="kw">class</span>, <span class="kw">new</span> MoneyDeserializer());
+}</pre>
+
+<h2>4. Handling Hibernate Lazy Loading</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ Jackson tries to serialize lazy proxy</div>
+<pre style="font-size:11.5px"><span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="nb">Order</span> {
+    <span class="an">@ManyToOne</span>(fetch = LAZY)
+    <span class="kw">private</span> Customer customer;
+}
+
+<span class="cm">// Controller returns Order entity</span>
+<span class="cm">// Transaction closed before Jackson runs</span>
+<span class="cm">// customer.getName() → LazyInitializationException</span>
+<span class="cm">// Or: triggers N+1 if session still open</span></pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Use DTOs + fetch join</div>
+<pre style="font-size:11.5px"><span class="cm">// Never return entities from controllers</span>
+<span class="cm">// Use projection DTOs loaded eagerly</span>
+<span class="an">@Query</span>(<span class="st">"SELECT o FROM Order o JOIN FETCH o.customer WHERE o.id=:id"</span>)
+Order findWithCustomer(<span class="an">@Param</span>(<span class="st">"id"</span>) Long id);
+
+<span class="cm">// Convert to DTO before transaction closes</span>
+<span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+<span class="kw">public</span> OrderDto findById(Long id) {
+    Order o = orderRepo.findWithCustomer(id);
+    <span class="kw">return</span> mapper.toDto(o); <span class="cm">// ← inside TX</span>
+}</pre>
+</div>
+</div>
+<pre><span class="cm">// Alternative: add Hibernate5JakartaModule to disable lazy proxies in Jackson</span>
+<span class="an">@Bean</span>
+<span class="kw">public</span> Hibernate5JakartaModule hibernateModule() {
+    <span class="kw">var</span> module = <span class="kw">new</span> Hibernate5JakartaModule();
+    module.disable(Hibernate5JakartaModule.Feature.USE_TRANSIENT_ANNOTATION);
+    <span class="kw">return</span> module;  <span class="cm">// serializes initialized proxies, skips uninitialized</span>
+}</pre>
+
+<h2>5. Circular Reference Handling</h2>
+<pre><span class="cm">// Problem: Order → Customer → List&lt;Order&gt; → Order → ... StackOverflow!</span>
+
+<span class="cm">// Solution 1: Break cycle with @JsonIgnore</span>
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="nb">Customer</span> {
+    <span class="an">@OneToMany</span>(mappedBy = <span class="st">"customer"</span>)
+    <span class="an">@JsonIgnore</span>  <span class="cm">// don't serialize customer's orders</span>
+    <span class="kw">private</span> List&lt;Order&gt; orders;
+}
+
+<span class="cm">// Solution 2: @JsonManagedReference / @JsonBackReference</span>
+<span class="kw">public class</span> <span class="nb">Order</span> {
+    <span class="an">@JsonManagedReference</span>  <span class="cm">// "the owner side" — will be serialized</span>
+    <span class="kw">private</span> Customer customer;
+}
+<span class="kw">public class</span> <span class="nb">Customer</span> {
+    <span class="an">@JsonBackReference</span>   <span class="cm">// "the back side" — OMITTED in JSON</span>
+    <span class="kw">private</span> List&lt;Order&gt; orders;
+}
+
+<span class="cm">// Solution 3: @JsonIdentityInfo (include ref by ID on repeat)</span>
+<span class="an">@JsonIdentityInfo</span>(generator = ObjectIdGenerators.PropertyGenerator.<span class="kw">class</span>,
+                  property = <span class="st">"id"</span>)
+<span class="kw">public class</span> <span class="nb">Order</span> { ... }
+<span class="cm">// First time: {"id":1,"customer":{"id":5,"name":"Alice","orders":[1,2,3]}}</span>
+<span class="cm">// Subsequent: just the id reference instead of full object</span>
+
+<span class="cm">// Best solution: USE DTOs — no entity references, no cycles</span></pre>
+
+<h2>6. Jackson Performance Optimizations</h2>
+<pre><span class="cm">// 1. ObjectMapper is THREAD-SAFE after configuration — share one instance</span>
+<span class="an">@Bean</span>
+<span class="kw">public</span> ObjectMapper objectMapper() { ... }  <span class="cm">// Singleton bean ✅</span>
+<span class="cm">// ❌ new ObjectMapper() in every method — expensive! creates new TypeFactory</span>
+
+<span class="cm">// 2. Streaming API for large responses (avoid buffering entire JSON in memory)</span>
+<span class="an">@GetMapping</span>(<span class="st">"/reports/large"</span>)
+<span class="kw">public void</span> largeReport(HttpServletResponse response) <span class="kw">throws</span> IOException {
+    response.setContentType(<span class="st">"application/json"</span>);
+    <span class="kw">try</span> (JsonGenerator gen = objectMapper.createGenerator(response.getOutputStream())) {
+        gen.writeStartArray();
+        orderRepo.streamAll().forEach(order -> {
+            <span class="kw">try</span> { gen.writeObject(orderMapper.toDto(order)); }
+            <span class="kw">catch</span> (IOException e) { <span class="kw">throw new</span> UncheckedIOException(e); }
+        });
+        gen.writeEndArray();
+    }
+}
+
+<span class="cm">// 3. @JsonView — different views for different endpoints</span>
+<span class="kw">public class</span> <span class="nb">Views</span> {
+    <span class="kw">public static class</span> <span class="nb">Summary</span> {}
+    <span class="kw">public static class</span> <span class="nb">Detail</span> <span class="kw">extends</span> Summary {}
+}
+
+<span class="kw">public class</span> <span class="nb">OrderDto</span> {
+    <span class="an">@JsonView</span>(Views.Summary.<span class="kw">class</span>) <span class="kw">private</span> String id;
+    <span class="an">@JsonView</span>(Views.Summary.<span class="kw">class</span>) <span class="kw">private</span> String status;
+    <span class="an">@JsonView</span>(Views.Detail.<span class="kw">class</span>)  <span class="kw">private</span> List&lt;OrderItemDto&gt; items;
+    <span class="an">@JsonView</span>(Views.Detail.<span class="kw">class</span>)  <span class="kw">private</span> AuditInfo audit;
+}
+
+<span class="an">@GetMapping</span>(<span class="st">"/orders"</span>)
+<span class="an">@JsonView</span>(Views.Summary.<span class="kw">class</span>)   <span class="cm">// list: only id + status</span>
+<span class="kw">public</span> List&lt;OrderDto&gt; listOrders() { ... }
+
+<span class="an">@GetMapping</span>(<span class="st">"/orders/{id}"</span>)
+<span class="an">@JsonView</span>(Views.Detail.<span class="kw">class</span>)    <span class="cm">// detail: all fields</span>
+<span class="kw">public</span> OrderDto getOrder(<span class="an">@PathVariable</span> Long id) { ... }</pre>
+</div>
+
+<!-- ═══════════════════════ 8. VALIDATION ═══════════════════════ -->
+<div id="valid" class="page">
+<h1>Validation Pipeline</h1>
+<p class="sub">Bean Validation 3.0, Hibernate Validator, groups, cross-field, cascade, error responses</p>
+
+<h2>1. Validation Architecture</h2>
+<div class="diag">
+HTTP Request with JSON body
+        │
+        ▼
+<span class="b">DispatcherServlet → HandlerAdapter</span>
+        │
+        ▼
+<span class="b">RequestResponseBodyMethodProcessor.resolveArgument()</span>
+  ├─ HttpMessageConverter reads JSON → Java object
+  └─ if @Valid or @Validated on parameter:
+       SmartValidator.validate(object, bindingResult)
+         │
+         ▼
+       <span class="g">HibernateValidator (Jakarta Bean Validation 3.0 impl)</span>
+         ├─ traverse all fields
+         ├─ for each @Constraint annotation:
+         │    call ConstraintValidator.isValid()
+         │    record ConstraintViolation if false
+         └─ if cascaded @Valid on nested object: recurse
+
+If violations found:
+  <span class="r">MethodArgumentNotValidException thrown</span>
+  → @ExceptionHandler in @RestControllerAdvice catches
+  → map FieldErrors to response DTO → 400 Bad Request
+</div>
+
+<h2>2. Full Constraint Library</h2>
+<pre><span class="cm">// Jakarta standard constraints:</span>
+<span class="an">@NotNull</span>          <span class="cm">// not null (allows empty string!)</span>
+<span class="an">@NotEmpty</span>         <span class="cm">// not null AND not empty string/collection</span>
+<span class="an">@NotBlank</span>         <span class="cm">// not null AND not blank (trims whitespace)</span>
+<span class="an">@Size</span>(min=2, max=100)   <span class="cm">// string length or collection size</span>
+<span class="an">@Min</span>(<span class="num">1</span>) <span class="an">@Max</span>(<span class="num">999</span>)    <span class="cm">// numeric range</span>
+<span class="an">@DecimalMin</span>(<span class="st">"0.01"</span>) <span class="an">@DecimalMax</span>(<span class="st">"10000.00"</span>)
+<span class="an">@Positive</span>         <span class="cm">// &gt; 0</span>
+<span class="an">@PositiveOrZero</span>   <span class="cm">// &gt;= 0</span>
+<span class="an">@Negative</span>         <span class="cm">// &lt; 0</span>
+<span class="an">@Email</span>            <span class="cm">// email format</span>
+<span class="an">@Pattern</span>(regexp = <span class="st">"^[A-Z]{2}[0-9]{6}$"</span>)
+<span class="an">@Past</span>             <span class="cm">// date in past</span>
+<span class="an">@PastOrPresent</span>
+<span class="an">@Future</span>           <span class="cm">// date in future</span>
+<span class="an">@FutureOrPresent</span>
+<span class="an">@Digits</span>(integer=10, fraction=2)  <span class="cm">// e.g. monetary amounts</span>
+<span class="an">@URL</span>              <span class="cm">// valid URL (Hibernate Validator)</span>
+<span class="an">@CreditCardNumber</span> <span class="cm">// Luhn check (Hibernate Validator)</span>
+<span class="an">@Length</span>(min=5)    <span class="cm">// Hibernate: like @Size but for strings only</span>
+<span class="an">@Range</span>(min=1, max=100)  <span class="cm">// Hibernate</span></pre>
+
+<h2>3. Validation Groups</h2>
+<pre><span class="cm">// Different rules for CREATE vs UPDATE</span>
+<span class="kw">public interface</span> <span class="nb">OnCreate</span> {}
+<span class="kw">public interface</span> <span class="nb">OnUpdate</span> {}
+
+<span class="an">@Data</span>
+<span class="kw">public class</span> <span class="nb">UserRequest</span> {
+    <span class="an">@Null</span>(groups = OnCreate.<span class="kw">class</span>)       <span class="cm">// must be null when creating</span>
+    <span class="an">@NotNull</span>(groups = OnUpdate.<span class="kw">class</span>)    <span class="cm">// must exist when updating</span>
+    <span class="kw">private</span> Long id;
+
+    <span class="an">@NotBlank</span>(groups = OnCreate.<span class="kw">class</span>)   <span class="cm">// required on create only</span>
+    <span class="kw">private</span> String password;
+
+    <span class="an">@NotBlank</span>(groups = {OnCreate.<span class="kw">class</span>, OnUpdate.<span class="kw">class</span>})
+    <span class="an">@Email</span>(groups = {OnCreate.<span class="kw">class</span>, OnUpdate.<span class="kw">class</span>})
+    <span class="kw">private</span> String email;
+}
+
+<span class="an">@PostMapping</span>(<span class="st">"/users"</span>)
+<span class="kw">public</span> ResponseEntity&lt;UserDto&gt; create(
+        <span class="an">@Validated</span>(OnCreate.<span class="kw">class</span>) <span class="an">@RequestBody</span> UserRequest req) { ... }
+        <span class="cm">// @Validated vs @Valid: @Validated supports groups, @Valid does not</span>
+
+<span class="an">@PutMapping</span>(<span class="st">"/users/{id}"</span>)
+<span class="kw">public</span> ResponseEntity&lt;UserDto&gt; update(<span class="an">@PathVariable</span> Long id,
+        <span class="an">@Validated</span>(OnUpdate.<span class="kw">class</span>) <span class="an">@RequestBody</span> UserRequest req) { ... }</pre>
+
+<h2>4. Cross-Field Validation (Class-level)</h2>
+<pre><span class="cm">// Step 1: Define annotation</span>
+<span class="an">@Target</span>(ElementType.TYPE)
+<span class="an">@Retention</span>(RetentionPolicy.RUNTIME)
+<span class="an">@Constraint</span>(validatedBy = PasswordMatchValidator.<span class="kw">class</span>)
+<span class="kw">public @interface</span> <span class="nb">PasswordMatch</span> {
+    String message() <span class="kw">default</span> <span class="st">"Passwords do not match"</span>;
+    Class&lt;?&gt;[] groups() <span class="kw">default</span> {};
+    Class&lt;? extends Payload&gt;[] payload() <span class="kw">default</span> {};
+}
+
+<span class="cm">// Step 2: Validator</span>
+<span class="kw">public class</span> <span class="nb">PasswordMatchValidator</span>
+        <span class="kw">implements</span> ConstraintValidator&lt;PasswordMatch, RegisterRequest&gt; {
+    <span class="an">@Override</span>
+    <span class="kw">public boolean</span> isValid(RegisterRequest req, ConstraintValidatorContext ctx) {
+        <span class="kw">if</span> (req.getPassword() == <span class="kw">null</span>) <span class="kw">return true</span>;  <span class="cm">// let @NotNull handle null</span>
+        <span class="kw">if</span> (!req.getPassword().equals(req.getConfirmPassword())) {
+            ctx.disableDefaultConstraintViolation();
+            ctx.buildConstraintViolationWithTemplate(<span class="st">"Passwords do not match"</span>)
+               .addPropertyNode(<span class="st">"confirmPassword"</span>)  <span class="cm">// attach to specific field</span>
+               .addConstraintViolation();
+            <span class="kw">return false</span>;
+        }
+        <span class="kw">return true</span>;
+    }
+}
+
+<span class="cm">// Step 3: Annotate the DTO class</span>
+<span class="an">@PasswordMatch</span>
+<span class="kw">public class</span> <span class="nb">RegisterRequest</span> {
+    <span class="an">@NotBlank</span> <span class="an">@Email</span> <span class="kw">private</span> String email;
+    <span class="an">@NotBlank</span> <span class="an">@Size</span>(min=<span class="num">8</span>) <span class="kw">private</span> String password;
+    <span class="an">@NotBlank</span> <span class="kw">private</span> String confirmPassword;
+}</pre>
+
+<h2>5. Production Error Response</h2>
+<pre><span class="an">@RestControllerAdvice</span>
+<span class="kw">public class</span> <span class="nb">ValidationExceptionHandler</span> {
+
+    <span class="an">@ExceptionHandler</span>(MethodArgumentNotValidException.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.BAD_REQUEST)
+    <span class="kw">public</span> ValidationErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+        Map&lt;String, List&lt;String&gt;&gt; errors = <span class="kw">new</span> LinkedHashMap&lt;&gt;();
+
+        ex.getBindingResult().getFieldErrors().forEach(fe ->
+            errors.computeIfAbsent(fe.getField(), k -> <span class="kw">new</span> ArrayList&lt;&gt;())
+                  .add(fe.getDefaultMessage()));
+
+        <span class="cm">// Include global (class-level) errors</span>
+        ex.getBindingResult().getGlobalErrors().forEach(ge ->
+            errors.computeIfAbsent(<span class="st">"_global"</span>, k -> <span class="kw">new</span> ArrayList&lt;&gt;())
+                  .add(ge.getDefaultMessage()));
+
+        <span class="kw">return new</span> ValidationErrorResponse(
+            <span class="st">"VALIDATION_FAILED"</span>,
+            <span class="st">"Request validation failed"</span>,
+            errors,
+            Instant.now()
+        );
+    }
+}
+
+<span class="cm">// Response JSON:</span>
+<span class="cm">// {</span>
+<span class="cm">//   "code": "VALIDATION_FAILED",</span>
+<span class="cm">//   "message": "Request validation failed",</span>
+<span class="cm">//   "errors": {</span>
+<span class="cm">//     "email": ["must not be blank", "must be a valid email"],</span>
+<span class="cm">//     "confirmPassword": ["Passwords do not match"],</span>
+<span class="cm">//     "items": ["size must be between 1 and 3"]</span>
+<span class="cm">//   },</span>
+<span class="cm">//   "timestamp": "2024-01-15T10:30:00Z"</span>
+<span class="cm">// }</span></pre>
+</div>
+
+<!-- ═══════════════════════ 9. THREADING ═══════════════════════ -->
+<div id="threads" class="page">
+<h1>Threading Model in Spring Boot</h1>
+<p class="sub">Request threads, async, thread pools, @Async, CompletableFuture, virtual threads, bottlenecks</p>
+
+<h2>1. Default Thread-Per-Request Model</h2>
+<div class="diag">
+HTTP Request 1 ───▶ <span class="b">http-nio-8080-exec-1</span> ───▶ Controller ───▶ DB (blocked) ───▶ Response
+HTTP Request 2 ───▶ <span class="b">http-nio-8080-exec-2</span> ───▶ Controller ───▶ DB (blocked) ───▶ Response
+HTTP Request 3 ───▶ <span class="b">http-nio-8080-exec-3</span> ───▶ Controller ───▶ DB (blocked) ───▶ Response
+                                                                          ↑
+                                    <span class="r">Thread blocked during I/O — wasted CPU time</span>
+                                    <span class="r">200 threads max → 200 concurrent req ceiling</span>
+
+Thread naming: http-nio-{port}-exec-{n} (Tomcat NIO)
+               task-{n} (Spring @Async)
+               Email-{n} (custom pool named "Email-")
+               ForkJoinPool.commonPool-worker-{n} (CompletableFuture default)
+</div>
+
+<h2>2. @Async — Configuration & Pitfalls</h2>
+<pre><span class="cm">// Configuration (ALWAYS define custom executor for @Async)</span>
+<span class="an">@Configuration</span>
+<span class="an">@EnableAsync</span>
+<span class="kw">public class</span> <span class="nb">AsyncConfig</span> <span class="kw">implements</span> AsyncConfigurer {
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = <span class="kw">new</span> ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(<span class="num">5</span>);
+        executor.setMaxPoolSize(<span class="num">20</span>);
+        executor.setQueueCapacity(<span class="num">1000</span>);
+        executor.setThreadNamePrefix(<span class="st">"Async-"</span>);
+        executor.setRejectedExecutionHandler(
+            <span class="kw">new</span> ThreadPoolExecutor.CallerRunsPolicy()); <span class="cm">// backpressure</span>
+        executor.setTaskDecorator(task -> {             <span class="cm">// context propagation!</span>
+            RequestAttributes attrs = RequestContextHolder.currentRequestAttributes();
+            Map&lt;String, String&gt; mdc = MDC.getCopyOfContextMap();
+            <span class="kw">return</span> () -> {
+                RequestContextHolder.setRequestAttributes(attrs);
+                MDC.setContextMap(mdc != <span class="kw">null</span> ? mdc : Collections.emptyMap());
+                <span class="kw">try</span> { task.run(); }
+                <span class="kw">finally</span> {
+                    RequestContextHolder.resetRequestAttributes();
+                    MDC.clear();
+                }
+            };
+        });
+        executor.initialize();
+        <span class="kw">return</span> executor;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        <span class="kw">return</span> (ex, method, params) ->
+            log.error(<span class="st">"Async exception in {}: {}"</span>, method.getName(), ex.getMessage(), ex);
+    }
+}</pre>
+
+<h2>3. @Async Mistakes</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ @Async on private method — ignored</div>
+<pre style="font-size:11.5px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">EmailService</span> {
+    <span class="an">@Async</span>  <span class="cm">// IGNORED — same as @Transactional</span>
+    <span class="kw">private void</span> send(String email) {
+        <span class="cm">// Runs on CALLING thread, not async</span>
+    }
+}
+<span class="cm">// Also: same-class this.send() is ignored</span></pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Public method, separate class</div>
+<pre style="font-size:11.5px"><span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb">EmailService</span> {
+    <span class="an">@Async</span>(<span class="st">"emailExecutor"</span>)
+    <span class="kw">public</span> CompletableFuture&lt;Void&gt; send(String email) {
+        <span class="cm">// Runs on emailExecutor thread</span>
+        doSend(email);
+        <span class="kw">return</span> CompletableFuture.completedFuture(<span class="kw">null</span>);
+    }
+}
+<span class="cm">// Return CompletableFuture to allow caller to track</span></pre>
+</div>
+</div>
+
+<h2>4. CompletableFuture — Full Operator Reference</h2>
+<pre><span class="cm">// Async chain: user data + orders + recommendations in parallel</span>
+CompletableFuture&lt;User&gt; userFuture =
+    CompletableFuture.supplyAsync(() -&gt; userRepo.findById(userId), ioExecutor);
+
+CompletableFuture&lt;List&lt;Order&gt;&gt; ordersFuture =
+    CompletableFuture.supplyAsync(() -&gt; orderRepo.findByUser(userId), ioExecutor);
+
+CompletableFuture&lt;List&lt;Product&gt;&gt; recsFuture =
+    CompletableFuture.supplyAsync(() -&gt; mlService.recommend(userId), ioExecutor);
+
+<span class="cm">// Wait for all three:</span>
+CompletableFuture&lt;DashboardDto&gt; dashboard =
+    CompletableFuture.allOf(userFuture, ordersFuture, recsFuture)
+        .thenApply(v -&gt; DashboardDto.of(
+            userFuture.join(),      <span class="cm">// join() is safe here (already done)</span>
+            ordersFuture.join(),
+            recsFuture.join()
+        ));
+
+<span class="cm">// Timeout + fallback:</span>
+DashboardDto result = dashboard
+    .orTimeout(<span class="num">5</span>, TimeUnit.SECONDS)     <span class="cm">// Java 9+ throws TimeoutException after 5s</span>
+    .exceptionally(ex -&gt; DashboardDto.minimal(userId))  <span class="cm">// fallback</span>
+    .join();
+
+<span class="cm">// Operators quick ref:</span>
+<span class="cm">// .thenApply(fn)         sync transform of result (T → U)</span>
+<span class="cm">// .thenCompose(fn)       async flatMap (T → CF&lt;U&gt;)</span>
+<span class="cm">// .thenCombine(cf, fn)   combine two CF results</span>
+<span class="cm">// .thenAccept(fn)        consume result, return void CF</span>
+<span class="cm">// .thenRun(fn)           run after completion, no result</span>
+<span class="cm">// .exceptionally(fn)     handle exception, return fallback</span>
+<span class="cm">// .handle(fn)            always runs (result or exception)</span>
+<span class="cm">// .whenComplete(fn)      always runs, can't transform</span>
+<span class="cm">// .allOf(cf1,cf2,...)    wait for all CFs to complete</span>
+<span class="cm">// .anyOf(cf1,cf2,...)    wait for first CF to complete</span></pre>
+
+<h2>5. Virtual Threads (Java 21 + Spring Boot 3.2)</h2>
+<pre><span class="cm"># Enable virtual threads for entire application:</span>
+spring.threads.virtual.enabled=true
+
+<span class="cm">// What changes under the hood:</span>
+<span class="cm">// TomcatProtocolHandlerCustomizer replaces Tomcat executor with:</span>
+Executors.newVirtualThreadPerTaskExecutor()
+<span class="cm">// Every HTTP request gets its own virtual thread (almost free)</span>
+<span class="cm">// Virtual thread blocks on DB → unmounts from OS carrier thread</span>
+<span class="cm">// OS carrier thread picks up another virtual thread → no waste</span>
+
+<span class="cm">// Also replaces: Spring @Async executor + Scheduled tasks</span>
+
+<span class="cm">// CRITICAL: Don't mix virtual threads with synchronized blocks</span>
+<span class="cm">// synchronized pins VT to carrier thread, kills the benefit</span>
+<span class="cm">// Use ReentrantLock instead:</span>
+<span class="kw">private final</span> ReentrantLock lock = <span class="kw">new</span> ReentrantLock();
+
+<span class="cm">// Also: ThreadLocal doesn't auto-scope to virtual threads</span>
+<span class="cm">// ScopedValue (Java 21 preview) is the right model:</span>
+ScopedValue&lt;User&gt; CURRENT_USER = ScopedValue.newInstance();
+ScopedValue.where(CURRENT_USER, user).run(() -&gt; processRequest());</pre>
+
+<h2>6. Thread Pool Sizing Decision Tree</h2>
+<div class="diag">
+Is the work CPU-bound or I/O-bound?
+│
+├─ <span class="b">CPU-bound</span> (hashing, image processing, ML inference)
+│    pool_size = CPU_cores (+ 1 for GC)
+│    Usually: 4-8 threads on modern servers
+│    Use: Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
+│
+├─ <span class="b">I/O-bound</span> (DB queries, HTTP calls, file I/O)
+│    pool_size = threads_needed_for_target_throughput
+│    formula: target_rps × avg_latency_s = concurrent_threads
+│    Example: 100 req/s × 0.2s avg = 20 threads minimum
+│    Use: ThreadPoolTaskExecutor with core=20, max=100, queue=500
+│
+└─ <span class="b">Mixed I/O + CPU</span> (most web apps)
+     Use <span class="g">virtual threads</span> (Java 21): per-task threads, JVM manages
+     Falls back naturally for both patterns
+     No tuning needed for most applications
+</div>
+</div>
+
+<!-- ═══════════════════════ 10. LIFECYCLE ═══════════════════════ -->
+<div id="lifecycle" class="page">
+<h1>Complete Request Lifecycle</h1>
+<p class="sub">Browser → DNS → TCP → Tomcat → Spring → DB → Response — every step, every failure mode</p>
+
+<h2>The Full Journey (40+ Steps)</h2>
+<div class="diag">
+<span class="b">═══ CLIENT SIDE ═══════════════════════════════════════════════════</span>
+
+[T+0ms]   Browser: user submits "POST /api/orders"
+[T+0ms]   Browser checks DNS cache → miss
+[T+1ms]   OS DNS resolver → /etc/hosts → miss
+[T+3ms]   DNS query to resolver → A record → 93.184.216.34
+[T+3ms]   Browser: TCP SYN to 93.184.216.34:443
+[T+6ms]   Server: TCP SYN-ACK
+[T+6ms]   Browser: TCP ACK  (3-way handshake done, ~3ms RTT)
+[T+9ms]   TLS 1.3 handshake (1 RTT)
+[T+12ms]  HTTP/2 connection established
+[T+12ms]  Browser sends: POST /api/orders (headers + JSON body)
+
+<span class="b">═══ LOAD BALANCER / REVERSE PROXY ════════════════════════════════</span>
+
+[T+12ms]  Nginx/ALB receives request
+          → SSL termination (TLS decrypted here)
+          → checks X-Forwarded-For, real-ip
+          → round-robin / least-connection to backend
+          → adds headers: X-Request-ID, X-Forwarded-Host
+[T+13ms]  Plain HTTP forwarded to Spring Boot app server
+
+<span class="b">═══ EMBEDDED TOMCAT ═══════════════════════════════════════════════</span>
+
+[T+13ms]  NIC receives bytes → OS TCP stack → socket buffer
+[T+13ms]  <span class="y">Tomcat Acceptor thread</span>: ServerSocketChannel.accept()
+[T+13ms]  New SocketChannel registered with <span class="y">Poller NIO Selector</span>
+[T+13ms]  Selector.select() → socket readable
+[T+13ms]  Poller submits to <span class="b">Worker thread pool</span> (e.g. exec-42)
+[T+14ms]  exec-42: HTTP/1.1 parser reads request line + headers
+[T+14ms]  Body bytes buffered: { "customerId": "C001", ... }
+[T+14ms]  Request object constructed
+[T+14ms]  CoyoteAdapter.service() → Tomcat pipeline
+[T+14ms]  StandardEngineValve → StandardHostValve → ApplicationFilterChain
+
+<span class="b">═══ SERVLET FILTER CHAIN ══════════════════════════════════════════</span>
+
+[T+14ms]  CharacterEncodingFilter:     sets UTF-8
+[T+14ms]  ContentCachingRequestFilter: wraps body stream (if logging)
+[T+14ms]  CorsFilter:                  checks Origin header
+[T+15ms]  SecurityFilterChain:
+            JwtAuthenticationFilter:
+              → extract Bearer token from Authorization header
+              → JwtService.extractUsername(token): parse JWT claims
+              → UserDetailsService.loadUserByUsername(email) → DB hit! <span class="y">~5ms</span>
+              → JwtService.isTokenValid(): check expiry, signature
+              → SecurityContextHolder.setAuthentication(auth)
+[T+20ms]  RateLimitFilter: check Redis counter <span class="y">~2ms</span>
+
+<span class="b">═══ DISPATCHER SERVLET ════════════════════════════════════════════</span>
+
+[T+22ms]  DispatcherServlet.doDispatch()
+[T+22ms]  getHandler():
+            RequestMappingHandlerMapping.getHandler()
+            → lookup URL tree: POST /api/orders
+            → match: OrderController#createOrder(CreateOrderRequest, String)
+            → build HandlerExecutionChain with interceptors
+[T+22ms]  getHandlerAdapter():
+            RequestMappingHandlerAdapter selected
+
+<span class="b">═══ INTERCEPTORS preHandle() ══════════════════════════════════════</span>
+
+[T+22ms]  RequestTracingInterceptor.preHandle():
+            → extract X-Trace-Id header (or generate UUID)
+            → MDC.put("traceId", id)
+            → req.setAttribute("startTime", now)
+
+<span class="b">═══ ARGUMENT RESOLUTION ════════════════════════════════════════════</span>
+
+[T+22ms]  HandlerMethodArgumentResolver chain:
+            RequestResponseBodyMethodProcessor:
+              → MappingJackson2HttpMessageConverter.read()
+              → ObjectMapper.readValue(bodyStream, CreateOrderRequest.class)
+              → reflection: find fields, call setters / field injection
+              → CreateOrderRequest populated
+[T+23ms]  @Valid triggers HibernateValidator:
+              → validate all @NotNull, @Email, @Size constraints
+              → validate @Valid nested objects (ShippingAddress)
+              → 0 violations → proceed
+            @RequestHeader("Idempotency-Key") → string value
+            Principal → from SecurityContextHolder
+
+<span class="b">═══ AOP PROXY CHAIN ═══════════════════════════════════════════════</span>
+
+[T+23ms]  OrderController.createOrder() invoked via CGLIB proxy
+[T+23ms]  MetricsAspect @Around: start timer
+[T+23ms]  LoggingAspect @Before: log method entry
+
+<span class="b">═══ SERVICE LAYER ══════════════════════════════════════════════════</span>
+
+[T+23ms]  orderService.createOrder() called via proxy
+[T+23ms]  TransactionInterceptor @Around:
+            JpaTransactionManager.getTransaction():
+              → check ThreadLocal → no existing TX
+              → <span class="g">HikariCP.getConnection()</span>: check pool (pool has 18 idle, takes 1)
+              → connection.setAutoCommit(false) → BEGIN transaction
+              → connection bound to ThreadLocal
+[T+23ms]  IdempotencyService.check(key):
+            Redis GET "idempotency:{key}" → <span class="y">miss ~1ms</span>
+
+<span class="b">═══ REPOSITORY / HIBERNATE ════════════════════════════════════════</span>
+
+[T+24ms]  orderRepo.save(order):
+            Hibernate EntityManager.persist(order)
+            → dirty checking: new entity, schedule INSERT
+[T+24ms]  inventoryRepo.findByProductId(productId):
+            Hibernate: check L1 cache (EntityManager session cache) → miss
+            → check L2 cache (Caffeine/EHCache) → miss
+            → build JPQL: "SELECT i FROM Inventory i WHERE i.productId=?"
+            → SQL: "SELECT id, product_id, qty FROM inventory WHERE product_id=?"
+            → HikariCP: same connection from ThreadLocal
+            → JDBC PreparedStatement.executeQuery()
+            → Network: SQL bytes → PostgreSQL server <span class="y">~5ms</span>
+            → ResultSet → Inventory entity hydrated
+[T+29ms]  inventoryService.deductStock():
+            inventoryRepo.save(inventory):
+            → Hibernate: dirty check → entity changed → schedule UPDATE
+
+<span class="b">═══ TRANSACTION COMMIT ════════════════════════════════════════════</span>
+
+[T+29ms]  TransactionInterceptor: method returned (no exception)
+[T+29ms]  JpaTransactionManager.commit():
+            Hibernate Session.flush():
+              → INSERT INTO orders (id, ...) VALUES (?, ...)  <span class="y">~2ms</span>
+              → UPDATE inventory SET qty=? WHERE id=?         <span class="y">~1ms</span>
+            connection.commit()  → COMMIT sent to PostgreSQL   <span class="y">~1ms</span>
+            connection returned to HikariCP pool ← <span class="g">freed!</span>
+[T+33ms]  Idempotency key stored in Redis (24h TTL)
+
+<span class="b">═══ RESPONSE GENERATION ═══════════════════════════════════════════</span>
+
+[T+33ms]  Controller: return ResponseEntity.created(location).body(orderDto)
+[T+33ms]  AOP afterReturning: cache result, record metrics
+[T+33ms]  Interceptor postHandle(): add response headers
+[T+33ms]  HandlerAdapter.handleReturnValue():
+            RequestResponseBodyMethodProcessor:
+              → MappingJackson2HttpMessageConverter.write()
+              → ObjectMapper.writeValue(response.outputStream, orderDto)
+              → JSON serialized directly to HTTP output stream
+[T+34ms]  Response written: HTTP 201, Location: /api/orders/7, body: {...}
+[T+34ms]  Interceptor afterCompletion(): MDC.clear(), log "201 in 20ms"
+[T+34ms]  Filter chain unwinds: logging filters, security context cleanup
+[T+34ms]  Tomcat: response bytes → OS socket buffer → NIC → network
+
+<span class="b">═══ CLIENT RECEIVES ═══════════════════════════════════════════════</span>
+
+[T+37ms]  Browser receives HTTP 201 response
+[T+37ms]  Total: ~37ms (3ms DNS + 9ms TCP/TLS + 25ms app + 3ms network return)
+</div>
+
+<h2>Failure Scenarios & Diagnosis</h2>
+<div class="tabs">
+<button class="tb on" onclick="tb(this,'fail1')">DB Timeout</button>
+<button class="tb" onclick="tb(this,'fail2')">Pool Starvation</button>
+<button class="tb" onclick="tb(this,'fail3')">OOM Error</button>
+<button class="tb" onclick="tb(this,'fail4')">Deadlock</button>
+<button class="tb" onclick="tb(this,'fail5')">Slow P99</button>
+</div>
+<div id="fail1" class="tc on">
+<pre><span class="cm">// Symptom: SQLTransientConnectionException: Unable to acquire connection within 30000ms</span>
+
+<span class="cm">// Diagnosis:</span>
+<span class="cm">// 1. Check pool metrics:</span>
+curl http://localhost:8080/actuator/metrics/hikaricp.connections.pending
+<span class="cm">// → count > 0 means threads waiting for connections</span>
+
+<span class="cm">// 2. Check active connections:</span>
+curl http://localhost:8080/actuator/metrics/hikaricp.connections.active
+<span class="cm">// → equals maximumPoolSize = all connections in use</span>
+
+<span class="cm">// 3. Thread dump — look for where connections are held:</span>
+curl http://localhost:8080/actuator/threaddump | jq '.threads[].stackTrace'
+
+<span class="cm">// Common root causes:</span>
+<span class="cm">// a) @Transactional method doing slow HTTP call while holding connection</span>
+<span class="cm">// b) DB server slow → queries taking 10x longer → connections held longer</span>
+<span class="cm">// c) maximumPoolSize too small for traffic</span>
+
+<span class="cm">// Fix a): move external calls outside @Transactional</span>
+<span class="cm">// Fix b): check DB query plans, add indexes</span>
+<span class="cm">// Fix c): increase pool size (but not beyond db max_connections)</span></pre>
+</div>
+<div id="fail2" class="tc">
+<pre><span class="cm">// Symptom: Application hangs under load, all threads in WAITING state</span>
+<span class="cm">// Thread dump shows: "exec-1..200" all waiting in HikariPool</span>
+
+<span class="cm">// Root cause: transaction holding connection calls another transactional service</span>
+<span class="cm">// that needs a connection from the SAME pool → circular wait</span>
+
+<span class="an">@Transactional</span>
+<span class="kw">public void</span> processOrder(Long id) {
+    Order o = orderRepo.findById(id);  <span class="cm">// connection 1 acquired</span>
+    <span class="cm">// Calls external service which creates its own @Transactional</span>
+    <span class="cm">// but it needs connection 2, which might not be available!</span>
+    externalService.notify(id);  <span class="cm">// this also does DB work</span>
+}
+
+<span class="cm">// Fix: ensure notify() uses REQUIRES_NEW on different pool</span>
+<span class="cm">// Or: use async event instead of synchronous call</span>
+applicationEventPublisher.publishEvent(<span class="kw">new</span> OrderProcessedEvent(id));
+<span class="cm">// @EventListener @Async runs after TX commits, on different thread</span></pre>
+</div>
+<div id="fail3" class="tc">
+<pre><span class="cm">// Symptom: OutOfMemoryError: Java heap space</span>
+<span class="cm">// Heap dump: large List&lt;Order&gt; objects</span>
+
+<span class="cm">// Root cause: loading entire table into memory</span>
+<span class="cm">// ❌ orderRepo.findAll() with 10M rows = 10M objects in heap</span>
+
+<span class="cm">// Fix 1: Pageable</span>
+Page&lt;Order&gt; page = orderRepo.findAll(PageRequest.of(<span class="num">0</span>, <span class="num">1000</span>));
+
+<span class="cm">// Fix 2: Stream (Hibernate ScrollableResults)</span>
+<span class="an">@Transactional</span>(readOnly = <span class="kw">true</span>)
+<span class="kw">public void</span> exportOrders(OutputStream out) {
+    <span class="kw">try</span> (Stream&lt;Order&gt; stream = orderRepo.streamAll()) {
+        stream.forEach(o -> writeToStream(out, o));
+        <span class="cm">// processed one-by-one, constant memory</span>
+    }
+}
+
+<span class="cm">// Fix 3: JVM heap settings</span>
+<span class="cm">// -Xmx should be 70% of container memory</span>
+<span class="cm">// -XX:+UseG1GC with -XX:MaxGCPauseMillis=200</span>
+<span class="cm">// -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/</span></pre>
+</div>
+<div id="fail4" class="tc">
+<pre><span class="cm">// Symptom: requests hanging, thread dump shows BLOCKED threads</span>
+<span class="cm">// DB log: "deadlock detected" + rollback</span>
+
+<span class="cm">// Root cause: two transactions lock rows in different orders</span>
+<span class="cm">// TX1: locks order 1 then tries to lock order 2</span>
+<span class="cm">// TX2: locks order 2 then tries to lock order 1</span>
+
+<span class="cm">// Fix 1: consistent lock ordering</span>
+<span class="cm">// Always fetch/lock in ascending ID order:</span>
+List&lt;Long&gt; ids = Arrays.asList(id1, id2);
+Collections.sort(ids);
+<span class="cm">// Then lock in order: ids.forEach(id -> repo.findByIdForUpdate(id));</span>
+
+<span class="cm">// Fix 2: optimistic locking (no DB locks)</span>
+<span class="an">@Entity</span>
+<span class="kw">public class</span> <span class="nb">Order</span> {
+    <span class="an">@Version</span>
+    <span class="kw">private int</span> version;  <span class="cm">// Hibernate adds WHERE version=? to UPDATE</span>
+}
+<span class="cm">// OptimisticLockException on conflict → retry at application layer</span>
+
+<span class="cm">// Fix 3: reduce transaction scope</span>
+<span class="cm">// Shorter transactions = shorter lock holds = less deadlock chance</span></pre>
+</div>
+<div id="fail5" class="tc">
+<pre><span class="cm">// Symptom: p50=50ms, p95=200ms, p99=2000ms</span>
+<span class="cm">// 1% of requests are 40× slower — what's happening?</span>
+
+<span class="cm">// Investigation tools:</span>
+
+<span class="cm">// 1. Slow query log (PostgreSQL)</span>
+<span class="cm">//    log_min_duration_statement = 100  ← log queries > 100ms</span>
+<span class="cm">//    → Check with EXPLAIN ANALYZE for missing indexes</span>
+
+<span class="cm">// 2. Micrometer histograms for method timing:</span>
+<span class="an">@Timed</span>(value = <span class="st">"order.service.create"</span>, percentiles = {<span class="num">0.5</span>, <span class="num">0.95</span>, <span class="num">0.99</span>})
+<span class="kw">public</span> Order createOrder(OrderRequest req) { ... }
+
+<span class="cm">// 3. Distributed trace (Micrometer Tracing + Zipkin)</span>
+<span class="cm">//    spring-boot-starter-actuator</span>
+<span class="cm">//    micrometer-tracing-bridge-brave</span>
+<span class="cm">//    → Zipkin shows each step's duration</span>
+<span class="cm">//    → Find: "HikariCP wait: 1800ms" = pool exhaustion spike</span>
+
+<span class="cm">// 4. GC pause correlation</span>
+<span class="cm">//    Add: -Xlog:gc*:file=gc.log:time</span>
+<span class="cm">//    GC pause every 30s coincides with p99 spike?</span>
+<span class="cm">//    → Switch to ZGC: -XX:+UseZGC  (&lt;1ms pauses)</span>
+
+<span class="cm">// Common p99 culprits:</span>
+<span class="cm">// - Pool starvation spike (fix: larger pool or shorter TX)</span>
+<span class="cm">// - GC pause (fix: ZGC or better GC tuning)</span>
+<span class="cm">// - N+1 query on certain data patterns (fix: JOIN FETCH)</span>
+<span class="cm">// - Redis timeout under load (fix: Redis cluster + timeouts)</span></pre>
+</div>
+
+<h2>Architecture Diagram — Component Map</h2>
+<div class="diag">
+Browser / Mobile
+      │  HTTPS
+      ▼
+<span class="b">CloudFront CDN / API Gateway</span>  ← cache GET responses, WAF, DDoS protection
+      │
+      ▼
+<span class="b">Nginx Ingress / ALB</span>  ← SSL termination, routing, load balance
+      │  HTTP
+      ▼
+<span class="b">Pod: Spring Boot App (JVM)</span>
+  ┌─────────────────────────────────────────────┐
+  │  <span class="y">Tomcat (Port 8080)</span>                         │
+  │    Acceptor + Poller + Worker Pool (200)     │
+  │                                              │
+  │  <span class="b">Spring Filter Chain</span>                         │
+  │    CorsFilter → SecurityFilter → ...         │
+  │                                              │
+  │  <span class="b">DispatcherServlet</span>                           │
+  │    HandlerMapping → Interceptors →           │
+  │    HandlerAdapter → @Controller              │
+  │                                              │
+  │  <span class="b">Service Layer</span> (@Transactional via proxy)     │
+  │                                              │
+  │  <span class="b">Repository Layer</span> (Spring Data JPA)          │
+  │    Hibernate ORM → JPQL → SQL                │
+  │                                              │
+  │  <span class="g">HikariCP</span> (pool: 20 connections)             │
+  └─────────────────────────────────────────────┘
+        │                │               │
+        ▼                ▼               ▼
+  <span class="p">PostgreSQL</span>        <span class="p">Redis</span>         <span class="p">External APIs</span>
+  (primary DB)      (cache, sessions,  (payment, email,
+                     rate limits)       notifications)
+
+<span class="b">Observability Stack:</span>
+  Micrometer → Prometheus → Grafana  (metrics)
+  Micrometer Tracing → Zipkin        (distributed traces)
+  Logback → ELK / Loki               (structured logs)
+  Spring Actuator /health /metrics   (operational endpoints)
+</div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('on');
+  event.target.classList.add('active');
+  window.scrollTo(0,0);
+}
+function tb(btn,id){
+  const grp=btn.closest('.tabs');
+  grp.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  let el=grp.nextElementSibling;
+  while(el&&el.classList&&el.classList.contains('tc')){
+    el.classList.remove('on');
+    el=el.nextElementSibling;
+  }
+  const t=document.getElementById(id);
+  if(t)t.classList.add('on');
+}
+</script>
+</body>
+</html>
