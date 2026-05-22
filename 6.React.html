@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React & JavaScript — Complete Frontend Reference</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:#30363d;--border2:#21262d;
+  --text:#e6edf3;--text2:#c9d1d9;--text3:#8b949e;
+  --blue:#58a6ff;--blue-bg:#1f3a5f;
+  --green:#3fb950;--green-bg:#1a3a2a;
+  --orange:#f0883e;--orange-bg:#3d2800;
+  --red:#ff7b72;--red-bg:#3d0f0f;
+  --purple:#d2a8ff;--purple-bg:#2d1f3d;
+  --yellow:#e3b341;--yellow-bg:#3d3000;
+  --teal:#39d353;--pink:#f778ba;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:14px}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;overflow-x:auto}
+.topbar-inner{display:flex;min-width:max-content;padding:0 8px}
+.nb{padding:8px 10px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:11px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.nb:hover{color:var(--text)}.nb.active{color:var(--blue);border-bottom-color:var(--blue)}
+.page{display:none;padding:20px 16px;max-width:980px;margin:0 auto}.page.on{display:block}
+h1{font-size:23px;font-weight:700;margin:0 0 4px}
+h2{font-size:17px;font-weight:600;color:var(--text);margin:26px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border2)}
+h3{font-size:13.5px;font-weight:600;color:var(--blue);margin:14px 0 6px}
+h4{font-size:13px;font-weight:600;color:var(--purple);margin:10px 0 5px}
+.sub{color:var(--text3);font-size:13px;margin-bottom:18px}
+pre{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:13px 15px;overflow-x:auto;font-family:'Consolas','Cascadia Code',monospace;font-size:12px;line-height:1.6;margin:8px 0;tab-size:2}
+/* JS syntax */
+.kw{color:#ff7b72}.cm{color:var(--text3);font-style:italic}.st{color:#a5d6ff}
+.fn{color:#d2a8ff}.nb2{color:#79c0ff}.num{color:#79c0ff}
+.gt{color:var(--green)}.yt{color:var(--yellow)}.rt{color:var(--red)}.pt{color:var(--purple)}
+.jsx{color:#f0883e}.tag{color:#7ee787}.attr{color:#79c0ff}.val{color:#a5d6ff}
+.diag{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:10px 0;font-family:'Consolas',monospace;font-size:11.5px;line-height:1.9;overflow-x:auto;color:var(--text2)}
+.diag .b{color:var(--blue)}.diag .g{color:var(--green)}.diag .y{color:var(--yellow)}
+.diag .r{color:var(--red)}.diag .p{color:var(--purple)}.diag .o{color:var(--orange)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:13px}
+.ct{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px}
+.card p{font-size:12px;color:var(--text3)}.card pre{font-size:11.5px}
+.tip{background:#0d2339;border-left:3px solid var(--blue);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px}
+.tip-t{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.warn{background:var(--yellow-bg);border-left:3px solid var(--yellow);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px;color:#c9b060}
+.warn-t{font-size:10px;font-weight:700;color:var(--yellow);margin-bottom:3px;text-transform:uppercase}
+.danger{background:var(--red-bg);border-left:3px solid var(--red);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px;color:#ffa0a0}
+.ok{background:var(--green-bg);border-left:3px solid var(--green);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px;color:#7ee787}
+table{width:100%;border-collapse:collapse;margin:9px 0;font-size:12px}
+th{background:var(--bg3);color:var(--text3);padding:6px 10px;text-align:left;font-weight:600;border:1px solid var(--border)}
+td{padding:6px 10px;border:1px solid var(--border2);color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#0a0e13}
+.cmp{display:flex;gap:10px;margin:9px 0}
+.bad{flex:1;background:#2d1212;border:1px solid #5a2020;border-radius:8px;padding:12px}
+.good{flex:1;background:#0d2a1a;border:1px solid #204020;border-radius:8px;padding:12px}
+.clbl{font-size:10px;font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.bad .clbl{color:var(--red)}.good .clbl{color:var(--green)}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0}
+.tb{padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:var(--bg);color:var(--text3);cursor:pointer;font-size:11.5px;transition:all .15s}
+.tb.on,.tb:hover{background:var(--bg3);color:var(--text);border-color:var(--blue)}
+.tc{display:none}.tc.on{display:block}
+.pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600}
+.pb{background:var(--blue-bg);color:var(--blue)}.pg{background:var(--green-bg);color:var(--green)}
+.po{background:var(--orange-bg);color:var(--orange)}.pr{background:var(--red-bg);color:var(--red)}
+.pp{background:var(--purple-bg);color:var(--purple)}.py{background:var(--yellow-bg);color:var(--yellow)}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+  <button class="nb active" onclick="go('js')">① JavaScript</button>
+  <button class="nb" onclick="go('react')">② React Fundamentals</button>
+  <button class="nb" onclick="go('hooks')">③ Hooks Deep Dive</button>
+  <button class="nb" onclick="go('arch')">④ Architecture</button>
+  <button class="nb" onclick="go('router')">⑤ React Router</button>
+  <button class="nb" onclick="go('api')">⑥ API Integration</button>
+  <button class="nb" onclick="go('state')">⑦ State Management</button>
+  <button class="nb" onclick="go('perf')">⑧ Performance</button>
+  <button class="nb" onclick="go('forms')">⑨ Forms</button>
+  <button class="nb" onclick="go('auth')">⑩ Auth</button>
+  <button class="nb" onclick="go('fullstack')">⑪ Spring Boot + React</button>
+  <button class="nb" onclick="go('styling')">⑫ Styling</button>
+</div></div>
+
+<!-- ════════════════ 1. JAVASCRIPT ════════════════ -->
+<div id="js" class="page on">
+<h1>Modern JavaScript for React</h1>
+<p class="sub">Closures, async/await, event loop, modules, destructuring — essentials for React devs</p>
+
+<h2>1. Closures — The Foundation of Hooks</h2>
+<pre><span class="cm">// A closure captures variables from its enclosing scope</span>
+<span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;                          <span class="cm">// enclosed variable</span>
+  <span class="kw">return</span> {
+    increment: () => { count++; },        <span class="cm">// captures 'count'</span>
+    decrement: () => { count--; },
+    getCount:  () => count,
+  };
+}
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>();
+counter.<span class="fn">increment</span>(); counter.<span class="fn">increment</span>();
+console.<span class="fn">log</span>(counter.<span class="fn">getCount</span>()); <span class="cm">// 2</span>
+
+<span class="cm">// Stale closure (CRITICAL React bug pattern):</span>
+<span class="kw">function</span> <span class="fn">buggyTimer</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;
+  <span class="fn">setInterval</span>(() => {
+    count++;
+    console.<span class="fn">log</span>(count); <span class="cm">// captures initial count=0 → always logs 1!</span>
+  }, <span class="num">1000</span>);
+}
+<span class="cm">// React useState has the same trap with async callbacks</span></pre>
+
+<h2>2. The Event Loop — Why async Works</h2>
+<div class="diag">
+JavaScript Runtime:
+
+  <span class="b">Call Stack</span>         <span class="b">Web APIs</span>          <span class="b">Callback Queue</span>
+  [main()]          setTimeout(fn,0)  [fn] ← after Stack empties
+  [fetchData()]     fetch('/api')
+  [parseJSON()]     addEventListener
+
+  <span class="b">Microtask Queue</span> (Promise callbacks — HIGHER priority than Callback Queue)
+  [.then(resolve)]  ← runs before setTimeout callbacks
+
+Execution order:
+1. Run all synchronous code in Call Stack
+2. Run ALL microtasks (Promises) — may add more microtasks
+3. Render (browser repaints DOM)
+4. Pick ONE task from Callback Queue (setTimeout, setInterval, I/O)
+5. Repeat
+
+<span class="g">Key insight: Promises run before setTimeout even if both are "ready"</span>
+</div>
+<pre>console.<span class="fn">log</span>(<span class="st">"1"</span>);                          <span class="cm">// 1 — sync</span>
+<span class="fn">setTimeout</span>(() => console.<span class="fn">log</span>(<span class="st">"2"</span>), <span class="num">0</span>);    <span class="cm">// 4 — macro task</span>
+Promise.<span class="fn">resolve</span>().<span class="fn">then</span>(() => console.<span class="fn">log</span>(<span class="st">"3"</span>)); <span class="cm">// 3 — micro task</span>
+console.<span class="fn">log</span>(<span class="st">"4"</span>);                          <span class="cm">// 2 — sync</span>
+<span class="cm">// Output: 1, 4, 3, 2</span></pre>
+
+<h2>3. Promises & async/await</h2>
+<pre><span class="cm">// Promise states: pending → fulfilled | rejected</span>
+<span class="kw">const</span> <span class="fn">fetchUser</span> = (<span class="nb2">id</span>) =>
+  <span class="fn">fetch</span>(<span class="st">`/api/users/${id}`</span>)
+    .<span class="fn">then</span>(res => {
+      <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">`HTTP ${res.status}`</span>);
+      <span class="kw">return</span> res.<span class="fn">json</span>();
+    });
+
+<span class="cm">// async/await — syntactic sugar over Promises</span>
+<span class="kw">async function</span> <span class="fn">loadDashboard</span>(<span class="nb2">userId</span>) {
+  <span class="kw">try</span> {
+    <span class="cm">// Sequential: user first, then their orders</span>
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="fn">fetchUser</span>(userId);
+
+    <span class="cm">// Parallel: fetch orders + profile simultaneously</span>
+    <span class="kw">const</span> [orders, profile] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+      <span class="fn">fetchOrders</span>(userId),
+      <span class="fn">fetchProfile</span>(userId),
+    ]);
+
+    <span class="kw">return</span> { user, orders, profile };
+  } <span class="kw">catch</span> (err) {
+    console.<span class="fn">error</span>(<span class="st">"Dashboard load failed:"</span>, err);
+    <span class="kw">throw</span> err;  <span class="cm">// re-throw for caller to handle</span>
+  }
+}
+
+<span class="cm">// Promise.allSettled — don't fail if ONE fails</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.<span class="fn">allSettled</span>([
+  <span class="fn">fetchUser</span>(<span class="num">1</span>),
+  <span class="fn">fetchOrders</span>(<span class="num">1</span>),
+]);
+results.<span class="fn">forEach</span>(r => {
+  <span class="kw">if</span> (r.status === <span class="st">"fulfilled"</span>) console.<span class="fn">log</span>(r.value);
+  <span class="kw">else</span> console.<span class="fn">error</span>(r.reason);
+});</pre>
+
+<h2>4. Destructuring & Spread</h2>
+<pre><span class="cm">// Array destructuring</span>
+<span class="kw">const</span> [first, second, ...rest] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];
+<span class="kw">const</span> [<span class="nb2">state</span>, <span class="nb2">setState</span>] = <span class="fn">useState</span>(<span class="num">0</span>);  <span class="cm">// React pattern!</span>
+
+<span class="cm">// Object destructuring with rename + defaults</span>
+<span class="kw">const</span> { name: userName = <span class="st">"Guest"</span>, age, address: { city } = {} } = user;
+
+<span class="cm">// Spread — immutable updates (critical for React state!)</span>
+<span class="kw">const</span> updatedUser = { ...user, name: <span class="st">"Alice"</span>, age: <span class="num">25</span> };
+<span class="kw">const</span> newArr = [...items, newItem];
+<span class="kw">const</span> withoutItem = items.<span class="fn">filter</span>(i => i.id !== idToRemove);
+
+<span class="cm">// Optional chaining + nullish coalescing</span>
+<span class="kw">const</span> city = user?.address?.city ?? <span class="st">"Unknown"</span>;
+<span class="kw">const</span> count = data?.items?.length ?? <span class="num">0</span>;</pre>
+
+<h2>5. ES Modules</h2>
+<pre><span class="cm">// Named exports (can have multiple)</span>
+<span class="kw">export const</span> API_URL = <span class="st">"https://api.example.com"</span>;
+<span class="kw">export function</span> <span class="fn">formatDate</span>(<span class="nb2">date</span>) { <span class="kw">return</span> <span class="kw">new</span> <span class="fn">Intl.DateTimeFormat</span>(<span class="st">"en"</span>).<span class="fn">format</span>(date); }
+<span class="kw">export</span> { <span class="nb2">useAuth</span>, <span class="nb2">AuthProvider</span> };
+
+<span class="cm">// Default export (one per file, usually the component)</span>
+<span class="kw">export default function</span> <span class="fn">UserCard</span>({ user }) { ... }
+
+<span class="cm">// Import</span>
+<span class="kw">import</span> UserCard <span class="kw">from</span> <span class="st">'./UserCard'</span>;                   <span class="cm">// default</span>
+<span class="kw">import</span> { API_URL, formatDate } <span class="kw">from</span> <span class="st">'./utils'</span>;         <span class="cm">// named</span>
+<span class="kw">import</span> * <span class="kw">as</span> Utils <span class="kw">from</span> <span class="st">'./utils'</span>;                      <span class="cm">// namespace</span>
+<span class="kw">import</span> UserCard, { formatDate } <span class="kw">from</span> <span class="st">'./UserCard'</span>;      <span class="cm">// both</span>
+
+<span class="cm">// Dynamic import (code splitting)</span>
+<span class="kw">const</span> { default: Chart } = <span class="kw">await import</span>(<span class="st">'./Chart'</span>);
+<span class="cm">// Or with React.lazy:</span>
+<span class="kw">const</span> Chart = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="st">'./Chart'</span>));</pre>
+</div>
+
+<!-- ════════════════ 2. REACT FUNDAMENTALS ════════════════ -->
+<div id="react" class="page">
+<h1>React Fundamentals</h1>
+<p class="sub">JSX compilation, virtual DOM, reconciliation, props vs state, lifecycle — deeply explained</p>
+
+<h2>1. JSX Compilation</h2>
+<pre><span class="cm">// JSX is NOT HTML — it's syntax sugar for React.createElement()</span>
+
+<span class="cm">// What you write:</span>
+<span class="kw">function</span> <span class="fn">Button</span>({ label, onClick, disabled = <span class="kw">false</span> }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;button</span> <span class="attr">className</span>=<span class="val">"btn"</span> <span class="attr">onClick</span>=<span class="val">{onClick}</span> <span class="attr">disabled</span>=<span class="val">{disabled}</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="val">"btn-label"</span><span class="tag">&gt;</span>{label}<span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;/button&gt;</span>
+  );
+}
+
+<span class="cm">// What Babel compiles it to:</span>
+<span class="kw">function</span> <span class="fn">Button</span>({ label, onClick, disabled = <span class="kw">false</span> }) {
+  <span class="kw">return</span> React.<span class="fn">createElement</span>(<span class="st">"button"</span>,
+    { className: <span class="st">"btn"</span>, onClick, disabled },
+    React.<span class="fn">createElement</span>(<span class="st">"span"</span>, { className: <span class="st">"btn-label"</span> }, label)
+  );
+}
+<span class="cm">// Returns: plain JavaScript OBJECT (React element / virtual DOM node)</span>
+<span class="cm">// { type: "button", props: { className: "btn", onClick, disabled,</span>
+<span class="cm">//   children: { type: "span", props: { children: label } } } }</span></pre>
+
+<h2>2. Virtual DOM & Reconciliation</h2>
+<div class="diag">
+<span class="b">Render cycle:</span>
+
+  State/Props change
+       │
+       ▼
+  Component function re-executes
+       │ returns React elements (plain objects, cheap!)
+       ▼
+  <span class="b">New Virtual DOM tree</span>
+       │ React's "diffing" algorithm (reconciliation)
+       ▼
+  <span class="b">Diff vs Previous Virtual DOM</span>
+       │ Only compute WHAT changed
+       ▼
+  <span class="b">Minimal DOM updates</span>
+       │ Apply only the diff to real DOM (expensive operations minimized)
+       ▼
+  Browser repaints
+
+<span class="y">Reconciliation rules:</span>
+  1. Different element type → unmount old, mount new (no reuse!)
+  2. Same type → update props in place (DOM node reused)
+  3. Lists without keys → assume position-based (slow, buggy)
+  4. Lists with stable keys → match by key (fast, correct)
+</div>
+
+<h2>3. Props vs State</h2>
+<div class="g2">
+<div class="card">
+<div class="ct">Props — Input from parent</div>
+<pre style="font-size:11.5px"><span class="cm">// Props: immutable in child, flow down</span>
+<span class="kw">function</span> <span class="fn">UserCard</span>({ name, email, onDelete }) {
+  <span class="cm">// Cannot: name = "Alice" — read only!</span>
+  <span class="cm">// Props change → parent re-renders → child re-renders</span>
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;h3&gt;</span>{name}<span class="tag">&lt;/h3&gt;</span>
+      <span class="tag">&lt;p&gt;</span>{email}<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>=<span class="val">{onDelete}</span><span class="tag">&gt;</span>Delete<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+</div>
+<div class="card">
+<div class="ct">State — Internal, mutable</div>
+<pre style="font-size:11.5px"><span class="cm">// State: owned by component, triggers re-render</span>
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="cm">// Calling setCount triggers re-render</span>
+  <span class="cm">// NEVER mutate state directly:</span>
+  <span class="cm">// ❌ count++  (no re-render!)</span>
+  <span class="cm">// ✅ setCount(c => c + 1)</span>
+  <span class="kw">return</span> (
+    <span class="tag">&lt;button</span> <span class="attr">onClick</span>=<span class="val">{() => setCount(c => c + 1)}</span><span class="tag">&gt;</span>
+      {count}
+    <span class="tag">&lt;/button&gt;</span>
+  );
+}</pre>
+</div>
+</div>
+
+<h2>4. Component Rendering & Keys</h2>
+<pre><span class="cm">// Keys: React's identity system for list items</span>
+<span class="kw">function</span> <span class="fn">TodoList</span>({ todos }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;ul&gt;</span>
+      {todos.<span class="fn">map</span>(todo => (
+        <span class="cm">// ✅ Stable, unique key → React reuses DOM nodes correctly</span>
+        <span class="tag">&lt;TodoItem</span> <span class="attr">key</span>=<span class="val">{todo.id}</span> <span class="attr">todo</span>=<span class="val">{todo}</span> <span class="tag">/&gt;</span>
+        <span class="cm">// ❌ key={index} → on reorder, React confuses items → bugs + lost state</span>
+      ))}
+    <span class="tag">&lt;/ul&gt;</span>
+  );
+}
+
+<span class="cm">// Conditional rendering patterns:</span>
+<span class="kw">function</span> <span class="fn">Dashboard</span>({ user, isLoading, error }) {
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> <span class="tag">&lt;Spinner /&gt;</span>;           <span class="cm">// early return</span>
+  <span class="kw">if</span> (error)     <span class="kw">return</span> <span class="tag">&lt;ErrorBanner</span> <span class="attr">msg</span>=<span class="val">{error}</span> <span class="tag">/&gt;</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      {user &amp;&amp; <span class="tag">&lt;UserGreeting</span> <span class="attr">user</span>=<span class="val">{user}</span> <span class="tag">/&gt;</span>}         {/* short-circuit */}
+      {user?.isPremium ? <span class="tag">&lt;PremiumBadge /&gt;</span> : <span class="tag">&lt;UpgradePrompt /&gt;</span>}
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+
+<h2>5. Component Composition Patterns</h2>
+<pre><span class="cm">// Children prop — most flexible composition</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ title, children, footer }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"card"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"card-header"</span><span class="tag">&gt;</span>{title}<span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"card-body"</span><span class="tag">&gt;</span>{children}<span class="tag">&lt;/div&gt;</span>
+      {footer &amp;&amp; <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"card-footer"</span><span class="tag">&gt;</span>{footer}<span class="tag">&lt;/div&gt;</span>}
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}
+
+<span class="cm">// Usage: any content goes inside</span>
+<span class="tag">&lt;Card</span> <span class="attr">title</span>=<span class="val">"User Profile"</span> <span class="attr">footer</span>=<span class="val">{&lt;Button&gt;Save&lt;/Button&gt;}</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;UserForm</span> <span class="attr">user</span>=<span class="val">{user}</span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/Card&gt;</span></pre>
+</div>
+
+<!-- ════════════════ 3. HOOKS ════════════════ -->
+<div id="hooks" class="page">
+<h1>React Hooks — Deep Dive</h1>
+<p class="sub">Render cycle, batching, stale closures, dependency arrays, memoization, custom hooks</p>
+
+<h2>1. useState — State Batching & Functional Updates</h2>
+<pre><span class="cm">// State batching (React 18): multiple setStates in event handlers → 1 re-render</span>
+<span class="kw">function</span> <span class="fn">Form</span>() {
+  <span class="kw">const</span> [name, setName] = <span class="fn">useState</span>(<span class="st">""</span>);
+  <span class="kw">const</span> [email, setEmail] = <span class="fn">useState</span>(<span class="st">""</span>);
+
+  <span class="kw">const</span> <span class="fn">handleReset</span> = () => {
+    <span class="fn">setName</span>(<span class="st">""</span>);    <span class="cm">// React 18: batched → only 1 re-render total</span>
+    <span class="fn">setEmail</span>(<span class="st">""</span>);
+  };
+
+  <span class="kw">return</span> <span class="tag">&lt;button</span> <span class="attr">onClick</span>=<span class="val">{handleReset}</span><span class="tag">&gt;</span>Reset<span class="tag">&lt;/button&gt;</span>;
+}
+
+<span class="cm">// Functional update: safe when new state depends on current state</span>
+<span class="kw">const</span> <span class="fn">increment</span> = () => <span class="fn">setCount</span>(prev => prev + <span class="num">1</span>);   <span class="cm">// ✅ safe</span>
+<span class="kw">const</span> <span class="fn">badIncrement</span> = () => <span class="fn">setCount</span>(count + <span class="num">1</span>);          <span class="cm">// ❌ stale in async</span>
+
+<span class="cm">// Object state — ALWAYS spread to preserve other fields</span>
+<span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>({ name: <span class="st">""</span>, email: <span class="st">""</span>, age: <span class="num">0</span> });
+<span class="kw">const</span> <span class="fn">updateName</span> = (name) => <span class="fn">setUser</span>(u => ({ ...u, name }));   <span class="cm">// ✅</span>
+<span class="kw">const</span> <span class="fn">badUpdate</span>  = (name) => <span class="fn">setUser</span>({ name });                <span class="cm">// ❌ loses email, age!</span></pre>
+
+<h2>2. useEffect — The Complete Guide</h2>
+<pre><span class="cm">// useEffect(fn, deps)</span>
+<span class="cm">// deps=undefined → runs after EVERY render</span>
+<span class="cm">// deps=[]        → runs ONCE after mount</span>
+<span class="cm">// deps=[a,b]     → runs when a or b changes (shallow comparison)</span>
+
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userId }) {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">let</span> cancelled = <span class="kw">false</span>;                    <span class="cm">// cleanup flag</span>
+
+    <span class="kw">const</span> <span class="fn">loadUser</span> = async () => {
+      <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchUser</span>(userId);
+      <span class="kw">if</span> (!cancelled) <span class="fn">setUser</span>(data);           <span class="cm">// don't update unmounted component</span>
+    };
+
+    <span class="fn">loadUser</span>();
+
+    <span class="kw">return</span> () => { cancelled = <span class="kw">true</span>; };       <span class="cm">// cleanup on userId change/unmount</span>
+  }, [userId]);                                <span class="cm">// re-run when userId changes</span>
+
+  <span class="cm">// AbortController is cleaner:</span>
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>();
+    <span class="fn">fetch</span>(<span class="st">`/api/users/${userId}`</span>, { signal: controller.signal })
+      .<span class="fn">then</span>(r => r.<span class="fn">json</span>()).<span class="fn">then</span>(setUser)
+      .<span class="fn">catch</span>(e => { <span class="kw">if</span> (e.name !== <span class="st">"AbortError"</span>) console.<span class="fn">error</span>(e); });
+    <span class="kw">return</span> () => controller.<span class="fn">abort</span>();
+  }, [userId]);
+}</pre>
+
+<h2>3. Stale Closure — The #1 Hook Bug</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ Stale closure — reads old count</div>
+<pre style="font-size:11.5px"><span class="kw">function</span> <span class="fn">Timer</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => {
+      <span class="cm">// 'count' captured at effect creation!</span>
+      <span class="cm">// Always logs 0, never increments</span>
+      console.<span class="fn">log</span>(count); <span class="cm">// stale!</span>
+      <span class="fn">setCount</span>(count + <span class="num">1</span>); <span class="cm">// always sets to 1!</span>
+    }, <span class="num">1000</span>);
+    <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id);
+  }, []);  <span class="cm">// empty deps = closure captures count=0</span>
+}</pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Functional update fixes stale closure</div>
+<pre style="font-size:11.5px"><span class="kw">function</span> <span class="fn">Timer</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => {
+      <span class="cm">// Functional update: always gets CURRENT count</span>
+      <span class="fn">setCount</span>(prev => prev + <span class="num">1</span>); <span class="cm">// ✅</span>
+    }, <span class="num">1000</span>);
+    <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id);
+  }, []);  <span class="cm">// no deps needed!</span>
+
+  <span class="kw">return</span> <span class="tag">&lt;div&gt;</span>{count}<span class="tag">&lt;/div&gt;</span>;
+}</pre>
+</div>
+</div>
+
+<h2>4. useMemo & useCallback — When to Use</h2>
+<pre><span class="cm">// useMemo: memoize expensive computation</span>
+<span class="kw">function</span> <span class="fn">ExpensiveList</span>({ items, filter }) {
+  <span class="cm">// Recalculates ONLY when items or filter changes</span>
+  <span class="kw">const</span> filteredItems = <span class="fn">useMemo</span>(
+    () => items.<span class="fn">filter</span>(item => item.category === filter).<span class="fn">sort</span>((a, b) => a.price - b.price),
+    [items, filter]  <span class="cm">// dependencies</span>
+  );
+  <span class="kw">return</span> filteredItems.<span class="fn">map</span>(item => <span class="tag">&lt;Item</span> <span class="attr">key</span>=<span class="val">{item.id}</span> <span class="attr">item</span>=<span class="val">{item}</span> <span class="tag">/&gt;</span>);
+}
+
+<span class="cm">// useCallback: stable function reference for children/effects</span>
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="cm">// Without useCallback: new function every render → Child re-renders every time</span>
+  <span class="cm">// With useCallback: same reference if count hasn't changed</span>
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = <span class="fn">useCallback</span>((data) => {
+    <span class="fn">submitForm</span>(data, count);
+  }, [count]);  <span class="cm">// depends on count</span>
+
+  <span class="kw">return</span> <span class="tag">&lt;MemoizedChild</span> <span class="attr">onSubmit</span>=<span class="val">{handleSubmit}</span> <span class="tag">/&gt;</span>;
+}
+
+<span class="cm">// React.memo: skip re-render if props unchanged</span>
+<span class="kw">const</span> MemoizedChild = React.<span class="fn">memo</span>(<span class="kw">function</span> <span class="fn">Child</span>({ onSubmit }) {
+  console.<span class="fn">log</span>(<span class="st">"Child renders"</span>);
+  <span class="kw">return</span> <span class="tag">&lt;button</span> <span class="attr">onClick</span>=<span class="val">{onSubmit}</span><span class="tag">&gt;</span>Submit<span class="tag">&lt;/button&gt;</span>;
+});
+
+<span class="cm">// ⚠️ Don't over-memoize!</span>
+<span class="cm">// Memoization has overhead. Only use when:</span>
+<span class="cm">// 1. Computation is genuinely expensive (&gt;1ms)</span>
+<span class="cm">// 2. Component re-renders frequently with same props</span>
+<span class="cm">// 3. Function passed to optimized child (React.memo)</span></pre>
+
+<h2>5. Custom Hooks — Reusable Logic</h2>
+<pre><span class="cm">// Custom hooks: extract and reuse stateful logic</span>
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>&lt;T&gt;(key: <span class="kw">string</span>, defaultValue: T) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>&lt;T&gt;(() => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> stored = localStorage.<span class="fn">getItem</span>(key);
+      <span class="kw">return</span> stored ? <span class="fn">JSON.parse</span>(stored) : defaultValue;
+    } <span class="kw">catch</span> { <span class="kw">return</span> defaultValue; }
+  });
+
+  <span class="kw">const</span> <span class="fn">setStored</span> = <span class="fn">useCallback</span>((newValue: T | ((v: T) => T)) => {
+    <span class="fn">setValue</span>(prev => {
+      <span class="kw">const</span> next = <span class="kw">typeof</span> newValue === <span class="st">"function"</span>
+        ? (newValue <span class="kw">as</span> (v: T) => T)(prev) : newValue;
+      localStorage.<span class="fn">setItem</span>(key, <span class="fn">JSON.stringify</span>(next));
+      <span class="kw">return</span> next;
+    });
+  }, [key]);
+
+  <span class="kw">return</span> [value, setStored] <span class="kw">as const</span>;
+}
+
+<span class="cm">// useDebounce hook</span>
+<span class="kw">function</span> <span class="fn">useDebounce</span>&lt;T&gt;(value: T, delay = <span class="num">300</span>): T {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value);
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(value), delay);
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(timer);
+  }, [value, delay]);
+  <span class="kw">return</span> debounced;
+}
+
+<span class="cm">// Usage:</span>
+<span class="kw">const</span> [search, setSearch] = <span class="fn">useState</span>(<span class="st">""</span>);
+<span class="kw">const</span> debouncedSearch = <span class="fn">useDebounce</span>(search, <span class="num">400</span>);
+<span class="fn">useEffect</span>(() => { <span class="kw">if</span> (debouncedSearch) <span class="fn">fetchResults</span>(debouncedSearch); }, [debouncedSearch]);</pre>
+</div>
+
+<!-- ════════════════ 4. ARCHITECTURE ════════════════ -->
+<div id="arch" class="page">
+<h1>Scalable React Architecture</h1>
+<p class="sub">Feature-based structure, component composition, state colocation, custom hooks, UI system</p>
+
+<h2>1. Production Folder Structure</h2>
+<pre><span class="cm">src/
+├── app/                        ← app-level: router, providers, store
+│   ├── App.tsx
+│   ├── router.tsx
+│   └── store.ts
+│
+├── features/                   ← domain features (main code)
+│   ├── auth/
+│   │   ├── api/                ← API calls for this feature
+│   │   │   └── authApi.ts
+│   │   ├── components/         ← feature-specific components
+│   │   │   ├── LoginForm.tsx
+│   │   │   └── RegisterForm.tsx
+│   │   ├── hooks/              ← feature-specific hooks
+│   │   │   └── useAuth.ts
+│   │   ├── store/              ← feature state slice
+│   │   │   └── authSlice.ts
+│   │   └── index.ts            ← public API (what other features can import)
+│   │
+│   ├── orders/
+│   │   ├── api/orderApi.ts
+│   │   ├── components/OrderTable.tsx
+│   │   ├── hooks/useOrders.ts
+│   │   └── index.ts
+│   │
+│   └── dashboard/
+│
+├── shared/                     ← truly shared across features
+│   ├── components/             ← design system components
+│   │   ├── Button/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Button.test.tsx
+│   │   │   └── index.ts
+│   │   ├── Modal/
+│   │   ├── Table/
+│   │   └── index.ts
+│   ├── hooks/                  ← generic hooks (useDebounce, useLocalStorage)
+│   ├── utils/                  ← pure functions
+│   ├── types/                  ← shared TypeScript types
+│   └── api/                    ← axios instance, interceptors
+│       └── client.ts
+│
+├── pages/                      ← route-level components
+│   ├── DashboardPage.tsx
+│   ├── OrdersPage.tsx
+│   └── LoginPage.tsx
+│
+└── assets/</span></pre>
+
+<h2>2. State Colocation Rule</h2>
+<div class="diag">
+<span class="b">Rule: State lives as close to where it's used as possible</span>
+
+  <span class="g">Local state</span>: used only in one component → useState inside that component
+  <span class="y">Shared state</span>: used by siblings → lift to closest common ancestor
+  <span class="b">Global state</span>: used everywhere → Context or Redux
+
+  Accordion.expanded    → local useState (only Accordion needs it)
+  Modal.isOpen          → lift to parent (parent controls open/close)
+  ProductList.filter    → URL search params (shareable, bookmarkable)
+  User.authToken        → global Redux/Context (needed everywhere)
+
+<span class="r">Anti-pattern: lifting state too high</span>
+  Putting everything in Redux/Context when it's only used locally
+  → Unnecessary re-renders of unrelated components
+  → Harder to reason about, harder to test in isolation
+</div>
+
+<h2>3. Component API Design</h2>
+<pre><span class="cm">// Reusable Button component with controlled API</span>
+<span class="kw">type</span> ButtonProps = {
+  variant?: <span class="st">"primary"</span> | <span class="st">"secondary"</span> | <span class="st">"danger"</span> | <span class="st">"ghost"</span>;
+  size?: <span class="st">"sm"</span> | <span class="st">"md"</span> | <span class="st">"lg"</span>;
+  isLoading?: <span class="kw">boolean</span>;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+} &amp; React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;;  <span class="cm">// forward all native props!</span>
+
+<span class="kw">export function</span> <span class="fn">Button</span>({
+  variant = <span class="st">"primary"</span>, size = <span class="st">"md"</span>, isLoading = <span class="kw">false</span>,
+  leftIcon, rightIcon, children, disabled, className, ...rest
+}: ButtonProps) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;button</span>
+      <span class="attr">className</span>=<span class="val">{cn(baseStyles, variants[variant], sizes[size], className)}</span>
+      <span class="attr">disabled</span>=<span class="val">{disabled || isLoading}</span>
+      {...rest}  <span class="cm">// onClick, type, form, etc. forwarded</span>
+    <span class="tag">&gt;</span>
+      {isLoading &amp;&amp; <span class="tag">&lt;Spinner</span> <span class="attr">size</span>=<span class="val">"sm"</span> <span class="tag">/&gt;</span>}
+      {leftIcon &amp;&amp; <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="val">"mr-2"</span><span class="tag">&gt;</span>{leftIcon}<span class="tag">&lt;/span&gt;</span>}
+      {children}
+      {rightIcon &amp;&amp; <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="val">"ml-2"</span><span class="tag">&gt;</span>{rightIcon}<span class="tag">&lt;/span&gt;</span>}
+    <span class="tag">&lt;/button&gt;</span>
+  );
+}</pre>
+</div>
+
+<!-- ════════════════ 5. ROUTER ════════════════ -->
+<div id="router" class="page">
+<h1>React Router v6</h1>
+<p class="sub">SPA routing, nested routes, protected routes, lazy loading, auth flow</p>
+
+<h2>1. Router Configuration</h2>
+<pre><span class="cm">// app/router.tsx</span>
+<span class="kw">import</span> { createBrowserRouter, RouterProvider } <span class="kw">from</span> <span class="st">"react-router-dom"</span>;
+<span class="kw">const</span> router = <span class="fn">createBrowserRouter</span>([
+  {
+    path: <span class="st">"/"</span>,
+    element: <span class="tag">&lt;RootLayout /&gt;</span>,                   <span class="cm">// persistent layout (nav, footer)</span>
+    errorElement: <span class="tag">&lt;ErrorBoundary /&gt;</span>,
+    children: [
+      { index: <span class="kw">true</span>, element: <span class="tag">&lt;HomePage /&gt;</span> },  <span class="cm">// matches exactly "/"</span>
+      {
+        path: <span class="st">"dashboard"</span>,
+        element: <span class="tag">&lt;ProtectedRoute&gt;&lt;DashboardLayout /&gt;&lt;/ProtectedRoute&gt;</span>,
+        children: [
+          { index: <span class="kw">true</span>, element: <span class="tag">&lt;DashboardOverview /&gt;</span> },
+          { path: <span class="st">"orders"</span>,    element: <span class="tag">&lt;OrdersPage /&gt;</span> },
+          { path: <span class="st">"orders/:id"</span>, element: <span class="tag">&lt;OrderDetailPage /&gt;</span> },
+          { path: <span class="st">"settings"</span>,  element: <span class="tag">&lt;SettingsPage /&gt;</span> },
+        ],
+      },
+      {
+        path: <span class="st">"admin"</span>,
+        element: <span class="tag">&lt;RoleRoute</span> <span class="attr">role</span>=<span class="val">"ADMIN"</span><span class="tag">&gt;&lt;AdminLayout /&gt;&lt;/RoleRoute&gt;</span>,
+        children: [
+          { path: <span class="st">"users"</span>,     element: <span class="tag">&lt;UserManagementPage /&gt;</span> },
+        ],
+      },
+      <span class="cm">// Lazy loaded routes (code splitting!)</span>
+      {
+        path: <span class="st">"reports"</span>,
+        lazy: <span class="kw">async</span> () => ({
+          Component: (<span class="kw">await import</span>(<span class="st">"../pages/ReportsPage"</span>)).default
+        }),
+      },
+      { path: <span class="st">"login"</span>,  element: <span class="tag">&lt;LoginPage /&gt;</span> },
+      { path: <span class="st">"*"</span>,      element: <span class="tag">&lt;NotFoundPage /&gt;</span> },
+    ],
+  },
+]);
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> <span class="tag">&lt;RouterProvider</span> <span class="attr">router</span>=<span class="val">{router}</span> <span class="tag">/&gt;</span>;
+}</pre>
+
+<h2>2. Protected Routes</h2>
+<pre><span class="cm">// ProtectedRoute: redirect if not authenticated</span>
+<span class="kw">function</span> <span class="fn">ProtectedRoute</span>({ children }: { children: React.ReactNode }) {
+  <span class="kw">const</span> { isAuthenticated, isLoading } = <span class="fn">useAuth</span>();
+  <span class="kw">const</span> location = <span class="fn">useLocation</span>();
+
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> <span class="tag">&lt;PageSpinner /&gt;</span>;
+
+  <span class="kw">if</span> (!isAuthenticated) {
+    <span class="cm">// Save where they were trying to go</span>
+    <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="attr">to</span>=<span class="val">"/login"</span> <span class="attr">state</span>=<span class="val">{{ from: location }}</span> <span class="attr">replace</span> <span class="tag">/&gt;</span>;
+  }
+  <span class="kw">return</span> &lt;&gt;{children}&lt;/&gt;;
+}
+
+<span class="cm">// RoleRoute: redirect if wrong role</span>
+<span class="kw">function</span> <span class="fn">RoleRoute</span>({ role, children }: { role: <span class="kw">string</span>, children: React.ReactNode }) {
+  <span class="kw">const</span> { user } = <span class="fn">useAuth</span>();
+  <span class="kw">if</span> (!user?.roles?.includes(role)) <span class="kw">return</span> <span class="tag">&lt;Navigate</span> <span class="attr">to</span>=<span class="val">"/403"</span> <span class="attr">replace</span> <span class="tag">/&gt;</span>;
+  <span class="kw">return</span> &lt;&gt;{children}&lt;/&gt;;
+}
+
+<span class="cm">// Redirect to original destination after login:</span>
+<span class="kw">function</span> <span class="fn">LoginPage</span>() {
+  <span class="kw">const</span> navigate = <span class="fn">useNavigate</span>();
+  <span class="kw">const</span> location = <span class="fn">useLocation</span>();
+  <span class="kw">const</span> from = location.state?.from?.pathname ?? <span class="st">"/dashboard"</span>;
+
+  <span class="kw">const</span> <span class="fn">handleLogin</span> = <span class="kw">async</span> (credentials) => {
+    <span class="kw">await</span> <span class="fn">login</span>(credentials);
+    <span class="fn">navigate</span>(from, { replace: <span class="kw">true</span> });  <span class="cm">// go to original destination</span>
+  };
+  <span class="kw">return</span> <span class="tag">&lt;LoginForm</span> <span class="attr">onSubmit</span>=<span class="val">{handleLogin}</span> <span class="tag">/&gt;</span>;
+}
+
+<span class="cm">// Navigation hooks</span>
+<span class="kw">const</span> navigate = <span class="fn">useNavigate</span>();
+navigate(<span class="st">"/dashboard"</span>);               <span class="cm">// programmatic navigation</span>
+navigate(-<span class="num">1</span>);                           <span class="cm">// go back</span>
+navigate(<span class="st">"../settings"</span>, { relative: <span class="st">"path"</span> }); <span class="cm">// relative</span>
+
+<span class="kw">const</span> { id } = <span class="fn">useParams</span>();              <span class="cm">// :id from path</span>
+<span class="kw">const</span> [searchParams, setSearchParams] = <span class="fn">useSearchParams</span>();
+<span class="kw">const</span> page = searchParams.<span class="fn">get</span>(<span class="st">"page"</span>) ?? <span class="st">"1"</span>;
+<span class="fn">setSearchParams</span>({ page: <span class="st">"2"</span>, filter: <span class="st">"active"</span> });</pre>
+</div>
+
+<!-- ════════════════ 6. API ════════════════ -->
+<div id="api" class="page">
+<h1>Frontend API Integration</h1>
+<p class="sub">Axios client, loading states, optimistic updates, pagination, retry, token handling</p>
+
+<h2>1. Axios Client Setup</h2>
+<pre><span class="cm">// shared/api/client.ts</span>
+<span class="kw">import</span> axios, { AxiosError } <span class="kw">from</span> <span class="st">"axios"</span>;
+<span class="kw">import</span> { tokenService } <span class="kw">from</span> <span class="st">"../services/tokenService"</span>;
+<span class="kw">import</span> { refreshTokens } <span class="kw">from</span> <span class="st">"../../features/auth/api/authApi"</span>;
+
+<span class="kw">export const</span> apiClient = axios.<span class="fn">create</span>({
+  baseURL: import.meta.env.VITE_API_URL ?? <span class="st">"http://localhost:8080"</span>,
+  timeout: <span class="num">15000</span>,
+  headers: { <span class="st">"Content-Type"</span>: <span class="st">"application/json"</span> },
+});
+
+<span class="cm">// Request interceptor: attach JWT</span>
+apiClient.interceptors.request.<span class="fn">use</span>((config) => {
+  <span class="kw">const</span> token = tokenService.<span class="fn">getAccessToken</span>();
+  <span class="kw">if</span> (token) config.headers.Authorization = <span class="st">`Bearer ${token}`</span>;
+  <span class="kw">return</span> config;
+});
+
+<span class="cm">// Response interceptor: handle 401 → refresh token</span>
+<span class="kw">let</span> isRefreshing = <span class="kw">false</span>;
+<span class="kw">let</span> refreshQueue: Array&lt;(token: <span class="kw">string</span>) => void&gt; = [];
+
+apiClient.interceptors.response.<span class="fn">use</span>(
+  (res) => res,
+  <span class="kw">async</span> (error: AxiosError) => {
+    <span class="kw">const</span> original = error.config <span class="kw">as any</span>;
+    <span class="kw">if</span> (error.response?.status !== <span class="num">401</span> || original._retry) <span class="kw">return</span> Promise.<span class="fn">reject</span>(error);
+    original._retry = <span class="kw">true</span>;
+
+    <span class="kw">if</span> (isRefreshing) {
+      <span class="cm">// Queue requests while refreshing</span>
+      <span class="kw">return new</span> <span class="fn">Promise</span>((resolve) => {
+        refreshQueue.<span class="fn">push</span>((token) => {
+          original.headers.Authorization = <span class="st">`Bearer ${token}`</span>;
+          resolve(apiClient(original));
+        });
+      });
+    }
+
+    isRefreshing = <span class="kw">true</span>;
+    <span class="kw">try</span> {
+      <span class="kw">const</span> { accessToken } = <span class="kw">await</span> <span class="fn">refreshTokens</span>();
+      tokenService.<span class="fn">setTokens</span>(accessToken);
+      refreshQueue.<span class="fn">forEach</span>(cb => cb(accessToken));
+      refreshQueue = [];
+      original.headers.Authorization = <span class="st">`Bearer ${accessToken}`</span>;
+      <span class="kw">return</span> apiClient(original);
+    } <span class="kw">catch</span> (refreshError) {
+      tokenService.<span class="fn">clear</span>();
+      window.location.href = <span class="st">"/login"</span>;
+      <span class="kw">return</span> Promise.<span class="fn">reject</span>(refreshError);
+    } <span class="kw">finally</span> {
+      isRefreshing = <span class="kw">false</span>;
+    }
+  }
+);</pre>
+
+<h2>2. TanStack Query (React Query) — The Gold Standard</h2>
+<pre><span class="cm">// features/orders/hooks/useOrders.ts</span>
+<span class="kw">import</span> { useQuery, useMutation, useQueryClient } <span class="kw">from</span> <span class="st">"@tanstack/react-query"</span>;
+
+<span class="cm">// Fetching with automatic caching, refetch, loading states</span>
+<span class="kw">export function</span> <span class="fn">useOrders</span>(filters: OrderFilters) {
+  <span class="kw">return</span> <span class="fn">useQuery</span>({
+    queryKey: [<span class="st">"orders"</span>, filters],       <span class="cm">// cache key (array)</span>
+    queryFn: () => orderApi.<span class="fn">getOrders</span>(filters),
+    staleTime: <span class="num">5</span> * <span class="num">60</span> * <span class="num">1000</span>,             <span class="cm">// 5 min: don't refetch if fresh</span>
+    retry: <span class="num">2</span>,                               <span class="cm">// retry failed requests twice</span>
+    retryDelay: (attempt) => Math.<span class="fn">min</span>(<span class="num">1000</span> * <span class="num">2</span> ** attempt, <span class="num">10000</span>),
+  });
+}
+
+<span class="cm">// Mutation with optimistic update</span>
+<span class="kw">export function</span> <span class="fn">useUpdateOrderStatus</span>() {
+  <span class="kw">const</span> queryClient = <span class="fn">useQueryClient</span>();
+
+  <span class="kw">return</span> <span class="fn">useMutation</span>({
+    mutationFn: ({ id, status }: { id: <span class="kw">string</span>, status: <span class="kw">string</span> }) =>
+      orderApi.<span class="fn">updateStatus</span>(id, status),
+
+    <span class="cm">// Optimistic update: update UI BEFORE server confirms</span>
+    onMutate: <span class="kw">async</span> ({ id, status }) => {
+      <span class="kw">await</span> queryClient.<span class="fn">cancelQueries</span>({ queryKey: [<span class="st">"orders"</span>] });
+      <span class="kw">const</span> snapshot = queryClient.<span class="fn">getQueryData</span>([<span class="st">"orders"</span>]);
+      queryClient.<span class="fn">setQueryData</span>([<span class="st">"orders"</span>], (old: Order[]) =>
+        old.map(o => o.id === id ? { ...o, status } : o)
+      );
+      <span class="kw">return</span> { snapshot };  <span class="cm">// context for rollback</span>
+    },
+    onError: (err, vars, ctx) => {
+      <span class="cm">// Rollback to snapshot on error</span>
+      queryClient.<span class="fn">setQueryData</span>([<span class="st">"orders"</span>], ctx?.snapshot);
+    },
+    onSettled: () => {
+      <span class="cm">// Always refetch to sync with server truth</span>
+      queryClient.<span class="fn">invalidateQueries</span>({ queryKey: [<span class="st">"orders"</span>] });
+    },
+  });
+}
+
+<span class="cm">// Usage in component:</span>
+<span class="kw">function</span> <span class="fn">OrdersPage</span>() {
+  <span class="kw">const</span> [filters, setFilters] = <span class="fn">useState</span>({ status: <span class="st">"all"</span>, page: <span class="num">1</span> });
+  <span class="kw">const</span> { data: orders, isLoading, isError, error } = <span class="fn">useOrders</span>(filters);
+  <span class="kw">const</span> { mutate: updateStatus, isPending } = <span class="fn">useUpdateOrderStatus</span>();
+
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> <span class="tag">&lt;TableSkeleton rows</span>=<span class="val">{10}</span> <span class="tag">/&gt;</span>;
+  <span class="kw">if</span> (isError)   <span class="kw">return</span> <span class="tag">&lt;ErrorAlert</span> <span class="attr">message</span>=<span class="val">{error.message}</span> <span class="tag">/&gt;</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;OrderTable</span>
+      <span class="attr">orders</span>=<span class="val">{orders}</span>
+      <span class="attr">onStatusChange</span>=<span class="val">{(id, status) => updateStatus({ id, status })}</span>
+    <span class="tag">/&gt;</span>
+  );
+}</pre>
+
+<h2>3. Infinite Scroll Pagination</h2>
+<pre><span class="kw">import</span> { useInfiniteQuery } <span class="kw">from</span> <span class="st">"@tanstack/react-query"</span>;
+
+<span class="kw">function</span> <span class="fn">useInfiniteOrders</span>() {
+  <span class="kw">return</span> <span class="fn">useInfiniteQuery</span>({
+    queryKey: [<span class="st">"orders"</span>, <span class="st">"infinite"</span>],
+    queryFn: ({ pageParam = <span class="kw">null</span> }) => orderApi.<span class="fn">getPage</span>(pageParam),
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? <span class="kw">undefined</span>,
+    initialPageParam: <span class="kw">null</span>,
+  });
+}
+
+<span class="kw">function</span> <span class="fn">InfiniteOrderList</span>() {
+  <span class="kw">const</span> { data, fetchNextPage, hasNextPage, isFetchingNextPage } = <span class="fn">useInfiniteOrders</span>();
+  <span class="kw">const</span> sentinelRef = <span class="fn">useRef</span>&lt;HTMLDivElement&gt;(<span class="kw">null</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> observer = <span class="kw">new</span> <span class="fn">IntersectionObserver</span>(
+      ([entry]) => { <span class="kw">if</span> (entry.isIntersecting &amp;&amp; hasNextPage) <span class="fn">fetchNextPage</span>(); },
+      { threshold: <span class="num">0.1</span> }
+    );
+    <span class="kw">if</span> (sentinelRef.current) observer.<span class="fn">observe</span>(sentinelRef.current);
+    <span class="kw">return</span> () => observer.<span class="fn">disconnect</span>();
+  }, [hasNextPage, fetchNextPage]);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      {data?.pages.<span class="fn">flatMap</span>(page => page.orders).<span class="fn">map</span>(order => (
+        <span class="tag">&lt;OrderRow</span> <span class="attr">key</span>=<span class="val">{order.id}</span> <span class="attr">order</span>=<span class="val">{order}</span> <span class="tag">/&gt;</span>
+      ))}
+      <span class="tag">&lt;div</span> <span class="attr">ref</span>=<span class="val">{sentinelRef}</span><span class="tag">&gt;</span>{isFetchingNextPage &amp;&amp; <span class="tag">&lt;Spinner /&gt;</span>}<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+</div>
+
+<!-- ════════════════ 7. STATE ════════════════ -->
+<div id="state" class="page">
+<h1>State Management</h1>
+<p class="sub">Context API, Redux Toolkit, normalization, async thunks, render optimization</p>
+
+<h2>1. Context API — Right Use Cases</h2>
+<pre><span class="cm">// Context: good for slowly-changing global data (theme, auth, locale)</span>
+<span class="cm">// NOT for high-frequency updates (use Redux/Zustand)</span>
+
+<span class="kw">type</span> AuthContextType = {
+  user: User | <span class="kw">null</span>;
+  isAuthenticated: <span class="kw">boolean</span>;
+  login: (credentials: Credentials) => Promise&lt;void&gt;;
+  logout: () => void;
+};
+
+<span class="kw">const</span> AuthContext = React.<span class="fn">createContext</span>&lt;AuthContextType&gt;(<span class="kw">null</span>!);
+
+<span class="kw">export function</span> <span class="fn">AuthProvider</span>({ children }: { children: React.ReactNode }) {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>&lt;User | null&gt;(() =>
+    tokenService.<span class="fn">getUser</span>()     <span class="cm">// lazy init from localStorage</span>
+  );
+
+  <span class="kw">const</span> login = <span class="fn">useCallback</span>(<span class="kw">async</span> (credentials) => {
+    <span class="kw">const</span> { user, tokens } = <span class="kw">await</span> authApi.<span class="fn">login</span>(credentials);
+    tokenService.<span class="fn">setTokens</span>(tokens);
+    <span class="fn">setUser</span>(user);
+  }, []);
+
+  <span class="kw">const</span> logout = <span class="fn">useCallback</span>(() => {
+    tokenService.<span class="fn">clear</span>();
+    <span class="fn">setUser</span>(<span class="kw">null</span>);
+  }, []);
+
+  <span class="cm">// Memoize value to prevent unnecessary re-renders</span>
+  <span class="kw">const</span> value = <span class="fn">useMemo</span>(() =>
+    ({ user, isAuthenticated: !!user, login, logout }),
+    [user, login, logout]
+  );
+
+  <span class="kw">return</span> <span class="tag">&lt;AuthContext.Provider</span> <span class="attr">value</span>=<span class="val">{value}</span><span class="tag">&gt;</span>{children}<span class="tag">&lt;/AuthContext.Provider&gt;</span>;
+}
+
+<span class="kw">export const</span> <span class="fn">useAuth</span> = () => {
+  <span class="kw">const</span> ctx = <span class="fn">useContext</span>(AuthContext);
+  <span class="kw">if</span> (!ctx) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">"useAuth must be inside AuthProvider"</span>);
+  <span class="kw">return</span> ctx;
+};</pre>
+
+<h2>2. Redux Toolkit — Production Setup</h2>
+<pre><span class="cm">// features/orders/store/ordersSlice.ts</span>
+<span class="kw">import</span> { createSlice, createAsyncThunk, createEntityAdapter } <span class="kw">from</span> <span class="st">"@reduxjs/toolkit"</span>;
+
+<span class="cm">// EntityAdapter: normalized state (no duplicate data, O(1) lookup)</span>
+<span class="kw">const</span> ordersAdapter = <span class="fn">createEntityAdapter</span>&lt;Order&gt;({
+  sortComparer: (a, b) => b.createdAt.<span class="fn">localeCompare</span>(a.createdAt),
+});
+
+<span class="cm">// Async thunk: handles loading/success/error states automatically</span>
+<span class="kw">export const</span> fetchOrders = <span class="fn">createAsyncThunk</span>(
+  <span class="st">"orders/fetchAll"</span>,
+  <span class="kw">async</span> (filters: OrderFilters, { rejectWithValue }) => {
+    <span class="kw">try</span> {
+      <span class="kw">return await</span> orderApi.<span class="fn">getOrders</span>(filters);
+    } <span class="kw">catch</span> (err: any) {
+      <span class="kw">return</span> rejectWithValue(err.response?.data ?? <span class="st">"Network error"</span>);
+    }
+  }
+);
+
+<span class="kw">const</span> ordersSlice = <span class="fn">createSlice</span>({
+  name: <span class="st">"orders"</span>,
+  initialState: ordersAdapter.<span class="fn">getInitialState</span>({
+    status: <span class="st">"idle"</span> <span class="kw">as</span> <span class="st">"idle"</span> | <span class="st">"loading"</span> | <span class="st">"succeeded"</span> | <span class="st">"failed"</span>,
+    error: <span class="kw">null</span> <span class="kw">as string</span> | <span class="kw">null</span>,
+    totalCount: <span class="num">0</span>,
+  }),
+  reducers: {
+    orderUpdated: ordersAdapter.updateOne,
+    orderRemoved: ordersAdapter.removeOne,
+  },
+  extraReducers: (builder) => {
+    builder
+      .<span class="fn">addCase</span>(fetchOrders.pending,   (state) => { state.status = <span class="st">"loading"</span>; })
+      .<span class="fn">addCase</span>(fetchOrders.fulfilled, (state, { payload }) => {
+        state.status = <span class="st">"succeeded"</span>;
+        state.totalCount = payload.totalCount;
+        ordersAdapter.<span class="fn">setAll</span>(state, payload.orders);  <span class="cm">// normalize!</span>
+      })
+      .<span class="fn">addCase</span>(fetchOrders.rejected,  (state, { payload }) => {
+        state.status = <span class="st">"failed"</span>;
+        state.error = payload <span class="kw">as string</span>;
+      });
+  },
+});
+
+<span class="cm">// Selectors (memoized with createSelector)</span>
+<span class="kw">export const</span> {
+  selectAll: selectAllOrders,
+  selectById: selectOrderById,
+  selectTotal: selectOrderCount,
+} = ordersAdapter.<span class="fn">getSelectors</span>((state: RootState) => state.orders);
+
+<span class="kw">export const</span> selectOrderStatus = (state: RootState) => state.orders.status;</pre>
+
+<h2>3. Zustand — Lightweight Alternative</h2>
+<pre><span class="cm">// Zustand: minimal, no boilerplate, perfect for medium apps</span>
+<span class="kw">import</span> { create } <span class="kw">from</span> <span class="st">"zustand"</span>;
+<span class="kw">import</span> { devtools, persist } <span class="kw">from</span> <span class="st">"zustand/middleware"</span>;
+
+<span class="kw">const</span> useCartStore = <span class="fn">create</span>(
+  <span class="fn">devtools</span>(<span class="fn">persist</span>(
+    (set, get) => ({
+      items: [] <span class="kw">as</span> CartItem[],
+      total: <span class="num">0</span>,
+
+      <span class="fn">addItem</span>: (product: Product) => <span class="fn">set</span>((state) => ({
+        items: [...state.items, { ...product, qty: <span class="num">1</span> }],
+        total: state.total + product.price,
+      })),
+
+      <span class="fn">removeItem</span>: (id: <span class="kw">string</span>) => <span class="fn">set</span>((state) => {
+        <span class="kw">const</span> item = state.items.<span class="fn">find</span>(i => i.id === id);
+        <span class="kw">return</span> {
+          items: state.items.<span class="fn">filter</span>(i => i.id !== id),
+          total: state.total - (item?.price ?? <span class="num">0</span>),
+        };
+      }),
+
+      <span class="fn">clearCart</span>: () => <span class="fn">set</span>({ items: [], total: <span class="num">0</span> }),
+
+      <span class="fn">getItemCount</span>: () => get().items.<span class="fn">reduce</span>((sum, i) => sum + i.qty, <span class="num">0</span>),
+    }),
+    { name: <span class="st">"cart-storage"</span> }  <span class="cm">// persist to localStorage</span>
+  ))
+);
+
+<span class="cm">// Select only what you need (prevents unnecessary re-renders)</span>
+<span class="kw">const</span> items = useCartStore(state => state.items);
+<span class="kw">const</span> total = useCartStore(state => state.total);
+<span class="kw">const</span> addItem = useCartStore(state => state.<span class="fn">addItem</span>);</pre>
+</div>
+
+<!-- ════════════════ 8. PERFORMANCE ════════════════ -->
+<div id="perf" class="page">
+<h1>React Performance Optimization</h1>
+<p class="sub">Reconciliation, profiling, memoization, lazy loading, virtualization</p>
+
+<h2>1. Render Profiling</h2>
+<pre><span class="cm">// React DevTools Profiler: record renders, see timing</span>
+<span class="cm">// "Highlight updates" in DevTools: shows what re-renders (visualize)</span>
+
+<span class="cm">// Log renders during development:</span>
+<span class="kw">function</span> <span class="fn">OrderRow</span>({ order }: { order: Order }) {
+  <span class="kw">const</span> renderCount = <span class="fn">useRef</span>(<span class="num">0</span>);
+  <span class="fn">useEffect</span>(() => { console.<span class="fn">log</span>(<span class="st">`OrderRow ${order.id} rendered ${++renderCount.current} times`</span>); });
+  <span class="kw">return</span> <span class="tag">&lt;tr&gt;</span>...<span class="tag">&lt;/tr&gt;</span>;
+}
+
+<span class="cm">// why-did-you-render (package): shows why component re-rendered</span>
+OrderRow.whyDidYouRender = <span class="kw">true</span>;</pre>
+
+<h2>2. Virtualization — Render 10K rows at 60fps</h2>
+<pre><span class="cm">// Without virtualization: 10K DOM nodes = janky scroll</span>
+<span class="cm">// With react-window: only ~20 visible rows in DOM at a time</span>
+<span class="kw">import</span> { FixedSizeList, VariableSizeList } <span class="kw">from</span> <span class="st">"react-window"</span>;
+<span class="kw">import</span> AutoSizer <span class="kw">from</span> <span class="st">"react-virtualized-auto-sizer"</span>;
+
+<span class="kw">function</span> <span class="fn">VirtualOrderList</span>({ orders }: { orders: Order[] }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;AutoSizer&gt;</span>
+      {({ height, width }) => (
+        <span class="tag">&lt;FixedSizeList</span>
+          <span class="attr">height</span>=<span class="val">{height}</span>
+          <span class="attr">itemCount</span>=<span class="val">{orders.length}</span>
+          <span class="attr">itemSize</span>=<span class="val">{72}</span>                  <span class="cm">{/* row height in px */}</span>
+          <span class="attr">width</span>=<span class="val">{width}</span>
+          <span class="attr">overscanCount</span>=<span class="val">{5}</span>              <span class="cm">{/* render extra rows above/below */}</span>
+        <span class="tag">&gt;</span>
+          {({ index, style }) => (
+            <span class="tag">&lt;div</span> <span class="attr">style</span>=<span class="val">{style}</span><span class="tag">&gt;</span>             <span class="cm">{/* style is REQUIRED for positioning */}</span>
+              <span class="tag">&lt;OrderRow</span> <span class="attr">order</span>=<span class="val">{orders[index]}</span> <span class="tag">/&gt;</span>
+            <span class="tag">&lt;/div&gt;</span>
+          )}
+        <span class="tag">&lt;/FixedSizeList&gt;</span>
+      )}
+    <span class="tag">&lt;/AutoSizer&gt;</span>
+  );
+}</pre>
+
+<h2>3. Code Splitting & Lazy Loading</h2>
+<pre><span class="cm">// Split at route level (most impactful)</span>
+<span class="kw">const</span> AdminPage  = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="st">"./pages/AdminPage"</span>));
+<span class="kw">const</span> ReportsPage = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="st">"./pages/ReportsPage"</span>));
+<span class="kw">const</span> ChartWidget = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="st">"./components/ChartWidget"</span>));
+
+<span class="cm">// Wrap in Suspense with fallback</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;Suspense</span> <span class="attr">fallback</span>=<span class="val">{&lt;PageSkeleton /&gt;}</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;Routes&gt;</span>
+        <span class="tag">&lt;Route</span> <span class="attr">path</span>=<span class="val">"/admin"</span>   <span class="attr">element</span>=<span class="val">{&lt;AdminPage /&gt;}</span>   <span class="tag">/&gt;</span>
+        <span class="tag">&lt;Route</span> <span class="attr">path</span>=<span class="val">"/reports"</span> <span class="attr">element</span>=<span class="val">{&lt;ReportsPage /&gt;}</span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;/Routes&gt;</span>
+    <span class="tag">&lt;/Suspense&gt;</span>
+  );
+}
+
+<span class="cm">// Preload on hover (user intent detection)</span>
+<span class="kw">const</span> preloadAdmin = () => <span class="kw">import</span>(<span class="st">"./pages/AdminPage"</span>);
+
+<span class="tag">&lt;NavLink</span>
+  <span class="attr">to</span>=<span class="val">"/admin"</span>
+  <span class="attr">onMouseEnter</span>=<span class="val">{preloadAdmin}</span>    <span class="cm">{/* preload on hover */}</span>
+  <span class="attr">onFocus</span>=<span class="val">{preloadAdmin}</span>          <span class="cm">{/* preload on focus */}</span>
+<span class="tag">&gt;</span>
+  Admin
+<span class="tag">&lt;/NavLink&gt;</span></pre>
+</div>
+
+<!-- ════════════════ 9. FORMS ════════════════ -->
+<div id="forms" class="page">
+<h1>Complex Form Handling</h1>
+<p class="sub">React Hook Form, Zod validation, dynamic fields, file uploads, auth forms</p>
+
+<h2>1. React Hook Form + Zod</h2>
+<pre><span class="kw">import</span> { useForm, useFieldArray } <span class="kw">from</span> <span class="st">"react-hook-form"</span>;
+<span class="kw">import</span> { zodResolver } <span class="kw">from</span> <span class="st">"@hookform/resolvers/zod"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="st">"zod"</span>;
+
+<span class="cm">// Schema-first validation</span>
+<span class="kw">const</span> registerSchema = z.<span class="fn">object</span>({
+  name:     z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">2</span>, <span class="st">"Name is too short"</span>).<span class="fn">max</span>(<span class="num">50</span>),
+  email:    z.<span class="fn">string</span>().<span class="fn">email</span>(<span class="st">"Invalid email address"</span>),
+  password: z.<span class="fn">string</span>().<span class="fn">min</span>(<span class="num">8</span>)
+    .<span class="fn">regex</span>(/[A-Z]/, <span class="st">"Must contain uppercase"</span>)
+    .<span class="fn">regex</span>(/[0-9]/, <span class="st">"Must contain number"</span>),
+  confirmPassword: z.<span class="fn">string</span>(),
+  role:     z.<span class="fn">enum</span>([<span class="st">"user"</span>, <span class="st">"admin"</span>]).<span class="fn">default</span>(<span class="st">"user"</span>),
+  agreeToTerms: z.<span class="fn">boolean</span>().<span class="fn">refine</span>(v => v, <span class="st">"You must accept terms"</span>),
+}).<span class="fn">refine</span>(data => data.password === data.confirmPassword, {
+  message: <span class="st">"Passwords don't match"</span>,
+  path: [<span class="st">"confirmPassword"</span>],  <span class="cm">// attach error to this field</span>
+});
+
+<span class="kw">type</span> RegisterForm = z.<span class="fn">infer</span>&lt;<span class="kw">typeof</span> registerSchema&gt;;
+
+<span class="kw">function</span> <span class="fn">RegisterPage</span>() {
+  <span class="kw">const</span> {
+    register, handleSubmit, formState: { errors, isSubmitting, isDirty, isValid },
+    watch, setValue, setError, reset,
+  } = <span class="fn">useForm</span>&lt;RegisterForm&gt;({
+    resolver: <span class="fn">zodResolver</span>(registerSchema),
+    mode: <span class="st">"onBlur"</span>,          <span class="cm">// validate on blur (not on every keystroke)</span>
+    defaultValues: { role: <span class="st">"user"</span>, agreeToTerms: <span class="kw">false</span> },
+  });
+
+  <span class="kw">const</span> <span class="fn">onSubmit</span> = <span class="kw">async</span> (data: RegisterForm) => {
+    <span class="kw">try</span> {
+      <span class="kw">await</span> authApi.<span class="fn">register</span>(data);
+      navigate(<span class="st">"/dashboard"</span>);
+    } <span class="kw">catch</span> (err: any) {
+      <span class="cm">// Set server-side errors on specific fields</span>
+      <span class="kw">if</span> (err.response?.data?.field === <span class="st">"email"</span>) {
+        <span class="fn">setError</span>(<span class="st">"email"</span>, { message: <span class="st">"Email already exists"</span> });
+      } <span class="kw">else</span> {
+        <span class="fn">setError</span>(<span class="st">"root"</span>, { message: <span class="st">"Registration failed. Try again."</span> });
+      }
+    }
+  };
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;form</span> <span class="attr">onSubmit</span>=<span class="val">{handleSubmit(onSubmit)}</span> <span class="attr">noValidate</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;FormField</span> <span class="attr">label</span>=<span class="val">"Name"</span> <span class="attr">error</span>=<span class="val">{errors.name?.message}</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;input</span> {...<span class="fn">register</span>(<span class="st">"name"</span>)} <span class="attr">type</span>=<span class="val">"text"</span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;/FormField&gt;</span>
+
+      {errors.root &amp;&amp; <span class="tag">&lt;ErrorAlert</span> <span class="attr">message</span>=<span class="val">{errors.root.message}</span> <span class="tag">/&gt;</span>}
+
+      <span class="tag">&lt;Button</span> <span class="attr">type</span>=<span class="val">"submit"</span> <span class="attr">isLoading</span>=<span class="val">{isSubmitting}</span> <span class="attr">disabled</span>=<span class="val">{!isDirty || !isValid}</span><span class="tag">&gt;</span>
+        Register
+      <span class="tag">&lt;/Button&gt;</span>
+    <span class="tag">&lt;/form&gt;</span>
+  );
+}</pre>
+
+<h2>2. Dynamic Field Arrays</h2>
+<pre><span class="kw">function</span> <span class="fn">OrderForm</span>() {
+  <span class="kw">const</span> { control, register, watch } = <span class="fn">useForm</span>({ defaultValues: { items: [{ productId: <span class="st">""</span>, qty: <span class="num">1</span> }] } });
+  <span class="kw">const</span> { fields, append, remove, move } = <span class="fn">useFieldArray</span>({ control, name: <span class="st">"items"</span> });
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      {fields.<span class="fn">map</span>((field, index) => (
+        <span class="tag">&lt;div</span> <span class="attr">key</span>=<span class="val">{field.id}</span><span class="tag">&gt;</span>  <span class="cm">{/* ALWAYS use field.id not index for key */}</span>
+          <span class="tag">&lt;ProductSelect</span> {...<span class="fn">register</span>(<span class="st">`items.${index}.productId`</span>)} <span class="tag">/&gt;</span>
+          <span class="tag">&lt;input</span> {...<span class="fn">register</span>(<span class="st">`items.${index}.qty`</span>, { valueAsNumber: <span class="kw">true</span> })} <span class="attr">type</span>=<span class="val">"number"</span> <span class="tag">/&gt;</span>
+          <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val">"button"</span> <span class="attr">onClick</span>=<span class="val">{() => remove(index)}</span><span class="tag">&gt;</span>Remove<span class="tag">&lt;/button&gt;</span>
+        <span class="tag">&lt;/div&gt;</span>
+      ))}
+      <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val">"button"</span> <span class="attr">onClick</span>=<span class="val">{() => append({ productId: "", qty: 1 })}</span><span class="tag">&gt;</span>Add Item<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+</div>
+
+<!-- ════════════════ 10. AUTH ════════════════ -->
+<div id="auth" class="page">
+<h1>Frontend Authentication</h1>
+<p class="sub">JWT storage, refresh tokens, interceptors, session expiry, secure practices</p>
+
+<h2>1. Token Service</h2>
+<pre><span class="cm">// shared/services/tokenService.ts</span>
+<span class="cm">// NEVER store tokens in localStorage (XSS risk for refresh tokens)</span>
+<span class="cm">// Best: httpOnly cookie (backend) + short-lived access token in memory</span>
+<span class="cm">// Pragmatic: access token in memory, refresh token in localStorage</span>
+
+<span class="kw">const</span> TOKEN_KEY = <span class="st">"app_access_token"</span>;
+<span class="kw">const</span> REFRESH_KEY = <span class="st">"app_refresh_token"</span>;
+
+<span class="kw">let</span> inMemoryToken: <span class="kw">string</span> | <span class="kw">null</span> = <span class="kw">null</span>;
+
+<span class="kw">export const</span> tokenService = {
+  <span class="fn">getAccessToken</span>: () => inMemoryToken,
+  <span class="fn">getRefreshToken</span>: () => localStorage.<span class="fn">getItem</span>(REFRESH_KEY),
+
+  <span class="fn">setTokens</span>: ({ accessToken, refreshToken }: Tokens) => {
+    inMemoryToken = accessToken;                               <span class="cm">// memory only</span>
+    <span class="kw">if</span> (refreshToken) localStorage.<span class="fn">setItem</span>(REFRESH_KEY, refreshToken);
+  },
+
+  <span class="fn">getUser</span>: (): User | <span class="kw">null</span> => {
+    <span class="kw">const</span> token = inMemoryToken ?? localStorage.<span class="fn">getItem</span>(TOKEN_KEY);
+    <span class="kw">if</span> (!token) <span class="kw">return null</span>;
+    <span class="kw">try</span> {
+      <span class="kw">const</span> payload = <span class="fn">JSON.parse</span>(<span class="fn">atob</span>(token.<span class="fn">split</span>(<span class="st">"."</span>)[<span class="num">1</span>]));
+      <span class="kw">if</span> (payload.exp * <span class="num">1000</span> &lt; Date.<span class="fn">now</span>()) <span class="kw">return null</span>;  <span class="cm">// expired</span>
+      <span class="kw">return</span> { id: payload.sub, email: payload.email, roles: payload.roles };
+    } <span class="kw">catch</span> { <span class="kw">return null</span>; }
+  },
+
+  <span class="fn">isTokenExpiringSoon</span>: () => {
+    <span class="kw">const</span> token = inMemoryToken;
+    <span class="kw">if</span> (!token) <span class="kw">return true</span>;
+    <span class="kw">const</span> { exp } = <span class="fn">JSON.parse</span>(<span class="fn">atob</span>(token.<span class="fn">split</span>(<span class="st">"."</span>)[<span class="num">1</span>]));
+    <span class="kw">return</span> (exp * <span class="num">1000</span> - Date.<span class="fn">now</span>()) &lt; <span class="num">60</span> * <span class="num">1000</span>;  <span class="cm">// within 1 minute</span>
+  },
+
+  <span class="fn">clear</span>: () => {
+    inMemoryToken = <span class="kw">null</span>;
+    localStorage.<span class="fn">removeItem</span>(REFRESH_KEY);
+  },
+};</pre>
+
+<h2>2. Silent Refresh — Proactive Token Renewal</h2>
+<pre><span class="cm">// Silently refresh token before expiry</span>
+<span class="kw">function</span> <span class="fn">useTokenRefresh</span>() {
+  <span class="kw">const</span> { logout } = <span class="fn">useAuth</span>();
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">scheduleRefresh</span> = () => {
+      <span class="kw">const</span> token = tokenService.<span class="fn">getAccessToken</span>();
+      <span class="kw">if</span> (!token) <span class="kw">return</span>;
+
+      <span class="kw">const</span> { exp } = <span class="fn">JSON.parse</span>(<span class="fn">atob</span>(token.<span class="fn">split</span>(<span class="st">"."</span>)[<span class="num">1</span>]));
+      <span class="kw">const</span> msUntilExpiry = exp * <span class="num">1000</span> - Date.<span class="fn">now</span>();
+      <span class="kw">const</span> refreshIn = msUntilExpiry - <span class="num">60</span> * <span class="num">1000</span>;  <span class="cm">// 1 min early</span>
+
+      <span class="kw">if</span> (refreshIn &lt;= <span class="num">0</span>) { logout(); <span class="kw">return</span>; }
+
+      <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(<span class="kw">async</span> () => {
+        <span class="kw">try</span> {
+          <span class="kw">const</span> { accessToken } = <span class="kw">await</span> authApi.<span class="fn">refreshToken</span>(tokenService.<span class="fn">getRefreshToken</span>()!);
+          tokenService.<span class="fn">setTokens</span>({ accessToken });
+          <span class="fn">scheduleRefresh</span>();  <span class="cm">// schedule next refresh</span>
+        } <span class="kw">catch</span> { logout(); }
+      }, refreshIn);
+
+      <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(timer);
+    };
+    <span class="kw">return</span> <span class="fn">scheduleRefresh</span>();
+  }, [logout]);
+}</pre>
+</div>
+
+<!-- ════════════════ 11. FULLSTACK ════════════════ -->
+<div id="fullstack" class="page">
+<h1>Full React + Spring Boot Integration</h1>
+<p class="sub">JWT auth, CRUD, RBAC, file uploads, API abstraction, production structure</p>
+
+<h2>1. API Layer Abstraction</h2>
+<pre><span class="cm">// features/orders/api/orderApi.ts — all order API calls here</span>
+<span class="kw">import</span> { apiClient } <span class="kw">from</span> <span class="st">"../../../shared/api/client"</span>;
+
+<span class="kw">export type</span> OrderFilters = { status?: <span class="kw">string</span>; page?: <span class="kw">number</span>; size?: <span class="kw">number</span> };
+<span class="kw">export type</span> OrderPage   = { orders: Order[]; totalElements: <span class="kw">number</span>; totalPages: <span class="kw">number</span> };
+
+<span class="kw">export const</span> orderApi = {
+  <span class="fn">getOrders</span>: (filters: OrderFilters): Promise&lt;OrderPage&gt; =>
+    apiClient.<span class="fn">get</span>(<span class="st">"/api/v1/orders"</span>, { params: filters }).<span class="fn">then</span>(r => r.data),
+
+  <span class="fn">getOrder</span>: (id: <span class="kw">string</span>): Promise&lt;OrderDetail&gt; =>
+    apiClient.<span class="fn">get</span>(<span class="st">`/api/v1/orders/${id}`</span>).<span class="fn">then</span>(r => r.data),
+
+  <span class="fn">createOrder</span>: (data: CreateOrderDto): Promise&lt;Order&gt; =>
+    apiClient.<span class="fn">post</span>(<span class="st">"/api/v1/orders"</span>, data).<span class="fn">then</span>(r => r.data),
+
+  <span class="fn">updateOrder</span>: (id: <span class="kw">string</span>, data: Partial&lt;Order&gt;): Promise&lt;Order&gt; =>
+    apiClient.<span class="fn">patch</span>(<span class="st">`/api/v1/orders/${id}`</span>, data).<span class="fn">then</span>(r => r.data),
+
+  <span class="fn">deleteOrder</span>: (id: <span class="kw">string</span>): Promise&lt;void&gt; =>
+    apiClient.<span class="fn">delete</span>(<span class="st">`/api/v1/orders/${id}`</span>).<span class="fn">then</span>(r => r.data),
+
+  <span class="cm">// File upload with progress</span>
+  <span class="fn">uploadAttachment</span>: (orderId: <span class="kw">string</span>, file: File, onProgress?: (pct: <span class="kw">number</span>) => void) => {
+    <span class="kw">const</span> form = <span class="kw">new</span> <span class="fn">FormData</span>();
+    form.<span class="fn">append</span>(<span class="st">"file"</span>, file);
+    <span class="kw">return</span> apiClient.<span class="fn">post</span>(<span class="st">`/api/v1/orders/${orderId}/attachments`</span>, form, {
+      headers: { <span class="st">"Content-Type"</span>: <span class="st">"multipart/form-data"</span> },
+      onUploadProgress: (e) => onProgress?.(<span class="fn">Math.round</span>(e.loaded / e.total! * <span class="num">100</span>)),
+    }).<span class="fn">then</span>(r => r.data);
+  },
+};</pre>
+
+<h2>2. File Upload Component</h2>
+<pre><span class="kw">function</span> <span class="fn">FileUpload</span>({ orderId }: { orderId: <span class="kw">string</span> }) {
+  <span class="kw">const</span> [progress, setProgress] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">const</span> [status, setStatus] = <span class="fn">useState</span>&lt;<span class="st">"idle"</span>|<span class="st">"uploading"</span>|<span class="st">"done"</span>|<span class="st">"error"</span>&gt;(<span class="st">"idle"</span>);
+  <span class="kw">const</span> queryClient = <span class="fn">useQueryClient</span>();
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = <span class="kw">async</span> (e: React.ChangeEvent&lt;HTMLInputElement&gt;) => {
+    <span class="kw">const</span> file = e.target.files?.[<span class="num">0</span>];
+    <span class="kw">if</span> (!file) <span class="kw">return</span>;
+
+    <span class="cm">// Validate file</span>
+    <span class="kw">if</span> (file.size > <span class="num">10</span> * <span class="num">1024</span> * <span class="num">1024</span>) <span class="kw">return</span> <span class="fn">alert</span>(<span class="st">"Max 10MB"</span>);
+    <span class="kw">if</span> (![<span class="st">"image/jpeg"</span>, <span class="st">"image/png"</span>, <span class="st">"application/pdf"</span>].<span class="fn">includes</span>(file.type)) {
+      <span class="kw">return</span> <span class="fn">alert</span>(<span class="st">"Only JPG, PNG, PDF"</span>);
+    }
+
+    <span class="fn">setStatus</span>(<span class="st">"uploading"</span>); <span class="fn">setProgress</span>(<span class="num">0</span>);
+    <span class="kw">try</span> {
+      <span class="kw">await</span> orderApi.<span class="fn">uploadAttachment</span>(orderId, file, setProgress);
+      <span class="fn">setStatus</span>(<span class="st">"done"</span>);
+      queryClient.<span class="fn">invalidateQueries</span>({ queryKey: [<span class="st">"orders"</span>, orderId] });
+    } <span class="kw">catch</span> { <span class="fn">setStatus</span>(<span class="st">"error"</span>); }
+  };
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"upload-zone"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="val">"file"</span> <span class="attr">onChange</span>=<span class="val">{handleChange}</span> <span class="attr">accept</span>=<span class="val">".jpg,.png,.pdf"</span> <span class="tag">/&gt;</span>
+      {status === <span class="st">"uploading"</span> &amp;&amp; <span class="tag">&lt;ProgressBar</span> <span class="attr">value</span>=<span class="val">{progress}</span> <span class="tag">/&gt;</span>}
+      {status === <span class="st">"done"</span>      &amp;&amp; <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="val">"text-green-500"</span><span class="tag">&gt;</span>✓ Uploaded<span class="tag">&lt;/span&gt;</span>}
+      {status === <span class="st">"error"</span>     &amp;&amp; <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="val">"text-red-500"</span><span class="tag">&gt;</span>✗ Failed<span class="tag">&lt;/span&gt;</span>}
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+
+<h2>3. RBAC — Role-Based UI</h2>
+<pre><span class="cm">// Utility: check user permissions</span>
+<span class="kw">function</span> <span class="fn">usePermissions</span>() {
+  <span class="kw">const</span> { user } = <span class="fn">useAuth</span>();
+  <span class="kw">return</span> {
+    isAdmin:    user?.roles?.includes(<span class="st">"ADMIN"</span>) ?? <span class="kw">false</span>,
+    canEdit:    user?.roles?.some(r => [<span class="st">"ADMIN"</span>, <span class="st">"EDITOR"</span>].<span class="fn">includes</span>(r)) ?? <span class="kw">false</span>,
+    canDelete:  user?.roles?.includes(<span class="st">"ADMIN"</span>) ?? <span class="kw">false</span>,
+    canView:    !!user,
+  };
+}
+
+<span class="cm">// Can component: declarative permission check</span>
+<span class="kw">function</span> <span class="fn">Can</span>({ permission, children, fallback = <span class="kw">null</span> }: {
+  permission: <span class="kw">keyof</span> ReturnType&lt;<span class="kw">typeof</span> usePermissions&gt;;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}) {
+  <span class="kw">const</span> permissions = <span class="fn">usePermissions</span>();
+  <span class="kw">return</span> &lt;&gt;{permissions[permission] ? children : fallback}&lt;/&gt;;
+}
+
+<span class="cm">// Usage:</span>
+<span class="tag">&lt;Can</span> <span class="attr">permission</span>=<span class="val">"isAdmin"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;DeleteButton</span> <span class="attr">onClick</span>=<span class="val">{handleDelete}</span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/Can&gt;</span>
+
+<span class="tag">&lt;Can</span> <span class="attr">permission</span>=<span class="val">"canEdit"</span> <span class="attr">fallback</span>=<span class="val">{&lt;ViewOnlyBadge /&gt;}</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;EditForm</span> <span class="attr">order</span>=<span class="val">{order}</span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;/Can&gt;</span></pre>
+</div>
+
+<!-- ════════════════ 12. STYLING ════════════════ -->
+<div id="styling" class="page">
+<h1>Modern Responsive Styling</h1>
+<p class="sub">Flexbox, Grid, Tailwind CSS, reusable layouts, production UI patterns</p>
+
+<h2>1. Flexbox — 1D Layout</h2>
+<pre><span class="cm">/* Flexbox patterns */</span>
+
+<span class="cm">/* Center anything */</span>
+.center { display: flex; align-items: center; justify-content: center; }
+
+<span class="cm">/* Navigation bar */</span>
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+<span class="cm">/* Card row with equal height */</span>
+.card-row {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;   <span class="cm">/* all cards same height */</span>
+}
+
+<span class="cm">/* Sidebar + main layout */</span>
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar { flex: 0 0 250px; }   <span class="cm">/* fixed width, no shrink/grow */</span>
+.main    { flex: 1; }            <span class="cm">/* takes remaining space */</span>
+
+<span class="cm">/* Stick footer to bottom */</span>
+.page { display: flex; flex-direction: column; min-height: 100vh; }
+.content { flex: 1; }            <span class="cm">/* pushes footer down */</span>
+.footer { flex-shrink: 0; }</pre>
+
+<h2>2. CSS Grid — 2D Layout</h2>
+<pre><span class="cm">/* Responsive grid */</span>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+<span class="cm">/* Dashboard layout */</span>
+.dashboard {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebar main   main"
+    "sidebar footer footer";
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 60px 1fr auto;
+  min-height: 100vh;
+}
+.dashboard header  { grid-area: header; }
+.dashboard .sidebar { grid-area: sidebar; }
+.dashboard main    { grid-area: main; }
+
+<span class="cm">/* Cards with specific placement */</span>
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.stats-grid .featured { grid-column: span 2; }  <span class="cm">/* takes 2 columns */</span>
+
+<span class="cm">/* Responsive: 4 → 2 → 1 columns */</span>
+@media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px)  { .stats-grid { grid-template-columns: 1fr; } }</pre>
+
+<h2>3. Tailwind CSS — Production Component Library</h2>
+<pre><span class="cm">// tailwind.config.js — extend with design tokens</span>
+<span class="kw">export default</span> {
+  content: [<span class="st">"./src/**/*.{tsx,ts}"</span>],
+  theme: {
+    extend: {
+      colors: {
+        brand: { <span class="num">50</span>: <span class="st">"#eff6ff"</span>, <span class="num">500</span>: <span class="st">"#3b82f6"</span>, <span class="num">900</span>: <span class="st">"#1e3a8a"</span> },
+        danger: { <span class="num">500</span>: <span class="st">"#ef4444"</span> },
+      },
+      fontFamily: { sans: [<span class="st">"Inter"</span>, <span class="st">"system-ui"</span>] },
+      boxShadow: { card: <span class="st">"0 1px 3px 0 rgb(0 0 0 / 0.1)"</span> },
+    },
+  },
+};</pre>
+<pre><span class="cm">// Reusable Button with all variants using Tailwind</span>
+<span class="kw">import</span> { cva, <span class="kw">type</span> VariantProps } <span class="kw">from</span> <span class="st">"class-variance-authority"</span>;
+<span class="kw">import</span> { cn } <span class="kw">from</span> <span class="st">"../utils/cn"</span>;   <span class="cm">// clsx + twMerge</span>
+
+<span class="kw">const</span> buttonVariants = <span class="fn">cva</span>(
+  <span class="st">"inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50"</span>,
+  {
+    variants: {
+      variant: {
+        primary:   <span class="st">"bg-brand-500 text-white hover:bg-brand-600 shadow-sm"</span>,
+        secondary: <span class="st">"bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"</span>,
+        danger:    <span class="st">"bg-danger-500 text-white hover:bg-danger-600"</span>,
+        ghost:     <span class="st">"text-gray-700 hover:bg-gray-100"</span>,
+        link:      <span class="st">"text-brand-500 underline-offset-4 hover:underline"</span>,
+      },
+      size: {
+        sm:  <span class="st">"h-8 px-3 text-sm"</span>,
+        md:  <span class="st">"h-10 px-4 text-sm"</span>,
+        lg:  <span class="st">"h-12 px-6 text-base"</span>,
+        icon:<span class="st">"h-10 w-10"</span>,
+      },
+    },
+    defaultVariants: { variant: <span class="st">"primary"</span>, size: <span class="st">"md"</span> },
+  }
+);
+
+<span class="kw">export function</span> <span class="fn">Button</span>({ variant, size, className, children, isLoading, ...props }:
+  VariantProps&lt;<span class="kw">typeof</span> buttonVariants&gt; & { isLoading?: <span class="kw">boolean</span> } & React.ButtonHTMLAttributes&lt;HTMLButtonElement&gt;) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;button</span> <span class="attr">className</span>=<span class="val">{cn(buttonVariants({ variant, size }), className)}</span> <span class="attr">disabled</span>=<span class="val">{isLoading}</span> {...props}<span class="tag">&gt;</span>
+      {isLoading &amp;&amp; <span class="tag">&lt;span</span> <span class="attr">className</span>=<span class="val">"mr-2 animate-spin"</span><span class="tag">&gt;</span>⟳<span class="tag">&lt;/span&gt;</span>}
+      {children}
+    <span class="tag">&lt;/button&gt;</span>
+  );
+}</pre>
+
+<h2>4. Responsive Page Layout</h2>
+<pre><span class="cm">// Full responsive app shell</span>
+<span class="kw">function</span> <span class="fn">AppLayout</span>({ children }: { children: React.ReactNode }) {
+  <span class="kw">const</span> [sidebarOpen, setSidebarOpen] = <span class="fn">useState</span>(<span class="kw">false</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"min-h-screen bg-gray-50"</span><span class="tag">&gt;</span>
+      {<span class="cm">/* Mobile sidebar overlay */</span>}
+      {sidebarOpen &amp;&amp; (
+        <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"fixed inset-0 z-40 bg-black/50 lg:hidden"</span>
+             <span class="attr">onClick</span>=<span class="val">{() => setSidebarOpen(false)}</span> <span class="tag">/&gt;</span>
+      )}
+
+      {<span class="cm">/* Sidebar */</span>}
+      <span class="tag">&lt;aside</span> <span class="attr">className</span>=<span class="val">{cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform lg:translate-x-0 lg:static lg:shadow-none",
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      )}</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;Sidebar /&gt;</span>
+      <span class="tag">&lt;/aside&gt;</span>
+
+      {<span class="cm">/* Main */</span>}
+      <span class="tag">&lt;div</span> <span class="attr">className</span>=<span class="val">"lg:pl-64 flex flex-col min-h-screen"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;header</span> <span class="attr">className</span>=<span class="val">"sticky top-0 z-30 h-16 bg-white border-b flex items-center px-4 gap-4"</span><span class="tag">&gt;</span>
+          <span class="tag">&lt;button</span> <span class="attr">className</span>=<span class="val">"lg:hidden"</span> <span class="attr">onClick</span>=<span class="val">{() => setSidebarOpen(true)}</span><span class="tag">&gt;</span>☰<span class="tag">&lt;/button&gt;</span>
+          <span class="tag">&lt;TopBar /&gt;</span>
+        <span class="tag">&lt;/header&gt;</span>
+        <span class="tag">&lt;main</span> <span class="attr">className</span>=<span class="val">"flex-1 p-4 md:p-6 lg:p-8"</span><span class="tag">&gt;</span>{children}<span class="tag">&lt;/main&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}</pre>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('on');
+  event.target.classList.add('active');
+  window.scrollTo(0,0);
+}
+function tb(btn,id){
+  const grp=btn.closest('.tabs');
+  grp.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  let el=grp.nextElementSibling;
+  while(el&&el.classList&&el.classList.contains('tc')){
+    el.classList.remove('on');el=el.nextElementSibling;
+  }
+  const t=document.getElementById(id);if(t)t.classList.add('on');
+}
+</script>
+</body>
+</html>
