@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Mastery — Production Engineering Reference</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:#30363d;--border2:#21262d;
+  --text:#e6edf3;--text2:#c9d1d9;--text3:#8b949e;
+  --blue:#58a6ff;--blue-bg:#1f3a5f;
+  --green:#3fb950;--green-bg:#1a3a2a;
+  --orange:#f0883e;--orange-bg:#3d2800;
+  --red:#ff7b72;--red-bg:#3d0f0f;
+  --purple:#d2a8ff;--purple-bg:#2d1f3d;
+  --yellow:#e3b341;--yellow-bg:#3d3000;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;font-size:14px}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;overflow-x:auto}
+.topbar-inner{display:flex;min-width:max-content;padding:0 8px}
+.nb{padding:8px 10px;border:none;background:none;color:var(--text3);cursor:pointer;font-size:11px;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;white-space:nowrap}
+.nb:hover{color:var(--text)}.nb.active{color:var(--blue);border-bottom-color:var(--blue)}
+.page{display:none;padding:20px 16px;max-width:980px;margin:0 auto}.page.on{display:block}
+h1{font-size:23px;font-weight:700;margin:0 0 4px}
+h2{font-size:17px;font-weight:600;color:var(--text);margin:26px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border2)}
+h3{font-size:13.5px;font-weight:600;color:var(--blue);margin:14px 0 6px}
+h4{font-size:13px;font-weight:600;color:var(--purple);margin:10px 0 5px}
+.sub{color:var(--text3);font-size:13px;margin-bottom:18px}
+pre{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:13px 15px;overflow-x:auto;font-family:'Consolas','Cascadia Code',monospace;font-size:12px;line-height:1.6;margin:8px 0;tab-size:2}
+.kw{color:#ff7b72}.cm{color:var(--text3);font-style:italic}.st{color:#a5d6ff}
+.an{color:var(--purple)}.nb2{color:#79c0ff}.num{color:#79c0ff}
+.gt{color:var(--green)}.yt{color:var(--yellow)}.rt{color:var(--red)}.pt{color:var(--purple)}
+.diag{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin:10px 0;font-family:'Consolas',monospace;font-size:11.5px;line-height:1.9;overflow-x:auto;color:var(--text2)}
+.diag .b{color:var(--blue)}.diag .g{color:var(--green)}.diag .y{color:var(--yellow)}
+.diag .r{color:var(--red)}.diag .p{color:var(--purple)}.diag .o{color:var(--orange)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:10px 0}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:13px}
+.ct{font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px}
+.card p,.card li{font-size:12px;color:var(--text3);line-height:1.6}
+.tip{background:#0d2339;border-left:3px solid var(--blue);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px}
+.tip-t{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.warn{background:var(--yellow-bg);border-left:3px solid var(--yellow);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px;color:#c9b060}
+.warn-t{font-size:10px;font-weight:700;color:var(--yellow);margin-bottom:3px;text-transform:uppercase}
+.danger{background:var(--red-bg);border-left:3px solid var(--red);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px;color:#ffa0a0}
+.danger-t{font-size:10px;font-weight:700;color:var(--red);margin-bottom:3px;text-transform:uppercase}
+.ok{background:var(--green-bg);border-left:3px solid var(--green);padding:10px 12px;border-radius:0 7px 7px 0;margin:9px 0;font-size:12.5px;color:#7ee787}
+table{width:100%;border-collapse:collapse;margin:9px 0;font-size:12px}
+th{background:var(--bg3);color:var(--text3);padding:6px 10px;text-align:left;font-weight:600;border:1px solid var(--border)}
+td{padding:6px 10px;border:1px solid var(--border2);color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:#0a0e13}
+.cmp{display:flex;gap:10px;margin:9px 0}
+.bad{flex:1;background:#2d1212;border:1px solid #5a2020;border-radius:8px;padding:12px}
+.good{flex:1;background:#0d2a1a;border:1px solid #204020;border-radius:8px;padding:12px}
+.clbl{font-size:10px;font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.bad .clbl{color:var(--red)}.good .clbl{color:var(--green)}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin:9px 0}
+.tb{padding:4px 10px;border:1px solid var(--border);border-radius:5px;background:var(--bg);color:var(--text3);cursor:pointer;font-size:11.5px;transition:all .15s}
+.tb.on,.tb:hover{background:var(--bg3);color:var(--text);border-color:var(--blue)}
+.tc{display:none}.tc.on{display:block}
+.pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600}
+.pb{background:var(--blue-bg);color:var(--blue)}.pg{background:var(--green-bg);color:var(--green)}
+.po{background:var(--orange-bg);color:var(--orange)}.pr{background:var(--red-bg);color:var(--red)}
+.pp{background:var(--purple-bg);color:var(--purple)}.py{background:var(--yellow-bg);color:var(--yellow)}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+  <button class="nb active" onclick="go('basics')">① Java Basics</button>
+  <button class="nb" onclick="go('oop')">② OOP</button>
+  <button class="nb" onclick="go('collections')">③ Collections</button>
+  <button class="nb" onclick="go('exceptions')">④ Exceptions</button>
+  <button class="nb" onclick="go('io')">⑤ I/O & NIO</button>
+  <button class="nb" onclick="go('generics')">⑥ Generics</button>
+  <button class="nb" onclick="go('java8')">⑦ Java 8+</button>
+  <button class="nb" onclick="go('concurrency')">⑧ Concurrency</button>
+  <button class="nb" onclick="go('memory')">⑨ Memory</button>
+  <button class="nb" onclick="go('patterns')">⑩ Design Patterns</button>
+  <button class="nb" onclick="go('bestpractices')">⑪ Best Practices</button>
+</div></div>
+
+<!-- ═══════════════ 1. JAVA BASICS ═══════════════ -->
+<div id="basics" class="page on">
+<h1>Java Basics — Production Engineering Perspective</h1>
+<p class="sub">JVM internals, compilation flow, memory architecture, primitives — why these matter at runtime</p>
+
+<h2>1. JDK vs JRE vs JVM — The Actual Difference</h2>
+<div class="diag">
+<span class="b">JDK (Java Development Kit)</span> — what YOU install to write Java
+  javac (compiler), java (launcher), javap (bytecode inspector),
+  jstack (thread dump), jmap (heap dump), jconsole (JVM monitoring),
+  jar, keytool, plus the JRE
+
+<span class="b">JRE (Java Runtime Environment)</span> — what end-users need to RUN Java
+  JVM + standard library classes (java.lang, java.util, java.io, ...)
+  → Spring Boot fat JAR bundles the JRE logic, not this directly
+
+<span class="b">JVM (Java Virtual Machine)</span> — the actual execution engine
+  Interprets/compiles bytecode to native machine code
+  Manages memory (heap, stack, metaspace)
+  Performs garbage collection
+  Every JVM implementation (HotSpot, GraalVM, OpenJ9) differs in tuning
+
+<span class="y">Production truth:</span>
+  Docker container ships your JAR + JRE (eclipse-temurin:21-jre ~220MB)
+  GraalVM Native Image: compiles to native binary — no JVM at runtime!
+  Spring Boot 3 + GraalVM: startup 3s → 50ms, memory 300MB → 50MB
+</div>
+
+<h2>2. Compilation Flow — Source to Execution</h2>
+<div class="diag">
+<span class="b">Step 1: Compilation (javac)</span>
+  OrderService.java
+    │ lexical analysis → tokens
+    │ syntax analysis → AST (Abstract Syntax Tree)
+    │ semantic analysis → type checking, name resolution
+    │ bytecode generation
+    ▼
+  OrderService.class  ← platform-independent bytecode
+  (binary: 0xCAFEBABE magic header + bytecode instructions)
+
+<span class="b">Step 2: Class Loading (JVM startup)</span>
+  Bootstrap ClassLoader  → loads java.*, sun.* from rt.jar/modules
+  Platform ClassLoader   → loads javax.*, jdk.* extensions
+  Application ClassLoader→ loads YOUR classes from classpath
+  Spring's LaunchedURLClassLoader → loads from nested JAR files
+
+<span class="b">Step 3: Bytecode Interpretation → JIT Compilation</span>
+  JVM interprets bytecode (slow, ~1000 invocations)
+  C1 Compiler: quick compilation, basic optimizations
+  C2 Compiler: aggressive optimization after ~10,000 invocations
+  → Method inlining, escape analysis, loop unrolling
+  Result: native machine code, cached in Code Cache (off-heap!)
+</div>
+
+<h2>3. JVM Memory Architecture — Production Impact</h2>
+<div class="diag">
+<span class="b">Heap (GC-managed, -Xms/-Xmx)</span>
+  Young Generation:
+    Eden Space      ← new objects allocated here
+    Survivor S0/S1  ← objects that survived Minor GC
+  Old Generation    ← long-lived objects (Spring beans, caches, connection pools)
+
+<span class="b">Stack (per-thread, -Xss)</span>
+  Each thread: its own stack
+  Contains: method frames (local vars, operand stack, return address)
+  200 Tomcat threads × 512KB = ~100MB just for stacks!
+  StackOverflowError: too many nested frames (recursive calls)
+
+<span class="b">Metaspace (native memory, -XX:MaxMetaspaceSize)</span>
+  Class metadata: field names, method signatures, bytecode
+  Static variables (references stored in heap objects)
+  Interned strings (Java 8+: in heap)
+  Risk: ClassLoader leak → metaspace fills → OutOfMemoryError: Metaspace
+
+<span class="b">Code Cache (JIT-compiled code, off-heap)</span>
+  If full: JVM deoptimizes → performance cliff!
+  -XX:ReservedCodeCacheSize=256m (default often 48m — too small for Spring Boot)
+</div>
+
+<h2>4. Primitive Types vs Reference Types</h2>
+<pre><span class="cm">// Primitives: stored directly on stack (if local variable)</span>
+<span class="cm">// or embedded in object (if field)</span>
+<span class="kw">int</span>    count = <span class="num">42</span>;       <span class="cm">// 4 bytes, stack local variable</span>
+<span class="kw">long</span>   id = <span class="num">100L</span>;       <span class="cm">// 8 bytes</span>
+<span class="kw">double</span> price = <span class="num">9.99</span>;    <span class="cm">// 8 bytes, IEEE 754</span>
+<span class="kw">boolean</span> flag = <span class="kw">true</span>;    <span class="cm">// JVM uses int internally (1 bit concept, 4 bytes reality)</span>
+<span class="kw">char</span>   c = <span class="st">'A'</span>;         <span class="cm">// 2 bytes, UTF-16</span>
+
+<span class="cm">// Reference types: variable holds address, object is in heap</span>
+String name = <span class="st">"Alice"</span>;  <span class="cm">// name (4 bytes ptr on stack) → heap object</span>
+List&lt;Order&gt; orders = <span class="kw">new</span> ArrayList&lt;&gt;();  <span class="cm">// ptr → ArrayList object → heap</span>
+
+<span class="cm">// CRITICAL: Integer cache (-128 to 127 cached)</span>
+Integer a = <span class="num">127</span>;
+Integer b = <span class="num">127</span>;
+System.out.println(a == b);    <span class="cm">// true! (same cached object)</span>
+Integer x = <span class="num">128</span>;
+Integer y = <span class="num">128</span>;
+System.out.println(x == y);    <span class="cm">// FALSE! (different heap objects)</span>
+System.out.println(x.equals(y)); <span class="cm">// true (value comparison)</span>
+<span class="cm">// Rule: ALWAYS use .equals() for object comparison, NEVER == for Integer, String</span>
+
+<span class="cm">// String Pool — interview trap</span>
+String s1 = <span class="st">"hello"</span>;         <span class="cm">// from string pool</span>
+String s2 = <span class="st">"hello"</span>;         <span class="cm">// same pool object</span>
+String s3 = <span class="kw">new</span> String(<span class="st">"hello"</span>); <span class="cm">// new heap object!</span>
+System.out.println(s1 == s2);  <span class="cm">// true (same pool object)</span>
+System.out.println(s1 == s3);  <span class="cm">// FALSE (different objects)</span>
+<span class="cm">// String.intern() → adds to pool, returns pool reference</span></pre>
+
+<h2>5. Autoboxing Overhead — Performance Trap</h2>
+<pre><span class="cm">// Autoboxing: primitive → wrapper object (auto)</span>
+<span class="cm">// Unboxing: wrapper object → primitive (auto)</span>
+List&lt;Integer&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;();
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">1_000_000</span>; i++) {
+    list.add(i);  <span class="cm">// AUTOBOXING: creates 1M Integer objects on heap!</span>
+    <span class="cm">// Each Integer: 16 bytes object header + 4 bytes value = 20 bytes</span>
+    <span class="cm">// vs int[]: 4 bytes each → 5× memory waste</span>
+}
+
+<span class="cm">// PRODUCTION FIX: use primitive arrays or specialized libraries</span>
+<span class="kw">int</span>[] primitiveArray = <span class="kw">new int</span>[<span class="num">1_000_000</span>]; <span class="cm">// ~4MB vs ~20MB</span>
+
+<span class="cm">// Common autoboxing bug:</span>
+Long sum = <span class="num">0L</span>;
+<span class="kw">for</span> (<span class="kw">long</span> i = <span class="num">0</span>; i &lt; <span class="num">1000</span>; i++) {
+    sum += i;  <span class="cm">// sum unboxed → long add → reboxed → 1000 Long objects created!</span>
+}
+<span class="cm">// Fix: use long sum = 0L; (primitive)</span>
+
+<span class="cm">// NullPointerException from unboxing</span>
+Integer value = <span class="kw">null</span>;  <span class="cm">// from database/map lookup</span>
+<span class="kw">int</span> x = value;         <span class="cm">// NPE! unboxing null throws NullPointerException</span></pre>
+
+<h2>6. Access Modifiers — Architecture Enforcement</h2>
+<table>
+<tr><th>Modifier</th><th>Class</th><th>Package</th><th>Subclass</th><th>World</th><th>Use In Production</th></tr>
+<tr><td><code>public</code></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>API contracts, Spring @Component methods</td></tr>
+<tr><td><code>protected</code></td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>Template method pattern, framework extension points</td></tr>
+<tr><td><code>package-private</code></td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>Internal utilities, package cohesion</td></tr>
+<tr><td><code>private</code></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>Implementation details, fields (always private!)</td></tr>
+</table>
+<div class="warn"><div class="warn-t">⚠️ Common Mistake</div>Making fields <code>public</code> or <code>protected</code>. Fields should ALWAYS be <code>private</code>. Expose via getters/setters (or records). Public fields break encapsulation — you can never change the internal representation without breaking callers.</div>
+</div>
+
+<!-- ═══════════════ 2. OOP ═══════════════ -->
+<div id="oop" class="page">
+<h1>Object-Oriented Programming in Java</h1>
+<p class="sub">Encapsulation, inheritance pitfalls, SOLID, composition vs inheritance — production engineering lens</p>
+
+<h2>1. Encapsulation — More Than Getters/Setters</h2>
+<pre><span class="cm">// Weak encapsulation: exposes internals</span>
+<span class="kw">public class</span> <span class="nb2">Order</span> {
+    <span class="kw">public</span> List&lt;OrderItem&gt; items = <span class="kw">new</span> ArrayList&lt;&gt;(); <span class="cm">// ❌ internal exposed</span>
+    <span class="kw">public double</span> totalAmount;                         <span class="cm">// ❌ can be set inconsistently</span>
+}
+<span class="cm">// Caller: order.items.add(item); order.totalAmount += item.price;</span>
+<span class="cm">// Now business logic is scattered everywhere → bugs, inconsistency</span>
+
+<span class="cm">// Strong encapsulation: invariants enforced by the class itself</span>
+<span class="kw">public class</span> <span class="nb2">Order</span> {
+    <span class="kw">private final</span> List&lt;OrderItem&gt; items = <span class="kw">new</span> ArrayList&lt;&gt;();
+    <span class="kw">private</span> BigDecimal totalAmount = BigDecimal.ZERO;
+    <span class="kw">private</span> OrderStatus status = OrderStatus.PENDING;
+
+    <span class="kw">public void</span> addItem(OrderItem item) {
+        <span class="kw">if</span> (status != OrderStatus.PENDING)
+            <span class="kw">throw new</span> IllegalStateException(<span class="st">"Cannot modify confirmed order"</span>);
+        items.add(item);
+        totalAmount = totalAmount.add(item.getTotalPrice()); <span class="cm">// always consistent</span>
+    }
+
+    <span class="cm">// Return defensive copy — never expose mutable internal state</span>
+    <span class="kw">public</span> List&lt;OrderItem&gt; getItems() {
+        <span class="kw">return</span> Collections.unmodifiableList(items); <span class="cm">// ❌ can't modify external</span>
+    }
+}</pre>
+
+<h2>2. Inheritance — When It Becomes Dangerous</h2>
+<pre><span class="cm">// Inheritance danger: Fragile Base Class Problem</span>
+<span class="kw">class</span> <span class="nb2">HashSet</span>&lt;E&gt; {
+    <span class="kw">private int</span> addCount = <span class="num">0</span>;
+
+    <span class="kw">public boolean</span> add(E e) {
+        addCount++;
+        <span class="kw">return super</span>.add(e);  <span class="cm">// addAll() internally calls add() too!</span>
+    }
+
+    <span class="kw">public boolean</span> addAll(Collection&lt;? <span class="kw">extends</span> E&gt; c) {
+        addCount += c.size();  <span class="cm">// WRONG: add() called for each element</span>
+        <span class="kw">return super</span>.addAll(c); <span class="cm">// → add() increments again → double count!</span>
+    }
+}
+<span class="cm">// Classic Java design mistake (documented in Effective Java Item 18)</span>
+
+<span class="cm">// Liskov Substitution Principle violation:</span>
+<span class="kw">class</span> <span class="nb2">Rectangle</span> {
+    <span class="kw">protected int</span> width, height;
+    <span class="kw">public void</span> setWidth(<span class="kw">int</span> w) { width = w; }
+    <span class="kw">public void</span> setHeight(<span class="kw">int</span> h) { height = h; }
+}
+<span class="kw">class</span> <span class="nb2">Square</span> <span class="kw">extends</span> Rectangle {
+    <span class="kw">public void</span> setWidth(<span class="kw">int</span> w) { width = height = w; }   <span class="cm">// breaks Rectangle contract!</span>
+    <span class="kw">public void</span> setHeight(<span class="kw">int</span> h) { width = height = h; }
+}
+<span class="cm">// Code using Rectangle: rect.setWidth(4); rect.setHeight(5); area() expects 20</span>
+<span class="cm">// With Square: area() = 25 (height also set to 5) → LSP violated!</span></pre>
+
+<h2>3. Composition Over Inheritance</h2>
+<pre><span class="cm">// ❌ Deep inheritance → brittle, hard to test, Spring proxying issues</span>
+<span class="kw">class</span> <span class="nb2">BaseService</span> {
+    <span class="kw">protected void</span> validate() { ... }
+    <span class="kw">protected void</span> log() { ... }
+    <span class="kw">protected void</span> audit() { ... }
+}
+<span class="kw">class</span> <span class="nb2">OrderService</span> <span class="kw">extends</span> BaseService { ... }
+<span class="kw">class</span> <span class="nb2">PaymentService</span> <span class="kw">extends</span> BaseService { ... }
+<span class="cm">// Changing BaseService breaks EVERY subclass</span>
+<span class="cm">// Spring AOP can't proxy overridden private/final methods</span>
+
+<span class="cm">// ✅ Composition: inject behavior instead of inheriting it</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb2">OrderService</span> {
+    <span class="kw">private final</span> OrderRepository repository;
+    <span class="kw">private final</span> ValidationService validator;  <span class="cm">// composed in</span>
+    <span class="kw">private final</span> AuditService auditor;         <span class="cm">// composed in</span>
+
+    <span class="cm">// Each dependency independently testable</span>
+    <span class="cm">// Each dependency independently replaceable</span>
+    <span class="cm">// OrderService doesn't break if AuditService changes</span>
+}</pre>
+
+<h2>4. Interfaces vs Abstract Classes — Production Decision</h2>
+<table>
+<tr><th>Aspect</th><th>Interface</th><th>Abstract Class</th></tr>
+<tr><td>Multiple inheritance</td><td>✅ Multiple interfaces</td><td>❌ Single class</td></tr>
+<tr><td>State (fields)</td><td>❌ Only constants</td><td>✅ Can have fields</td></tr>
+<tr><td>Constructor</td><td>❌</td><td>✅</td></tr>
+<tr><td>Default methods</td><td>✅ Java 8+</td><td>✅</td></tr>
+<tr><td>Spring proxying</td><td>✅ JDK proxy</td><td>✅ CGLIB (subclass)</td></tr>
+<tr><td>Use when</td><td>Defining contract/capability</td><td>Shared implementation + extension</td></tr>
+</table>
+<pre><span class="cm">// Interface: what something CAN DO (capability)</span>
+<span class="kw">public interface</span> <span class="nb2">Exportable</span> {
+    <span class="kw">byte</span>[] exportToPdf();
+    <span class="kw">default</span> String exportToJson() { <span class="kw">return</span> <span class="cm">/* default implementation */</span>; }
+}
+
+<span class="cm">// Abstract class: IS-A relationship with shared state/behavior</span>
+<span class="kw">public abstract class</span> <span class="nb2">BaseEntity</span> {
+    <span class="kw">private</span> Long id;
+    <span class="kw">private</span> Instant createdAt = Instant.now();
+    <span class="kw">private</span> Instant updatedAt;
+
+    <span class="cm">// Template method: defines algorithm, subclass fills steps</span>
+    <span class="kw">public final void</span> save() {
+        validate();         <span class="cm">// must implement</span>
+        preSave();          <span class="cm">// optional hook</span>
+        persist();          <span class="cm">// must implement</span>
+        updatedAt = Instant.now();
+    }
+
+    <span class="kw">protected abstract void</span> validate();
+    <span class="kw">protected abstract void</span> persist();
+    <span class="kw">protected void</span> preSave() {}  <span class="cm">// optional override</span>
+}</pre>
+
+<h2>5. SOLID Principles — Real Production Examples</h2>
+<div class="tabs">
+<button class="tb on" onclick="tb(this,'solid-s')">S: Single Resp.</button>
+<button class="tb" onclick="tb(this,'solid-o')">O: Open/Closed</button>
+<button class="tb" onclick="tb(this,'solid-l')">L: Liskov</button>
+<button class="tb" onclick="tb(this,'solid-i')">I: Interface Seg.</button>
+<button class="tb" onclick="tb(this,'solid-d')">D: Dependency Inv.</button>
+</div>
+<div id="solid-s" class="tc on"><pre><span class="cm">// ❌ SRP violated: OrderService does too much</span>
+<span class="kw">class</span> <span class="nb2">OrderService</span> {
+    <span class="kw">void</span> createOrder(Order o) { ... }
+    <span class="kw">void</span> sendConfirmationEmail(Order o) { ... }    <span class="cm">// notification concern</span>
+    <span class="kw">void</span> generateInvoicePdf(Order o) { ... }      <span class="cm">// PDF concern</span>
+    <span class="kw">void</span> logToAuditTable(Order o) { ... }         <span class="cm">// audit concern</span>
+    <span class="kw">void</span> calculateShipping(Order o) { ... }       <span class="cm">// pricing concern</span>
+}
+<span class="cm">// Result: every developer touches this file → merge conflicts, bugs</span>
+
+<span class="cm">// ✅ SRP: one reason to change</span>
+<span class="kw">class</span> <span class="nb2">OrderService</span>      { <span class="kw">void</span> createOrder(Order o); }
+<span class="kw">class</span> <span class="nb2">NotificationService</span>{ <span class="kw">void</span> sendConfirmation(Order o); }
+<span class="kw">class</span> <span class="nb2">InvoiceService</span>     { <span class="kw">void</span> generatePdf(Order o); }
+<span class="kw">class</span> <span class="nb2">AuditService</span>       { <span class="kw">void</span> log(Order o); }
+<span class="kw">class</span> <span class="nb2">ShippingCalculator</span> { BigDecimal calculate(Order o); }</pre></div>
+<div id="solid-o" class="tc"><pre><span class="cm">// ❌ OCP violated: adding new payment type modifies existing code</span>
+<span class="kw">class</span> <span class="nb2">PaymentProcessor</span> {
+    <span class="kw">void</span> process(Payment p) {
+        <span class="kw">if</span> (p.type == STRIPE) processStripe(p);
+        <span class="kw">else if</span> (p.type == PAYPAL) processPayPal(p);
+        <span class="kw">else if</span> (p.type == CRYPTO) processCrypto(p); <span class="cm">// ← added, touches existing class</span>
+    }
+}
+
+<span class="cm">// ✅ OCP: open for extension (new class), closed for modification</span>
+<span class="kw">interface</span> <span class="nb2">PaymentStrategy</span> { PaymentResult process(Payment p); <span class="kw">boolean</span> supports(String type); }
+<span class="an">@Component</span> <span class="kw">class</span> <span class="nb2">StripeStrategy</span> <span class="kw">implements</span> PaymentStrategy { ... }
+<span class="an">@Component</span> <span class="kw">class</span> <span class="nb2">PayPalStrategy</span> <span class="kw">implements</span> PaymentStrategy { ... }
+<span class="cm">// Add crypto: new class, zero modification to existing</span>
+<span class="an">@Component</span> <span class="kw">class</span> <span class="nb2">CryptoStrategy</span> <span class="kw">implements</span> PaymentStrategy { ... }</pre></div>
+<div id="solid-l" class="tc"><pre><span class="cm">// LSP: subtypes must be substitutable for base types</span>
+<span class="cm">// Rule: override must not STRENGTHEN preconditions or WEAKEN postconditions</span>
+
+<span class="cm">// ✅ LSP-safe: ReadOnlyList throws on mutating operations</span>
+<span class="cm">// If code expects a List, it should work with ReadOnlyList for read operations</span>
+<span class="cm">// BUT: if code calls add(), it will throw — LSP violation!</span>
+<span class="cm">// Design fix: separate ReadableList and MutableList interfaces</span>
+
+<span class="kw">interface</span> <span class="nb2">ReadableList</span>&lt;T&gt; { T get(<span class="kw">int</span> i); <span class="kw">int</span> size(); Iterator&lt;T&gt; iterator(); }
+<span class="kw">interface</span> <span class="nb2">MutableList</span>&lt;T&gt; <span class="kw">extends</span> ReadableList&lt;T&gt; { <span class="kw">boolean</span> add(T t); <span class="kw">void</span> remove(<span class="kw">int</span> i); }
+<span class="cm">// ReadOnlyList implements ReadableList (no mutations promised)</span>
+<span class="cm">// → substitutable wherever ReadableList is expected → LSP satisfied!</span></pre></div>
+<div id="solid-i" class="tc"><pre><span class="cm">// ❌ ISP violated: fat interface forces useless implementations</span>
+<span class="kw">interface</span> <span class="nb2">UserService</span> {
+    User findById(Long id);
+    List&lt;User&gt; findAll();
+    User save(User u);
+    <span class="kw">void</span> delete(Long id);
+    <span class="kw">void</span> sendPasswordReset(String email); <span class="cm">// notification! wrong abstraction</span>
+    <span class="kw">void</span> generateReport();               <span class="cm">// reporting! wrong abstraction</span>
+}
+<span class="cm">// Read-only implementations forced to throw UnsupportedOperationException</span>
+
+<span class="cm">// ✅ ISP: small, focused interfaces</span>
+<span class="kw">interface</span> <span class="nb2">UserReader</span>    { User findById(Long id); List&lt;User&gt; findAll(); }
+<span class="kw">interface</span> <span class="nb2">UserWriter</span>    { User save(User u); <span class="kw">void</span> delete(Long id); }
+<span class="kw">interface</span> <span class="nb2">UserNotifier</span>  { <span class="kw">void</span> sendPasswordReset(String email); }
+<span class="cm">// Query services only implement UserReader → can be swapped for cached version</span></pre></div>
+<div id="solid-d" class="tc"><pre><span class="cm">// ❌ DIP violated: high-level depends on low-level concrete class</span>
+<span class="kw">class</span> <span class="nb2">OrderService</span> {
+    <span class="kw">private final</span> MySqlOrderRepository repo = <span class="kw">new</span> MySqlOrderRepository(); <span class="cm">// CONCRETE!</span>
+    <span class="cm">// Can't test without MySQL, can't swap to Postgres</span>
+}
+
+<span class="cm">// ✅ DIP: depend on abstraction, inject concrete via Spring</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb2">OrderService</span> {
+    <span class="kw">private final</span> OrderRepository repository;  <span class="cm">// INTERFACE</span>
+    <span class="kw">public</span> OrderService(OrderRepository repo) { <span class="kw">this</span>.repository = repo; }
+    <span class="cm">// Spring injects: MySqlOrderRepository, InMemoryOrderRepository (test), etc.</span>
+    <span class="cm">// OrderService doesn't know or care about implementation</span>
+}</pre></div>
+</div>
+
+<!-- ═══════════════ 3. COLLECTIONS ═══════════════ -->
+<div id="collections" class="page">
+<h1>Java Collections Framework — Internals</h1>
+<p class="sub">HashMap internals, collision resolution, time complexity, concurrent collections, production tradeoffs</p>
+
+<h2>1. HashMap Internal Architecture</h2>
+<div class="diag">
+<span class="b">HashMap = array of buckets + linked list/tree per bucket</span>
+
+  Internal array: Node&lt;K,V&gt;[] table (default capacity 16)
+  
+  put("Alice", user):
+    1. hash("Alice") → hashCode() + secondary mixing
+    2. index = (capacity - 1) &amp; hash  → bucket index (e.g., 7)
+    3. table[7] is empty → create Node, store there
+    
+  put("Bob", user):
+    1. hash("Bob") → different hash, maps to index 11
+    2. table[11] empty → store
+    
+  Collision: put("Carol", user) maps to index 7 (same as Alice):
+    3. table[7] has Alice → traverse linked list
+    4. .equals("Carol") != "Alice" → append Node at end
+    
+  Java 8+: if bucket has ≥8 entries → convert to Red-Black Tree (O(log n))!
+  
+<span class="y">Load Factor (default 0.75):</span>
+  When size &gt; capacity × 0.75 → RESIZE (double capacity, rehash all entries!)
+  16 entries → resize at 12 → new capacity 32
+  32 entries → resize at 24 → new capacity 64
+  Rehashing: expensive! O(n) — all entries rehashed
+  <span class="g">Fix: pre-size HashMap: new HashMap&lt;&gt;(expectedSize / 0.75 + 1)</span>
+</div>
+
+<h2>2. Collections Decision Matrix</h2>
+<table>
+<tr><th>Collection</th><th>Ordered</th><th>Sorted</th><th>Get O()</th><th>Add O()</th><th>Remove O()</th><th>Thread-safe</th></tr>
+<tr><td><code>ArrayList</code></td><td>✅ Insertion</td><td>❌</td><td>O(1)</td><td>O(1) amort.</td><td>O(n)</td><td>❌</td></tr>
+<tr><td><code>LinkedList</code></td><td>✅ Insertion</td><td>❌</td><td>O(n)</td><td>O(1)</td><td>O(1)*</td><td>❌</td></tr>
+<tr><td><code>HashSet</code></td><td>❌</td><td>❌</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>❌</td></tr>
+<tr><td><code>LinkedHashSet</code></td><td>✅ Insertion</td><td>❌</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>❌</td></tr>
+<tr><td><code>TreeSet</code></td><td>✅ Sorted</td><td>✅</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>❌</td></tr>
+<tr><td><code>HashMap</code></td><td>❌</td><td>❌</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>❌</td></tr>
+<tr><td><code>LinkedHashMap</code></td><td>✅ Insertion</td><td>❌</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>❌</td></tr>
+<tr><td><code>TreeMap</code></td><td>✅ Key order</td><td>✅</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>❌</td></tr>
+<tr><td><code>ConcurrentHashMap</code></td><td>❌</td><td>❌</td><td>O(1)</td><td>O(1)</td><td>O(1)</td><td>✅</td></tr>
+</table>
+
+<h2>3. Fail-Fast vs Fail-Safe Iterators</h2>
+<pre><span class="cm">// Fail-fast: throws ConcurrentModificationException if modified during iteration</span>
+List&lt;String&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;(List.of(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>));
+<span class="kw">for</span> (String s : list) {
+    <span class="kw">if</span> (s.equals(<span class="st">"b"</span>)) list.remove(s);  <span class="cm">// ConcurrentModificationException!</span>
+}
+<span class="cm">// Happens because: modCount changes → iterator.next() detects mismatch</span>
+
+<span class="cm">// ✅ Fix 1: use removeIf (safe)</span>
+list.<span class="fn">removeIf</span>(s -> s.equals(<span class="st">"b"</span>));
+
+<span class="cm">// ✅ Fix 2: collect and remove</span>
+List&lt;String&gt; toRemove = list.stream().filter(s -> s.equals(<span class="st">"b"</span>)).toList();
+list.removeAll(toRemove);
+
+<span class="cm">// ✅ Fix 3: iterator.remove()</span>
+Iterator&lt;String&gt; it = list.iterator();
+<span class="kw">while</span> (it.hasNext()) { <span class="kw">if</span> (it.next().equals(<span class="st">"b"</span>)) it.remove(); }
+
+<span class="cm">// Fail-safe: CopyOnWriteArrayList (for reads >> writes)</span>
+<span class="cm">// Works on copy → no ConcurrentModificationException</span>
+<span class="cm">// But: add() copies entire array → O(n) → expensive for frequent writes</span>
+<span class="cm">// Use for: Spring event listeners, rarely-changing config lists</span>
+List&lt;String&gt; safeList = <span class="kw">new</span> CopyOnWriteArrayList&lt;&gt;();
+<span class="kw">for</span> (String s : safeList) { safeList.add(<span class="st">"x"</span>); } <span class="cm">// no exception (reads snapshot)</span></pre>
+
+<h2>4. ConcurrentHashMap vs synchronizedMap</h2>
+<pre><span class="cm">// ❌ Hashtable/Collections.synchronizedMap: locks ENTIRE map per operation</span>
+Map&lt;String, Integer&gt; map = Collections.synchronizedMap(<span class="kw">new</span> HashMap&lt;&gt;());
+<span class="cm">// get() locks whole map → no concurrent reads → bottleneck at scale</span>
+
+<span class="cm">// ✅ ConcurrentHashMap: locks only the BUCKET (segment)</span>
+Map&lt;String, Integer&gt; cmap = <span class="kw">new</span> ConcurrentHashMap&lt;&gt;();
+<span class="cm">// Java 8+: uses CAS + synchronized on Node (bucket level)</span>
+<span class="cm">// Multiple reads: fully concurrent (no locks)</span>
+<span class="cm">// Writes to different buckets: concurrent</span>
+<span class="cm">// Writes to same bucket: synchronized on that bucket only</span>
+
+<span class="cm">// Atomic compound operations:</span>
+cmap.putIfAbsent(<span class="st">"key"</span>, <span class="num">0</span>);         <span class="cm">// atomic: add only if absent</span>
+cmap.computeIfAbsent(<span class="st">"key"</span>, k -> computeExpensive(k)); <span class="cm">// atomic compute</span>
+cmap.merge(<span class="st">"count"</span>, <span class="num">1</span>, Integer::sum); <span class="cm">// atomic increment counter!</span>
+
+<span class="cm">// ❌ Common mistake: non-atomic compound operation</span>
+<span class="kw">if</span> (!cmap.containsKey(<span class="st">"k"</span>)) cmap.put(<span class="st">"k"</span>, value); <span class="cm">// NOT atomic! Race condition!</span>
+<span class="cm">// ✅ Use putIfAbsent() instead</span></pre>
+
+<h2>5. Comparator vs Comparable — Production Sorting</h2>
+<pre><span class="cm">// Comparable: natural ordering (class defines its own)</span>
+<span class="kw">public class</span> <span class="nb2">Product</span> <span class="kw">implements</span> Comparable&lt;Product&gt; {
+    <span class="kw">private</span> BigDecimal price;
+    <span class="an">@Override</span>
+    <span class="kw">public int</span> compareTo(Product other) {
+        <span class="kw">return this</span>.price.compareTo(other.price);  <span class="cm">// ascending price</span>
+    }
+}
+Collections.sort(products);  <span class="cm">// uses compareTo</span>
+TreeSet&lt;Product&gt; sorted = <span class="kw">new</span> TreeSet&lt;&gt;(products);  <span class="cm">// ordered by price</span>
+
+<span class="cm">// Comparator: external/multiple orderings</span>
+Comparator&lt;Product&gt; byName = Comparator.comparing(Product::getName);
+Comparator&lt;Product&gt; byPriceDesc = Comparator.comparing(Product::getPrice).reversed();
+Comparator&lt;Product&gt; complex = Comparator
+    .comparing(Product::getCategory)
+    .thenComparing(Product::getPrice)
+    .thenComparing(Product::getName)
+    .thenComparingInt(Product::getStock);
+
+products.sort(complex);
+products.stream().sorted(byPriceDesc).limit(<span class="num">10</span>).toList();</pre>
+</div>
+
+<!-- ═══════════════ 4. EXCEPTIONS ═══════════════ -->
+<div id="exceptions" class="page">
+<h1>Java Exception Handling</h1>
+<p class="sub">Hierarchy, checked vs unchecked, Spring Boot global handling, anti-patterns, production practices</p>
+
+<h2>1. Exception Hierarchy</h2>
+<div class="diag">
+Throwable
+  ├── <span class="b">Error</span>  (JVM-level, don't catch)
+  │     ├── OutOfMemoryError
+  │     ├── StackOverflowError
+  │     └── VirtualMachineError
+  │
+  └── <span class="b">Exception</span>
+        ├── <span class="g">Checked Exceptions</span>  (must declare or catch)
+        │     ├── IOException
+        │     ├── SQLException
+        │     ├── ClassNotFoundException
+        │     └── your custom checked exceptions
+        │
+        └── <span class="r">RuntimeException</span>  (unchecked, no forced handling)
+              ├── NullPointerException
+              ├── IllegalArgumentException
+              ├── IllegalStateException
+              ├── IndexOutOfBoundsException
+              ├── ClassCastException
+              └── your custom unchecked exceptions
+
+<span class="y">Production rule: In modern Java/Spring, use UNCHECKED exceptions almost exclusively.</span>
+<span class="y">Checked exceptions leak implementation details, pollute method signatures,</span>
+<span class="y">force callers to handle or rethrow, and become unmanageable in lambdas.</span>
+</div>
+
+<h2>2. Custom Exceptions — Production Design</h2>
+<pre><span class="cm">// Domain-specific exception hierarchy</span>
+<span class="kw">public class</span> <span class="nb2">ApplicationException</span> <span class="kw">extends</span> RuntimeException {
+    <span class="kw">private final</span> String errorCode;
+    <span class="kw">private final</span> HttpStatus httpStatus;
+
+    <span class="kw">public</span> ApplicationException(String message, String errorCode, HttpStatus status) {
+        <span class="kw">super</span>(message);
+        <span class="kw">this</span>.errorCode = errorCode;
+        <span class="kw">this</span>.httpStatus = status;
+    }
+    <span class="cm">// Getters...</span>
+}
+
+<span class="kw">public class</span> <span class="nb2">ResourceNotFoundException</span> <span class="kw">extends</span> ApplicationException {
+    <span class="kw">public</span> ResourceNotFoundException(String resource, Object id) {
+        <span class="kw">super</span>(resource + <span class="st">" not found with id: "</span> + id, <span class="st">"RESOURCE_NOT_FOUND"</span>, HttpStatus.NOT_FOUND);
+    }
+}
+
+<span class="kw">public class</span> <span class="nb2">BusinessRuleException</span> <span class="kw">extends</span> ApplicationException {
+    <span class="kw">public</span> BusinessRuleException(String message) {
+        <span class="kw">super</span>(message, <span class="st">"BUSINESS_RULE_VIOLATION"</span>, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+}
+
+<span class="cm">// Usage in service:</span>
+<span class="kw">public</span> Order findOrder(Long id) {
+    <span class="kw">return</span> orderRepo.findById(id)
+        .orElseThrow(() -> <span class="kw">new</span> ResourceNotFoundException(<span class="st">"Order"</span>, id));
+}</pre>
+
+<h2>3. Global Exception Handler — Spring Boot</h2>
+<pre><span class="an">@RestControllerAdvice</span>
+<span class="an">@Slf4j</span>
+<span class="kw">public class</span> <span class="nb2">GlobalExceptionHandler</span> {
+
+    <span class="an">@ExceptionHandler</span>(ResourceNotFoundException.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.NOT_FOUND)
+    <span class="kw">public</span> ErrorResponse handleNotFound(ResourceNotFoundException ex) {
+        log.warn(<span class="st">"Resource not found: {}"</span>, ex.getMessage());  <span class="cm">// WARN not ERROR (expected)</span>
+        <span class="kw">return</span> ErrorResponse.of(ex.getErrorCode(), ex.getMessage());
+    }
+
+    <span class="an">@ExceptionHandler</span>(MethodArgumentNotValidException.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.BAD_REQUEST)
+    <span class="kw">public</span> ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+        Map&lt;String, String&gt; errors = ex.getBindingResult().getFieldErrors()
+            .stream().collect(Collectors.toMap(
+                FieldError::getField, FieldError::getDefaultMessage,
+                (existing, replacement) -> existing  <span class="cm">// on duplicate key</span>
+            ));
+        <span class="kw">return</span> ErrorResponse.validation(errors);
+    }
+
+    <span class="an">@ExceptionHandler</span>(ApplicationException.<span class="kw">class</span>)
+    <span class="kw">public</span> ResponseEntity&lt;ErrorResponse&gt; handleAppException(ApplicationException ex) {
+        log.warn(<span class="st">"Application exception [{}]: {}"</span>, ex.getErrorCode(), ex.getMessage());
+        <span class="kw">return</span> ResponseEntity.status(ex.getHttpStatus())
+            .body(ErrorResponse.of(ex.getErrorCode(), ex.getMessage()));
+    }
+
+    <span class="an">@ExceptionHandler</span>(Exception.<span class="kw">class</span>)
+    <span class="an">@ResponseStatus</span>(HttpStatus.INTERNAL_SERVER_ERROR)
+    <span class="kw">public</span> ErrorResponse handleGeneral(Exception ex, HttpServletRequest request) {
+        String traceId = MDC.get(<span class="st">"traceId"</span>);
+        log.error(<span class="st">"Unexpected error [traceId={}] at {}: {}"</span>,
+            traceId, request.getRequestURI(), ex.getMessage(), ex);
+        <span class="cm">// NEVER expose: stack trace, internal messages, class names to client!</span>
+        <span class="kw">return</span> ErrorResponse.of(<span class="st">"INTERNAL_ERROR"</span>,
+            <span class="st">"An error occurred. Reference: "</span> + traceId);
+    }
+}</pre>
+
+<h2>4. Anti-Patterns to Avoid</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ Exception Anti-Patterns</div>
+<pre style="font-size:11.5px"><span class="cm">// 1. Swallowing exceptions</span>
+<span class="kw">try</span> {
+    process();
+} <span class="kw">catch</span> (Exception e) {
+    <span class="cm">// silent — debugging nightmare!</span>
+}
+
+<span class="cm">// 2. Using exceptions for flow control</span>
+<span class="kw">try</span> {
+    <span class="kw">return</span> map.get(key);
+} <span class="kw">catch</span> (NullPointerException e) {
+    <span class="kw">return</span> defaultValue;  <span class="cm">// use getOrDefault()!</span>
+}
+
+<span class="cm">// 3. Catching too broadly</span>
+<span class="kw">catch</span> (Exception e) { log.error(e.getMessage()); }
+<span class="cm">// Catches OutOfMemoryError too! Use Throwable carefully.</span>
+
+<span class="cm">// 4. Re-wrapping losing stack trace</span>
+<span class="kw">catch</span> (IOException e) {
+    <span class="kw">throw new</span> AppException(<span class="st">"IO error"</span>);  <span class="cm">// loses cause!</span>
+}</pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Good Practices</div>
+<pre style="font-size:11.5px"><span class="cm">// 1. Log OR throw, not both</span>
+<span class="kw">catch</span> (Exception e) {
+    log.error(<span class="st">"Failed to process"</span>, e); <span class="cm">// then don't rethrow</span>
+    <span class="cm">// OR: throw, let global handler log</span>
+}
+
+<span class="cm">// 2. Preserve stack trace</span>
+<span class="kw">catch</span> (IOException e) {
+    <span class="kw">throw new</span> AppException(<span class="st">"IO error"</span>, e); <span class="cm">// pass cause!</span>
+}
+
+<span class="cm">// 3. Try-with-resources (always!)</span>
+<span class="kw">try</span> (InputStream is = openStream()) {
+    process(is);
+} <span class="cm">// auto-closes even on exception</span>
+
+<span class="cm">// 4. Specific exception types</span>
+<span class="kw">catch</span> (HttpClientErrorException e) { ... }
+<span class="kw">catch</span> (HttpServerErrorException e) { ... }</pre>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════ 5. I/O & NIO ═══════════════ -->
+<div id="io" class="page">
+<h1>Java I/O & NIO</h1>
+<p class="sub">Blocking vs non-blocking, channels, buffers, scalability, file handling, socket communication</p>
+
+<h2>1. Traditional I/O — Thread-Per-Connection Problem</h2>
+<div class="diag">
+<span class="b">Blocking I/O model (java.io):</span>
+  Client-1 connects → Thread-1 assigned (blocks on read())
+  Client-2 connects → Thread-2 assigned (blocks on read())
+  Client-N connects → Thread-N assigned (blocks on read())
+
+  10,000 clients = 10,000 blocked threads
+  Each thread: ~512KB stack = 5GB just for stacks!
+  CPU: context switching overhead between 10K threads
+  → System collapses under load
+
+<span class="b">Why Tomcat default is 200 threads:</span>
+  This is the maximum concurrent blocking I/O operations
+  At 200ms avg request: 200 threads ÷ 0.2s = 1000 req/s max
+  Beyond 200 concurrent: requests queue → timeouts → 503s
+</div>
+
+<h2>2. Java NIO — Non-Blocking I/O</h2>
+<pre><span class="cm">// NIO: Buffer-oriented, channel-based, non-blocking</span>
+<span class="cm">// Key concepts:</span>
+<span class="cm">// Channel: bidirectional data pipe (SocketChannel, FileChannel)</span>
+<span class="cm">// Buffer: holds data being read/written (ByteBuffer, CharBuffer)</span>
+<span class="cm">// Selector: monitors multiple channels for events</span>
+
+<span class="cm">// Buffer usage (MUST know flip() / clear() / rewind())</span>
+ByteBuffer buffer = ByteBuffer.allocate(<span class="num">1024</span>);    <span class="cm">// heap buffer</span>
+ByteBuffer direct = ByteBuffer.allocateDirect(<span class="num">1024</span>); <span class="cm">// off-heap, faster for IO</span>
+
+<span class="cm">// Writing to buffer:</span>
+buffer.put(<span class="st">"Hello"</span>.getBytes());                  <span class="cm">// position moves</span>
+buffer.flip();                                      <span class="cm">// position=0, limit=written bytes</span>
+
+<span class="cm">// Reading from buffer:</span>
+<span class="kw">while</span> (buffer.hasRemaining()) {
+    <span class="kw">byte</span> b = buffer.get();                         <span class="cm">// reads one byte</span>
+}
+buffer.clear();                                     <span class="cm">// reset for reuse</span>
+
+<span class="cm">// Non-blocking server with Selector (simplified):</span>
+Selector selector = Selector.open();
+ServerSocketChannel server = ServerSocketChannel.open();
+server.configureBlocking(<span class="kw">false</span>);                  <span class="cm">// non-blocking!</span>
+server.bind(<span class="kw">new</span> InetSocketAddress(<span class="num">8080</span>));
+server.register(selector, SelectionKey.OP_ACCEPT); <span class="cm">// register interest</span>
+
+<span class="kw">while</span> (<span class="kw">true</span>) {
+    selector.select();                              <span class="cm">// blocks until event</span>
+    <span class="kw">for</span> (SelectionKey key : selector.selectedKeys()) {
+        <span class="kw">if</span> (key.isAcceptable()) {
+            SocketChannel client = server.accept();
+            client.configureBlocking(<span class="kw">false</span>);
+            client.register(selector, SelectionKey.OP_READ);
+        }
+        <span class="kw">if</span> (key.isReadable()) { handleRead(key); }
+    }
+}
+<span class="cm">// ONE thread handles thousands of connections! → Netty, Spring WebFlux use this pattern</span></pre>
+
+<h2>3. Files API — Production File Handling</h2>
+<pre><span class="cm">// Modern: java.nio.file.Files (Java 7+) — preferred over File class</span>
+Path path = Path.of(<span class="st">"/data/uploads/file.csv"</span>);
+
+<span class="cm">// Reading (choose based on file size):</span>
+String content = Files.readString(path);                       <span class="cm">// whole file into String</span>
+List&lt;String&gt; lines = Files.readAllLines(path);                  <span class="cm">// all lines into List (⚠️ memory!)</span>
+<span class="kw">try</span> (Stream&lt;String&gt; stream = Files.lines(path)) {              <span class="cm">// ✅ streaming (memory-efficient)</span>
+    stream.filter(line -> !line.startsWith(<span class="st">"#"</span>)).forEach(processor::process);
+}
+
+<span class="cm">// Writing:</span>
+Files.writeString(path, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+Files.write(path, lines, StandardCharsets.UTF_8);
+
+<span class="cm">// Copy/Move/Delete:</span>
+Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);  <span class="cm">// atomic on same filesystem</span>
+Files.deleteIfExists(path);
+
+<span class="cm">// File upload in Spring Boot:</span>
+<span class="an">@PostMapping</span>(<span class="st">"/upload"</span>)
+<span class="kw">public</span> String upload(<span class="an">@RequestParam</span> MultipartFile file) <span class="kw">throws</span> IOException {
+    Path destination = Path.of(uploadDir, UUID.randomUUID() + <span class="st">"_"</span> + file.getOriginalFilename());
+    Files.createDirectories(destination.getParent());
+    <span class="kw">try</span> (InputStream input = file.getInputStream()) {
+        Files.copy(input, destination, StandardCopyOption.REPLACE_EXISTING);
+    }
+    <span class="kw">return</span> destination.getFileName().toString();
+}</pre>
+</div>
+
+<!-- ═══════════════ 6. GENERICS ═══════════════ -->
+<div id="generics" class="page">
+<h1>Java Generics — Deep Understanding</h1>
+<p class="sub">Type erasure, wildcards, covariance, bounded types, Spring/Hibernate usage, runtime limitations</p>
+
+<h2>1. Why Generics Exist — Type Safety Before Runtime</h2>
+<pre><span class="cm">// Without generics (Java 1.4): runtime ClassCastException</span>
+List list = <span class="kw">new</span> ArrayList();
+list.add(<span class="st">"hello"</span>);
+list.add(<span class="num">42</span>);         <span class="cm">// compiles! Different types mixed</span>
+String s = (String) list.get(<span class="num">1</span>);  <span class="cm">// ClassCastException at runtime!</span>
+
+<span class="cm">// With generics: compile-time safety</span>
+List&lt;String&gt; strings = <span class="kw">new</span> ArrayList&lt;&gt;();
+strings.add(<span class="st">"hello"</span>);
+strings.add(<span class="num">42</span>);    <span class="cm">// COMPILE ERROR — caught before deployment!</span>
+<span class="cm">// No cast needed: String s = strings.get(0);</span></pre>
+
+<h2>2. Type Erasure — The Runtime Reality</h2>
+<div class="diag">
+<span class="b">Generics exist ONLY at compile time. At runtime: erased to raw types.</span>
+
+  List&lt;String&gt; → List (with checkcast bytecode at use sites)
+  List&lt;Integer&gt; → List
+  
+  At runtime: List&lt;String&gt; and List&lt;Integer&gt; are THE SAME type!
+  
+<span class="y">Runtime limitation:</span>
+  new T()         → IMPOSSIBLE (can't instantiate type param at runtime)
+  new T[10]       → IMPOSSIBLE (generics + arrays = trouble)
+  obj instanceof List&lt;String&gt;  → COMPILE ERROR (can't check generic type at runtime)
+  obj instanceof List&lt;?&gt;       → OK (raw type check)
+  
+  list.getClass() == List.class  → always true regardless of T
+  
+<span class="b">Bridge methods:</span>
+  class Foo implements Comparable&lt;Foo&gt; { int compareTo(Foo o) }
+  Erasure: Comparable needs compareTo(Object o) → compiler generates BRIDGE method:
+    synthetic compareTo(Object o) { return compareTo((Foo) o); }
+  This makes polymorphism work with erasure!
+</div>
+
+<h2>3. Wildcards — PECS Rule</h2>
+<pre><span class="cm">// Producer Extends, Consumer Super (PECS) — Joshua Bloch's rule</span>
+
+<span class="cm">// ? extends T: Producer — you can READ T from it, not write</span>
+<span class="kw">public void</span> processOrders(List&lt;? <span class="kw">extends</span> Order&gt; orders) {
+    <span class="kw">for</span> (Order o : orders) { process(o); }  <span class="cm">// ✅ read as Order</span>
+    <span class="cm">// orders.add(new Order()); ← COMPILE ERROR (can't write!)</span>
+    <span class="cm">// Why? List could be List&lt;PremiumOrder&gt; — adding base Order would be wrong</span>
+}
+processOrders(premiumOrders);   <span class="cm">// List&lt;PremiumOrder&gt; works!</span>
+processOrders(regularOrders);   <span class="cm">// List&lt;RegularOrder&gt; works!</span>
+
+<span class="cm">// ? super T: Consumer — you can WRITE T to it, reading is Object</span>
+<span class="kw">public void</span> addOrders(List&lt;? <span class="kw">super</span> Order&gt; destination) {
+    destination.add(<span class="kw">new</span> Order());       <span class="cm">// ✅ write Order is safe</span>
+    destination.add(<span class="kw">new</span> PremiumOrder()); <span class="cm">// ✅ PremiumOrder IS-A Order</span>
+    <span class="cm">// Order o = destination.get(0); ← must use Object</span>
+}
+
+<span class="cm">// Classic example: Collections.copy()</span>
+<span class="kw">public static</span> &lt;T&gt; <span class="kw">void</span> copy(List&lt;? <span class="kw">super</span> T&gt; dest, List&lt;? <span class="kw">extends</span> T&gt; src) { ... }
+<span class="cm">// dest is consumer (? super T), src is producer (? extends T)</span></pre>
+
+<h2>4. Spring & Generics</h2>
+<pre><span class="cm">// Spring uses TypeToken pattern to get generic type at runtime</span>
+<span class="cm">// TypeReference captures generic type info by creating anonymous subclass</span>
+
+<span class="cm">// Jackson:</span>
+List&lt;Order&gt; orders = objectMapper.readValue(json,
+    <span class="kw">new</span> TypeReference&lt;List&lt;Order&gt;&gt;() {});  <span class="cm">// TypeReference captures List&lt;Order&gt;</span>
+<span class="cm">// Why? objectMapper.readValue(json, List.class) gives List&lt;LinkedHashMap&gt; (erased!)</span>
+<span class="cm">// TypeReference subclass has its type parameter accessible via reflection</span>
+
+<span class="cm">// Spring Data: JpaRepository uses generics for type-safe queries</span>
+<span class="kw">public interface</span> OrderRepository <span class="kw">extends</span> JpaRepository&lt;Order, Long&gt; {
+    <span class="cm">// Spring reads: T=Order, ID=Long from generic supertype → generates SQL</span>
+    List&lt;Order&gt; findByStatus(OrderStatus status);  <span class="cm">// returns typed List&lt;Order&gt;</span>
+}
+
+<span class="cm">// Generic service layer:</span>
+<span class="kw">public abstract class</span> <span class="nb2">BaseService</span>&lt;T, ID, R <span class="kw">extends</span> JpaRepository&lt;T, ID&gt;&gt; {
+    <span class="kw">protected final</span> R repository;
+    <span class="kw">public</span> T findById(ID id) {
+        <span class="kw">return</span> repository.findById(id)
+            .orElseThrow(() -> <span class="kw">new</span> EntityNotFoundException());
+    }
+}</pre>
+</div>
+
+<!-- ═══════════════ 7. JAVA 8+ ═══════════════ -->
+<div id="java8" class="page">
+<h1>Java 8+ Features</h1>
+<p class="sub">Lambdas, functional interfaces, Streams, Optional — deeply practical with performance analysis</p>
+
+<h2>1. Lambdas & Functional Interfaces</h2>
+<pre><span class="cm">// Functional interface: exactly ONE abstract method</span>
+<span class="an">@FunctionalInterface</span>  <span class="cm">// enforces compiler check</span>
+<span class="kw">public interface</span> <span class="nb2">OrderValidator</span> {
+    <span class="kw">boolean</span> isValid(Order order);
+}
+<span class="cm">// Lambda = implementation of the single abstract method:</span>
+OrderValidator notEmpty = order -> !order.getItems().isEmpty();
+OrderValidator hasCustomer = order -> order.getCustomerId() != <span class="kw">null</span>;
+
+<span class="cm">// Built-in functional interfaces:</span>
+Predicate&lt;Order&gt; isPremium = o -> o.getAmount().compareTo(BigDecimal.valueOf(<span class="num">100</span>)) &gt; <span class="num">0</span>;
+Function&lt;Order, String&gt; toId = Order::getId;                     <span class="cm">// method reference</span>
+Consumer&lt;Order&gt; audit = o -> log.info(<span class="st">"Processed: {}"</span>, o.getId());
+Supplier&lt;Order&gt; newOrder = Order::new;                           <span class="cm">// constructor reference</span>
+BiFunction&lt;Order, Discount, BigDecimal&gt; applyDiscount =
+    (order, discount) -> order.getTotal().subtract(discount.getAmount());
+
+<span class="cm">// Predicate composition:</span>
+Predicate&lt;Order&gt; valid = isPremium.<span class="fn">and</span>(hasCustomer).<span class="fn">and</span>(notEmpty);
+Predicate&lt;Order&gt; either = isPremium.<span class="fn">or</span>(o -> o.isPriority());
+Predicate&lt;Order&gt; notPremium = isPremium.<span class="fn">negate</span>();</pre>
+
+<h2>2. Stream API — Pipeline Execution</h2>
+<div class="diag">
+<span class="b">Stream pipeline: source → intermediate ops → terminal op</span>
+
+  Intermediate ops (LAZY — not executed until terminal):
+    filter(), map(), flatMap(), distinct(), sorted(), limit(), peek()
+    
+  Terminal ops (EAGER — triggers execution):
+    collect(), forEach(), count(), findFirst(), anyMatch(), reduce(), min(), max()
+
+<span class="b">Lazy evaluation example:</span>
+  orders.stream()
+    .filter(o -> { log("filter"); return o.isPending(); })   // not run yet
+    .map(o -> { log("map"); return o.getId(); })             // not run yet
+    .findFirst()                                             // terminal! runs both
+  Result: processes elements ONE AT A TIME until first match found
+  → NOT: filter all, THEN map all
+  → YES: filter(1), map(1), found? stop. No N+1 passes!
+
+<span class="b">Short-circuit: findFirst, anyMatch, limit stop early</span>
+  1M orders with findFirst matching → may process only 1 element!
+</div>
+
+<pre><span class="cm">// Real backend stream examples:</span>
+
+<span class="cm">// Group orders by status</span>
+Map&lt;OrderStatus, List&lt;Order&gt;&gt; byStatus = orders.stream()
+    .collect(Collectors.groupingBy(Order::getStatus));
+
+<span class="cm">// Count per status</span>
+Map&lt;OrderStatus, Long&gt; countByStatus = orders.stream()
+    .collect(Collectors.groupingBy(Order::getStatus, Collectors.counting()));
+
+<span class="cm">// Total revenue</span>
+BigDecimal total = orders.stream()
+    .map(Order::getAmount)
+    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+<span class="cm">// FlatMap: nested collections</span>
+List&lt;OrderItem&gt; allItems = orders.stream()
+    .flatMap(order -> order.getItems().stream())  <span class="cm">// flatten nested lists</span>
+    .toList();
+
+<span class="cm">// Custom collector: build comma-separated IDs</span>
+String ids = orders.stream()
+    .map(Order::getId)
+    .collect(Collectors.joining(", ", "[", "]"));
+
+<span class="cm">// toMap with merge function (handles duplicate keys):</span>
+Map&lt;String, BigDecimal&gt; revenueByCustomer = orders.stream()
+    .collect(Collectors.toMap(
+        Order::getCustomerId,
+        Order::getAmount,
+        BigDecimal::add  <span class="cm">// merge: sum amounts for same customer</span>
+    ));</pre>
+
+<h2>3. Stream Performance Pitfalls</h2>
+<div class="cmp">
+<div class="bad">
+<div class="clbl">❌ Stream Performance Anti-Patterns</div>
+<pre style="font-size:11.5px"><span class="cm">// 1. Stream for simple iteration</span>
+list.stream().forEach(System.out::println);
+<span class="cm">// vs: list.forEach(System.out::println); (faster, no stream overhead)</span>
+
+<span class="cm">// 2. sorted() on large streams</span>
+orders.stream()
+    .sorted()              <span class="cm">// buffers ALL to sort — O(n log n) + O(n) memory</span>
+    .limit(10).toList();   <span class="cm">// better: sort + limit at DB level</span>
+
+<span class="cm">// 3. Parallel stream for small collections</span>
+list.parallelStream()      <span class="cm">// fork-join overhead > benefit for &lt;10K elements</span>
+    .map(expensive).toList();
+
+<span class="cm">// 4. Boxing/unboxing in numeric streams</span>
+orders.stream()
+    .map(Order::getAmount)       <span class="cm">// Stream&lt;BigDecimal&gt;</span>
+    .mapToLong(BigDecimal::longValue) <span class="cm">// but what about primitives?</span></pre>
+</div>
+<div class="good">
+<div class="clbl">✅ Efficient Streams</div>
+<pre style="font-size:11.5px"><span class="cm">// Use IntStream/LongStream for primitives</span>
+<span class="kw">long</span> sum = IntStream.rangeClosed(<span class="num">1</span>, <span class="num">1000000</span>)
+    .asLongStream()
+    .sum();  <span class="cm">// no boxing!</span>
+
+<span class="cm">// Parallel only for CPU-bound, large data</span>
+orders.parallelStream()          <span class="cm">// 100K+ elements</span>
+    .filter(o -> isExpensive(o)) <span class="cm">// CPU-bound check</span>
+    .toList();
+
+<span class="cm">// Terminate early when possible</span>
+boolean anyPending = orders.stream()
+    .anyMatch(o -> o.getStatus() == PENDING);
+<span class="cm">// Stops at first PENDING — doesn't scan all</span></pre>
+</div>
+</div>
+
+<h2>4. Optional — Correct Usage</h2>
+<pre><span class="cm">// Optional: explicit nullable return, NOT a replacement for every null check</span>
+
+<span class="cm">// ❌ Wrong usages:</span>
+Optional&lt;String&gt; opt = null;         <span class="cm">// never null! defeats the purpose</span>
+<span class="kw">if</span> (opt.isPresent()) use(opt.get()); <span class="cm">// just use ifPresent()</span>
+Optional&lt;String&gt; field;              <span class="cm">// never use as field (Serializable issues)</span>
+<span class="kw">public void</span> process(Optional&lt;Order&gt; opt) <span class="cm">// never as parameter (caller confusion)</span>
+
+<span class="cm">// ✅ Optional in return types only (signals "may not be present")</span>
+<span class="kw">public</span> Optional&lt;User&gt; findByEmail(String email) {
+    <span class="kw">return</span> userRepo.findByEmail(email);  <span class="cm">// Spring Data returns Optional</span>
+}
+
+<span class="cm">// Chain with map/flatMap/filter:</span>
+String city = <span class="fn">findByEmail</span>(email)
+    .map(User::getAddress)
+    .map(Address::getCity)
+    .filter(c -> !c.isEmpty())
+    .orElse(<span class="st">"Unknown"</span>);
+
+<span class="cm">// Throw with message:</span>
+User user = <span class="fn">findByEmail</span>(email)
+    .orElseThrow(() -> <span class="kw">new</span> ResourceNotFoundException(<span class="st">"User"</span>, email));
+
+<span class="cm">// Execute only if present:</span>
+<span class="fn">findByEmail</span>(email)
+    .ifPresentOrElse(
+        user -> process(user),
+        () -> log.warn(<span class="st">"User not found: {}"</span>, email)
+    );</pre>
+</div>
+
+<!-- ═══════════════ 8. CONCURRENCY ═══════════════ -->
+<div id="concurrency" class="page">
+<h1>Java Concurrency — OS & Backend Perspective</h1>
+<p class="sub">Thread lifecycle, locks, atomics, CompletableFuture, memory model, production patterns</p>
+
+<h2>1. Thread Lifecycle & JVM Scheduling</h2>
+<div class="diag">
+Thread states (OS maps to: Running / Runnable / Blocked):
+
+<span class="b">NEW</span>        → created, not started
+<span class="b">RUNNABLE</span>   → started, may be on CPU or waiting for CPU time slice
+<span class="b">BLOCKED</span>    → waiting for monitor lock (synchronized block)
+<span class="b">WAITING</span>    → Object.wait(), Thread.join(), LockSupport.park()
+<span class="b">TIMED_WAIT</span> → Thread.sleep(n), Object.wait(n)
+<span class="b">TERMINATED</span> → run() completed or exception thrown
+
+Context switch cost:
+  Save current thread's CPU registers + program counter (~100 nanoseconds)
+  Load next thread's saved state
+  Cache effects: new thread's data not in L1/L2 cache → cache misses
+  Full context switch: ~1-10 microseconds
+
+JVM threads map 1:1 to OS threads (platform threads)
+Java 21 Virtual Threads: JVM-managed, mount/unmount on carrier OS threads
+  Blocking IO: virtual thread unmounts → carrier thread free → 0 waste
+</div>
+
+<h2>2. Synchronized vs ReentrantLock</h2>
+<pre><span class="cm">// synchronized: JVM built-in, simple but limited</span>
+<span class="kw">public synchronized void</span> withdraw(<span class="kw">double</span> amount) {
+    <span class="cm">// intrinsic lock on 'this' — one thread at a time</span>
+    <span class="cm">// Cannot: timeout, interruptible, try-lock, read/write lock</span>
+    balance -= amount;
+}
+
+<span class="cm">// ReentrantLock: explicit, more control</span>
+<span class="kw">private final</span> ReentrantLock lock = <span class="kw">new</span> ReentrantLock(<span class="kw">true</span>); <span class="cm">// fair=true: FIFO ordering</span>
+
+<span class="kw">public void</span> transfer(<span class="kw">double</span> amount) <span class="kw">throws</span> InterruptedException {
+    <span class="kw">if</span> (lock.tryLock(<span class="num">5</span>, TimeUnit.SECONDS)) {  <span class="cm">// timeout! doesn't block forever</span>
+        <span class="kw">try</span> {
+            balance -= amount;
+        } <span class="kw">finally</span> {
+            lock.unlock();   <span class="cm">// MUST unlock in finally!</span>
+        }
+    } <span class="kw">else</span> {
+        <span class="kw">throw new</span> IllegalStateException(<span class="st">"Could not acquire lock"</span>);
+    }
+}
+
+<span class="cm">// ReadWriteLock: multiple readers OR one writer</span>
+<span class="kw">private final</span> ReadWriteLock rwLock = <span class="kw">new</span> ReentrantReadWriteLock();
+
+<span class="kw">public</span> Object get(String key) {
+    rwLock.readLock().lock();    <span class="cm">// multiple threads can hold readLock simultaneously</span>
+    <span class="kw">try</span> { <span class="kw">return</span> cache.get(key); } <span class="kw">finally</span> { rwLock.readLock().unlock(); }
+}
+
+<span class="kw">public void</span> put(String key, Object value) {
+    rwLock.writeLock().lock();   <span class="cm">// exclusive! no readers while writing</span>
+    <span class="kw">try</span> { cache.put(key, value); } <span class="kw">finally</span> { rwLock.writeLock().unlock(); }
+}</pre>
+
+<h2>3. Java Memory Model — visibility</h2>
+<pre><span class="cm">// Without volatile: compiler/CPU may cache in register → other threads don't see update!</span>
+<span class="kw">class</span> <span class="nb2">BrokenStopFlag</span> {
+    <span class="kw">private boolean</span> running = <span class="kw">true</span>;  <span class="cm">// not volatile!</span>
+
+    <span class="kw">public void</span> stop() { running = <span class="kw">false</span>; }
+    <span class="kw">public void</span> run() {
+        <span class="kw">while</span> (running) { work(); }  <span class="cm">// might never see running=false! Infinite loop!</span>
+    }
+}
+
+<span class="cm">// volatile: guarantees visibility (not atomicity!)</span>
+<span class="kw">private volatile boolean</span> running = <span class="kw">true</span>;  <span class="cm">// reads always from main memory</span>
+
+<span class="cm">// AtomicInteger: visibility + atomicity via CAS (Compare-And-Swap)</span>
+<span class="kw">private final</span> AtomicInteger counter = <span class="kw">new</span> AtomicInteger(<span class="num">0</span>);
+<span class="kw">int</span> newVal = counter.incrementAndGet();     <span class="cm">// atomic: read-increment-write</span>
+counter.compareAndSet(<span class="num">5</span>, <span class="num">10</span>);             <span class="cm">// atomic: if value==5, set to 10</span>
+
+<span class="cm">// ConcurrentHashMap.compute() for atomic map operations:</span>
+ConcurrentHashMap&lt;String, AtomicInteger&gt; counts = <span class="kw">new</span> ConcurrentHashMap&lt;&gt;();
+counts.computeIfAbsent(<span class="st">"key"</span>, k -> <span class="kw">new</span> AtomicInteger(<span class="num">0</span>)).incrementAndGet();</pre>
+
+<h2>4. CompletableFuture — Async Pipelines</h2>
+<pre><span class="cm">// Always use custom executor — NEVER default ForkJoinPool for IO!</span>
+ExecutorService ioExecutor = Executors.newFixedThreadPool(
+    Runtime.getRuntime().availableProcessors() * <span class="num">2</span>,
+    <span class="kw">new</span> ThreadFactoryBuilder().setNameFormat(<span class="st">"io-worker-%d"</span>).build()
+);
+
+<span class="cm">// Parallel with timeout and fallback:</span>
+CompletableFuture&lt;User&gt; userFuture =
+    CompletableFuture.supplyAsync(() -> userRepo.findById(userId), ioExecutor);
+CompletableFuture&lt;List&lt;Order&gt;&gt; ordersFuture =
+    CompletableFuture.supplyAsync(() -> orderRepo.findByUser(userId), ioExecutor);
+
+CompletableFuture&lt;DashboardDto&gt; result = userFuture
+    .thenCombine(ordersFuture, DashboardDto::of)
+    .orTimeout(<span class="num">3</span>, TimeUnit.SECONDS)
+    .exceptionally(ex -> {
+        log.error(<span class="st">"Dashboard failed"</span>, ex);
+        <span class="kw">return</span> DashboardDto.empty();  <span class="cm">// graceful degradation</span>
+    });
+
+DashboardDto dashboard = result.join();  <span class="cm">// blocks until done (use carefully)</span>
+
+<span class="cm">// In Spring @Async context: return CompletableFuture from @Async method</span>
+<span class="cm">// Spring WebFlux: use reactive Mono/Flux instead (non-blocking from HTTP layer)</span></pre>
+</div>
+
+<!-- ═══════════════ 9. MEMORY ═══════════════ -->
+<div id="memory" class="page">
+<h1>Java Memory Management</h1>
+<p class="sub">GC algorithms, generations, reference types, memory leaks, OOM scenarios, monitoring</p>
+
+<h2>1. Garbage Collection — Generation Hypothesis</h2>
+<div class="diag">
+<span class="b">Weak Generational Hypothesis: most objects die young</span>
+
+Young Generation (Minor GC, fast ~5ms):
+  Eden: new objects allocated here (bump-pointer allocation, O(1))
+  S0, S1 (Survivor spaces): survive Minor GC, age counter increments
+  → Objects with age ≥ 15 (default): promoted to Old Gen
+
+Old Generation (Major/Full GC, slow ~100ms-seconds):
+  Long-lived objects: Spring singleton beans, HikariCP pool, thread-local caches
+  When Old Gen full → Major GC → Stop-The-World!
+  All app threads pause: HTTP requests hang, timeouts cascade
+
+G1GC (Java 9+ default):
+  Heap divided into equal regions (~2MB each)
+  Mixed GC: cleans most garbage regions first (highest ROI)
+  Concurrent marking: runs alongside app threads
+  Target: -XX:MaxGCPauseMillis=200 (tries to pause ≤ 200ms)
+
+ZGC (Java 15+, ultra-low latency):
+  Pauses &lt; 1ms regardless of heap size
+  Colored pointers: load barriers update references concurrently
+  Trade-off: higher CPU overhead (~15%) for latency guarantee
+</div>
+
+<h2>2. Memory Leaks — How They Happen in Java</h2>
+<pre><span class="cm">// Leak 1: Static collection holding objects</span>
+<span class="kw">public class</span> <span class="nb2">MetricRegistry</span> {
+    <span class="kw">private static final</span> Map&lt;String, Counter&gt; METRICS = <span class="kw">new</span> HashMap&lt;&gt;();
+    <span class="kw">public static void</span> record(String key, Counter c) { METRICS.put(key, c); }
+    <span class="cm">// Objects in METRICS are GC roots → never collected!
+    // If key grows unbounded → OOM</span>
+}
+<span class="cm">// Fix: use weak reference map or bounded cache (Caffeine)</span>
+
+<span class="cm">// Leak 2: ThreadLocal not removed</span>
+<span class="kw">private static final</span> ThreadLocal&lt;UserContext&gt; USER_CTX = <span class="kw">new</span> ThreadLocal&lt;&gt;();
+<span class="cm">// In Tomcat: threads are pooled and REUSED</span>
+<span class="cm">// If you set ThreadLocal and don't remove: each new request on that thread</span>
+<span class="cm">// gets PREVIOUS request's data → security leak + memory leak!</span>
+<span class="kw">try</span> {
+    USER_CTX.set(context);
+    doWork();
+} <span class="kw">finally</span> {
+    USER_CTX.remove();  <span class="cm">// ALWAYS remove in finally!</span>
+}
+
+<span class="cm">// Leak 3: Hibernate proxy not accessed within session</span>
+<span class="cm">// Entity with @OneToMany LAZY loaded, session closes, Jackson tries to serialize</span>
+<span class="cm">// → LazyInitializationException OR holds session open indefinitely</span>
+
+<span class="cm">// Leak 4: Listener/Observer not deregistered</span>
+eventBus.register(listener);   <span class="cm">// listener registered</span>
+<span class="cm">// Bean destroyed but not unregistered → eventBus holds reference → leak</span>
+<span class="cm">// Fix: @PreDestroy { eventBus.unregister(this); }</span></pre>
+
+<h2>3. Reference Types — GC Interaction</h2>
+<pre><span class="cm">// Strong reference (normal): Object not collected while reference exists</span>
+Object obj = <span class="kw">new</span> Object();  <span class="cm">// strong ref</span>
+obj = <span class="kw">null</span>;  <span class="cm">// eligible for GC now</span>
+
+<span class="cm">// SoftReference: collected when JVM needs memory (good for caches)</span>
+SoftReference&lt;byte[]&gt; cache = <span class="kw">new</span> SoftReference&lt;&gt;(<span class="kw">new byte</span>[<span class="num">1024</span> * <span class="num">1024</span>]);
+<span class="kw">byte</span>[] data = cache.get();  <span class="cm">// may return null if GC collected it</span>
+<span class="kw">if</span> (data == <span class="kw">null</span>) { data = loadFromDisk(); cache = <span class="kw">new</span> SoftReference&lt;&gt;(data); }
+<span class="cm">// JVM collects SoftRefs before throwing OOM → good for optional caches</span>
+
+<span class="cm">// WeakReference: collected on NEXT GC cycle (even without memory pressure)</span>
+WeakReference&lt;Session&gt; weakSession = <span class="kw">new</span> WeakReference&lt;&gt;(session);
+<span class="cm">// Used by: ThreadLocal internals, WeakHashMap (key becomes eligible for GC)</span>
+<span class="cm">// WeakHashMap: when key object is only weakly reachable → entry auto-removed!</span>
+
+<span class="cm">// PhantomReference: collected AFTER finalization (rarely used)</span>
+<span class="cm">// Used for: cleanup actions, replacing finalize()</span></pre>
+
+<h2>4. OOM Scenarios & Diagnosis</h2>
+<table>
+<tr><th>OOM Message</th><th>Cause</th><th>Fix</th></tr>
+<tr><td>Java heap space</td><td>Objects filling heap (data loading, memory leak, cache growth)</td><td>Increase -Xmx, find leak with heap dump, add pagination</td></tr>
+<tr><td>GC overhead limit</td><td>Spending >98% time in GC, recovering <2% heap</td><td>Find what's filling heap, reduce retention</td></tr>
+<tr><td>Metaspace</td><td>Too many classes loaded (classloader leak, hot-reload)</td><td>-XX:MaxMetaspaceSize, fix classloader leak</td></tr>
+<tr><td>Direct buffer memory</td><td>ByteBuffer.allocateDirect() filling off-heap</td><td>Increase -XX:MaxDirectMemorySize</td></tr>
+<tr><td>Unable to create native thread</td><td>Too many threads, OS limit</td><td>Reduce thread pool sizes, check for thread leaks</td></tr>
+</table>
+<pre><span class="cm"># Diagnosis commands:</span>
+jps -l                          <span class="cm"># list Java processes</span>
+jstat -gcutil &lt;pid&gt; 1000        <span class="cm"># GC stats every 1 second</span>
+jmap -histo:live &lt;pid&gt; | head -30 <span class="cm"># top objects by count/size</span>
+jmap -dump:format=b,file=heap.hprof &lt;pid&gt;  <span class="cm"># heap dump for MAT analysis</span>
+jstack &lt;pid&gt; | grep -A 5 BLOCKED <span class="cm"># find blocked threads</span>
+
+<span class="cm"># Spring Actuator:</span>
+curl /actuator/metrics/jvm.memory.used
+curl /actuator/metrics/jvm.gc.pause
+curl /actuator/heapdump  <span class="cm"># download heap dump</span>
+curl /actuator/threaddump  <span class="cm"># thread snapshot</span></pre>
+</div>
+
+<!-- ═══════════════ 10. DESIGN PATTERNS ═══════════════ -->
+<div id="patterns" class="page">
+<h1>Design Patterns in Java</h1>
+<p class="sub">When patterns solve problems vs. over-engineering — Spring Boot internal usage</p>
+
+<h2>1. Builder Pattern — Immutable Objects</h2>
+<pre><span class="cm">// Problem: Telescoping constructor anti-pattern</span>
+<span class="kw">new</span> User(<span class="st">"Alice"</span>, <span class="st">"alice@test.com"</span>, <span class="kw">null</span>, <span class="kw">null</span>, <span class="kw">true</span>, <span class="kw">false</span>, <span class="num">0</span>);
+<span class="cm">// Which null is which? What does false mean? Unreadable!</span>
+
+<span class="cm">// Lombok @Builder: generates builder automatically</span>
+<span class="an">@Value</span>  <span class="cm">// immutable: final fields, no setters</span>
+<span class="an">@Builder</span>
+<span class="kw">public class</span> <span class="nb2">UserDto</span> {
+    String id, name, email;
+    UserRole role;
+    <span class="an">@Builder.Default</span> <span class="kw">boolean</span> active = <span class="kw">true</span>;
+    Instant createdAt;
+}
+UserDto user = UserDto.builder()
+    .id(<span class="st">"u-123"</span>).name(<span class="st">"Alice"</span>).email(<span class="st">"alice@test.com"</span>)
+    .role(UserRole.ADMIN).createdAt(Instant.now()).build();
+<span class="cm">// Readable, immutable, thread-safe!</span>
+
+<span class="cm">// Java 16+ Records: even simpler for pure data carriers</span>
+<span class="kw">public record</span> OrderSummary(<span class="kw">String</span> id, BigDecimal total, OrderStatus status) {
+    <span class="cm">// compact constructor for validation:</span>
+    <span class="kw">public</span> OrderSummary {
+        Objects.requireNonNull(id, <span class="st">"id required"</span>);
+        <span class="kw">if</span> (total.compareTo(BigDecimal.ZERO) &lt; <span class="num">0</span>) <span class="kw">throw new</span> IllegalArgumentException();
+    }
+}
+<span class="cm">// Generates: constructor, getters, equals, hashCode, toString automatically</span></pre>
+
+<h2>2. Factory Pattern — Object Creation Control</h2>
+<pre><span class="cm">// Static factory vs constructor:</span>
+<span class="cm">// Constructors: must always create new object, always same return type</span>
+<span class="cm">// Factory: can return cached instance, return subtypes, have meaningful names</span>
+
+<span class="kw">public class</span> <span class="nb2">Money</span> {
+    <span class="kw">private static final</span> Map&lt;String, Money&gt; CACHE = <span class="kw">new</span> ConcurrentHashMap&lt;&gt;();
+
+    <span class="kw">private</span> Money(<span class="kw">long</span> amount, String currency) { ... }
+
+    <span class="cm">// Factory method with caching + meaningful name</span>
+    <span class="kw">public static</span> Money of(<span class="kw">long</span> amount, String currency) {
+        String key = amount + <span class="st">":"</span> + currency;
+        <span class="kw">return</span> CACHE.computeIfAbsent(key, k -> <span class="kw">new</span> Money(amount, currency));
+    }
+
+    <span class="kw">public static</span> Money zero(String currency) { <span class="kw">return</span> of(<span class="num">0</span>, currency); }
+}
+
+<span class="cm">// Abstract Factory — Spring @Profile is Factory in disguise</span>
+<span class="an">@Configuration</span>
+<span class="kw">public class</span> <span class="nb2">StorageConfig</span> {
+    <span class="an">@Bean</span> <span class="an">@Profile</span>(<span class="st">"production"</span>)
+    <span class="kw">public</span> StorageService s3Storage(AmazonS3 s3) { <span class="kw">return new</span> S3StorageService(s3); }
+
+    <span class="an">@Bean</span> <span class="an">@Profile</span>(<span class="st">"!production"</span>)
+    <span class="kw">public</span> StorageService localStorage() { <span class="kw">return new</span> LocalStorageService(<span class="st">"/tmp"</span>); }
+}
+<span class="cm">// Spring = Abstract Factory! Creates objects based on environment</span></pre>
+
+<h2>3. Strategy Pattern — Open/Closed in Practice</h2>
+<pre><span class="cm">// Strategy = algorithm encapsulated, interchangeable at runtime</span>
+<span class="cm">// Spring: inject ALL implementations, select at runtime</span>
+<span class="an">@Service</span>
+<span class="kw">public class</span> <span class="nb2">ShippingService</span> {
+    <span class="kw">private final</span> Map&lt;String, ShippingStrategy&gt; strategies;
+
+    <span class="cm">// Spring injects map: bean name → bean (all ShippingStrategy beans)</span>
+    <span class="kw">public</span> ShippingService(Map&lt;String, ShippingStrategy&gt; strategies) {
+        <span class="kw">this</span>.strategies = strategies;
+    }
+
+    <span class="kw">public</span> ShippingCost calculate(Order order) {
+        String carrier = order.getPreferredCarrier(); <span class="cm">// "fedexShippingStrategy"</span>
+        <span class="kw">return</span> Optional.ofNullable(strategies.get(carrier + <span class="st">"ShippingStrategy"</span>))
+            .orElse(strategies.get(<span class="st">"defaultShippingStrategy"</span>))
+            .calculate(order);
+    }
+}
+<span class="cm">// Add new carrier: new @Component class, zero change to ShippingService</span></pre>
+
+<h2>4. Template Method Pattern</h2>
+<pre><span class="cm">// Spring JdbcTemplate IS Template Method Pattern!</span>
+<span class="cm">// Algorithm: get connection → execute → handle result → close connection</span>
+<span class="cm">// YOU provide: the SQL + result mapping (the varying parts)</span>
+
+<span class="cm">// Define skeleton, subclass fills steps:</span>
+<span class="kw">public abstract class</span> <span class="nb2">DataImporter</span>&lt;T&gt; {
+
+    <span class="kw">public final</span> ImportResult importData(InputStream source) {
+        List&lt;T&gt; raw = parse(source);          <span class="cm">// step 1: abstract</span>
+        List&lt;T&gt; valid = validate(raw);        <span class="cm">// step 2: abstract</span>
+        deduplicateAndMerge(valid);            <span class="cm">// step 3: abstract</span>
+        <span class="kw">return</span> buildResult(valid);            <span class="cm">// step 4: common implementation</span>
+    }
+
+    <span class="kw">protected abstract</span> List&lt;T&gt; parse(InputStream src);
+    <span class="kw">protected abstract</span> List&lt;T&gt; validate(List&lt;T&gt; items);
+    <span class="kw">protected abstract void</span> deduplicateAndMerge(List&lt;T&gt; items);
+
+    <span class="kw">protected</span> ImportResult buildResult(List&lt;T&gt; items) {
+        <span class="kw">return new</span> ImportResult(items.size(), Instant.now());  <span class="cm">// shared impl</span>
+    }
+}
+<span class="kw">class</span> <span class="nb2">CsvOrderImporter</span> <span class="kw">extends</span> DataImporter&lt;Order&gt; { <span class="cm">/* CSV parsing */</span> }
+<span class="kw">class</span> <span class="nb2">JsonOrderImporter</span> <span class="kw">extends</span> DataImporter&lt;Order&gt; { <span class="cm">/* JSON parsing */</span> }</pre>
+</div>
+
+<!-- ═══════════════ 11. BEST PRACTICES ═══════════════ -->
+<div id="bestpractices" class="page">
+<h1>Java Best Practices</h1>
+<p class="sub">Immutability, clean code, production patterns, when NOT to apply patterns</p>
+
+<h2>1. Immutability — Why It Matters</h2>
+<pre><span class="cm">// Mutable objects: thread-safety issues, unexpected mutations, hard to debug</span>
+<span class="kw">public class</span> <span class="nb2">MutableOrder</span> {
+    <span class="kw">private</span> String status;                       <span class="cm">// anyone can change this!</span>
+    <span class="kw">public void</span> setStatus(String s) { status = s; }
+    <span class="cm">// Concurrent modification: thread A reads "PENDING"</span>
+    <span class="cm">// thread B sets "CANCELLED" → thread A proceeds assuming PENDING → bug!</span>
+}
+
+<span class="cm">// Immutable: once created, cannot change → inherently thread-safe</span>
+<span class="kw">public final class</span> <span class="nb2">OrderId</span> {              <span class="cm">// final: can't extend</span>
+    <span class="kw">private final</span> String value;              <span class="cm">// final fields: set once in constructor</span>
+
+    <span class="kw">public</span> OrderId(String value) {
+        <span class="kw">this</span>.value = Objects.requireNonNull(value).trim();
+        <span class="kw">if</span> (value.isEmpty()) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"OrderId cannot be empty"</span>);
+    }
+    <span class="kw">public</span> String getValue() { <span class="kw">return</span> value; }  <span class="cm">// getter only, no setter</span>
+    <span class="cm">// equals/hashCode/toString</span>
+}
+
+<span class="cm">// Returning defensive copies:</span>
+<span class="kw">public</span> List&lt;OrderItem&gt; getItems() {
+    <span class="kw">return</span> List.copyOf(items);  <span class="cm">// unmodifiable copy, not view</span>
+}
+<span class="kw">public</span> LocalDate getDeliveryDate() {
+    <span class="kw">return</span> deliveryDate;  <span class="cm">// LocalDate IS immutable, safe to return directly</span>
+}</pre>
+
+<h2>2. Fail-Fast Validation</h2>
+<pre><span class="cm">// Validate at system boundary, early, once</span>
+<span class="kw">public</span> Order createOrder(String customerId, List&lt;OrderItem&gt; items) {
+    <span class="cm">// Guard clauses — fail fast with clear messages</span>
+    Objects.requireNonNull(customerId, <span class="st">"customerId is required"</span>);
+    <span class="kw">if</span> (customerId.isBlank()) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"customerId cannot be blank"</span>);
+    <span class="kw">if</span> (items == <span class="kw">null</span> || items.isEmpty()) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"items required"</span>);
+    <span class="kw">if</span> (items.size() > <span class="num">100</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"max 100 items per order"</span>);
+
+    <span class="cm">// Actual business logic — no defensive nulls needed below</span>
+    <span class="kw">return</span> Order.create(customerId, items);
+}
+
+<span class="cm">// With Bean Validation in Spring:</span>
+<span class="an">@Validated</span>
+<span class="kw">public class</span> <span class="nb2">OrderService</span> {
+    <span class="kw">public</span> Order create(<span class="an">@Valid</span> CreateOrderRequest request) { ... }
+}
+<span class="cm">// Hibernate Validator runs automatically → ConstraintViolationException on invalid</span></pre>
+
+<h2>3. Clean Code Rules for Production Java</h2>
+<div class="g2">
+<div class="card">
+<div class="ct">Naming Conventions</div>
+<p>Classes: PascalCase nouns (OrderService, not OrderMgr)<br>
+Methods: camelCase verbs (findById, notIsFound)<br>
+Variables: camelCase, meaningful (orderId not id, not o)<br>
+Constants: UPPER_SNAKE_CASE (MAX_RETRY_COUNT)<br>
+Boolean: isXxx, hasXxx, canXxx (isActive, hasItems, canProcess)</p>
+</div>
+<div class="card">
+<div class="ct">Method Design Rules</div>
+<p>Methods do ONE thing (SRP)<br>
+Max 20 lines; if longer, extract method<br>
+Max 3 parameters; use a DTO for more<br>
+Return same type on all paths (no mixed types)<br>
+Avoid boolean parameters (split into two methods)</p>
+</div>
+<div class="card">
+<div class="ct">When NOT to Use Patterns</div>
+<p>Singleton: not needed — Spring manages lifecycle<br>
+Abstract Factory: @Configuration + @Bean is simpler<br>
+Iterator: use Stream API instead<br>
+Command: use lambdas/functional interfaces instead<br>
+Don't pattern for pattern's sake!</p>
+</div>
+<div class="card">
+<div class="ct">Spring Boot Specifics</div>
+<p>Always constructor injection (not field)<br>
+Never @Autowired on fields (use @RequiredArgsConstructor)<br>
+Return Optional from repository, not null<br>
+DTOs between layers (never pass entities to controllers)<br>
+@Transactional on service, not repository</p>
+</div>
+</div>
+
+<h2>4. Interview-Level Summary</h2>
+<table>
+<tr><th>Topic</th><th>Key Insight</th><th>Common Mistake</th></tr>
+<tr><td>JVM Memory</td><td>Stack = per-thread frames; Heap = shared objects; Metaspace = class metadata</td><td>Thinking Metaspace is heap; not sizing Code Cache</td></tr>
+<tr><td>String</td><td>Pool shared, == for pool objs, always .equals()</td><td>== for String comparison</td></tr>
+<tr><td>HashMap</td><td>Array+linked list+tree; resize at 0.75 load; O(1) avg</td><td>Ignoring collision worst case; not presizing</td></tr>
+<tr><td>Generics</td><td>Compile-time only; erased to raw types at runtime</td><td>instanceof with generic type; new T()</td></tr>
+<tr><td>Streams</td><td>Lazy; terminal triggers execution; short-circuit possible</td><td>Using stream for simple loops; sorted() on large streams</td></tr>
+<tr><td>Concurrency</td><td>volatile=visibility; synchronized/atomic=visibility+atomicity</td><td>volatile++ thinking it's atomic; not using finally for unlock</td></tr>
+<tr><td>GC</td><td>Minor GC frequent+fast; Major GC rare+slow; STW</td><td>Too many short-lived objects in Old Gen; ignoring GC logs</td></tr>
+<tr><td>Exceptions</td><td>Unchecked preferred; catch specific; log OR throw</td><td>Swallowing exceptions; catching Exception broadly</td></tr>
+</table>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('on');
+  event.target.classList.add('active');
+  window.scrollTo(0,0);
+}
+function tb(btn,id){
+  const grp=btn.closest('.tabs');
+  grp.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  let el=grp.nextElementSibling;
+  while(el&&el.classList&&el.classList.contains('tc')){
+    el.classList.remove('on');el=el.nextElementSibling;
+  }
+  const t=document.getElementById(id);if(t)t.classList.add('on');
+}
+</script>
+</body>
+</html>
